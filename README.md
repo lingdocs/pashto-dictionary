@@ -1,9 +1,10 @@
 # LingDocs Dictionary Monorepo
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/65b633a2-f123-4fcd-91bc-5e6acda43256/deploy-status)](https://app.netlify.com/sites/lingdocs-dictionary/deploys)
-![Website CI](https://github.com/lingdocs/dictionary.lingdocs.com/actions/workflows/website-ci.yml/badge.svg)
-![Functions CI](https://github.com/lingdocs/dictionary.lingdocs.com/actions/workflows/functions-ci.yml/badge.svg)
-![Functions Deploy](https://github.com/lingdocs/dictionary.lingdocs.com/actions/workflows/deploy-functions.yml/badge.svg)
+![Website CI](https://github.com/lingdocs/lingdocs-main/actions/workflows/website-ci.yml/badge.svg)
+![Functions CI](https://github.com/lingdocs/lingdocs-main/actions/workflows/functions-ci.yml/badge.svg)
+![Account Deploy](https://github.com/lingdocs/lingdocs-main/actions/workflows/deploy-account.yml/badge.svg)
+![Functions Deploy](https://github.com/lingdocs/lingdocs-main/actions/workflows/deploy-functions.yml/badge.svg)
 
 ## Contents
 
