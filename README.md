@@ -100,7 +100,7 @@ Serverless functions are used in conjungtion with Firebase Authentication to:
 
 #### Account Server
 
-Deployed through a self-hosted actions runner.
+Deployed through a self-hosted actions runner. It runs on an Ubuntu 20.04 machine and it requries `node` and `redis`.
 
 The runner is launched by this line in a crontab
 
