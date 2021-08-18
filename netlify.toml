@@ -1,0 +1,4 @@
+[build]
+  base    = "website"
+  command = "export REACT_APP_BUILD_NO=`git rev-parse --short HEAD` && yarn test && yarn build"
+  publish = "build"

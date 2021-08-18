@@ -1,0 +1,46 @@
+/**
+ * Copyright (c) 2021 lingdocs.com
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+const fillerWords = [
+    "to",
+    "being",
+    "through",
+    "for",
+    "is",
+    "by",
+    "and",
+    "if",
+    "a",
+    "the",
+    "Arabic",
+    "plural",
+    "verb",
+    "stem",
+    "of",
+    "do",
+    "it",
+    "be",
+    "become",
+    "up",
+    "when",
+    "out",
+    "up",
+    "inflected",
+    "attributive",
+    "etc",
+    "ie",
+    "literal",
+    "figurative",
+    "lit",
+    "fig",
+    "make",
+    "etc.",
+    "",
+];
+
+export default fillerWords;

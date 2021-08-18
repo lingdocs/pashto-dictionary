@@ -1,0 +1,384 @@
+/**
+ * Copyright (c) 2021 lingdocs.com
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+import { DictionaryDb } from "./dictionary-core";
+import sanitizePashto from "./sanitize-pashto";
+import fillerWords from "./filler-words";
+import {
+    Types,
+    convertSpelling,
+    simplifyPhonetics,
+} from "@lingdocs/pashto-inflector";
+import { isPashtoScript } from "./is-pashto";
+import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
+// @ts-ignore
+import relevancy from "relevancy";
+import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
+
+// const dictionaryBaseUrl = "https://storage.googleapis.com/lingdocs/";
+const dictionaryUrl = `https://storage.googleapis.com/lingdocs/dictionary`;
+const dictionaryInfoUrl = `https://storage.googleapis.com/lingdocs/dictionary-info`;
+
+const dictionaryInfoLocalStorageKey = "dictionaryInfo5";
+const dictionaryCollectionName = "dictionary3";
+// const dictionaryDatabaseName = "dictdb.db";
+export const pageSize = 35;
+
+const relevancySorter = new relevancy.Sorter();
+
+const db = indexedDB.open('inPrivate');
+db.onerror = (e) => {
+    console.error(e);
+    alert("Your browser does not have IndexedDB enabled. This might be because you are using private mode. Please use regular mode or enable IndexedDB to use this dictionary");
+}
+
+const dictDb = new DictionaryDb({
+    url: dictionaryUrl,
+    infoUrl: dictionaryInfoUrl,
+    collectionName: dictionaryCollectionName,
+    infoLocalStorageKey: dictionaryInfoLocalStorageKey,
+});
+
+function makeSearchStringSafe(searchString: string): string {
+  return searchString.replace(/[#-.]|[[-^]|[?|{}]/g, "");
+}
+
+function fuzzifyEnglish(input: string): string {
+  const safeInput = input.trim().replace(/[#-.]|[[-^]|[?|{}]/g, "");
+  // TODO: Could do: cover british/american things like offense / offence
+  return safeInput.replace("to ", "")
+                  .replace(/our/g, "ou?r")
+                  .replace(/or/g, "ou?r");
+}
+
+function chunkOutArray<T>(arr: T[], chunkSize: number): T[][] {
+  const R: T[][] = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    R.push(arr.slice(i, i + chunkSize));
+  }
+  return R;
+}
+
+function getExpForInflections(input: string, index: "p" | "f"): RegExp {
+  let base = input;
+  if (index === "f") {
+      if (["e", "é", "a", "á", "ó", "o"].includes(input.slice(-1))) {
+          base = input.slice(0, -1);
+      }
+      return new RegExp(`\\b${base}`);
+  }
+  if (["ه", "ې", "و"].includes(input.slice(-1))) {
+      base = input.slice(0, -1);
+  }
+  return new RegExp(`^${base}[و|ې|ه]?`);
+}
+
+function tsOneMonthBack(): number {
+    // https://stackoverflow.com/a/24049314/8620945
+    const d = new Date();
+    const m = d.getMonth();
+    d.setMonth(d.getMonth() - 1);
+  
+    // If still in same month, set date to last day of
+    // previous month
+    if (d.getMonth() === m) d.setDate(0);
+    d.setHours(0, 0, 0);
+    d.setMilliseconds(0);
+  
+    // Get the time value in milliseconds and convert to seconds
+    return d.getTime();
+}
+
+function alphabeticalLookup({ searchString, page }: {
+    searchString: string,
+    page: number,
+}): Types.DictionaryEntry[] {
+    const r = new RegExp("^" + sanitizePashto(makeSearchStringSafe(searchString)));
+    const regexResults = dictDb.collection.find({
+        $or: [
+            {p: { $regex: r }},
+            {g: { $regex: r }},
+        ],
+    });
+    const indexNumbers = regexResults.map((mpd) => mpd.i);
+    // Find the first matching word occuring first in the Pashto Index
+    let firstIndexNumber = null;
+    if (indexNumbers.length) {
+        firstIndexNumber = Math.min(...indexNumbers);
+    }
+    // $gt query from that first occurance
+    if (firstIndexNumber !== null) {
+        return dictDb.collection.chain()
+                    .find({ i: { $gt: firstIndexNumber - 1 }})
+                    .simplesort("i")
+                    .limit(page * pageSize)
+                    .data();
+    }
+    return [];
+}
+
+function fuzzyLookup({ searchString, language, page } : {
+    searchString: string,
+    language: "Pashto" | "English" | "Both",
+    page: number,
+}) {
+    return language === "Pashto"
+        ? pashtoFuzzyLookup({ searchString, page })
+        : englishLookup({ searchString, page });
+}
+
+function englishLookup({ searchString, page }: {
+    searchString: string,
+    page: number,
+}) {
+    let resultsGiven: number[] = [];
+    // get exact results
+    const exactQuery = { 
+        e: {
+            $regex: new RegExp(`^${fuzzifyEnglish(searchString)}$`, "i"),
+        },
+    };
+    const exactResultsLimit = pageSize < 10 ? Math.floor(pageSize / 2) : 10;
+    const exactResults = dictDb.collection.chain()
+                          .find(exactQuery)
+                          .limit(exactResultsLimit)
+                          .simplesort("i")
+                          .data();
+    resultsGiven = exactResults.map((mpd) => mpd.$loki);
+    // get results with full word match at beginning of string
+    const startingQuery = { 
+        e: {
+            $regex: new RegExp(`^${fuzzifyEnglish(searchString)}\\b`, "i"),
+        },
+        $loki: { $nin: resultsGiven },
+    };
+    const startingResultsLimit = (pageSize * page) - resultsGiven.length;
+    const startingResults = dictDb.collection.chain()
+                          .find(startingQuery)
+                          .limit(startingResultsLimit)
+                          .simplesort("i")
+                          .data();
+    resultsGiven = [...resultsGiven, ...startingResults.map((mpd) => mpd.$loki)];
+    // get results with full word match anywhere
+    const fullWordQuery = {
+        e: {
+            $regex: new RegExp(`\\b${fuzzifyEnglish(searchString)}\\b`, "i"),
+        },
+        $loki: { $nin: resultsGiven },
+    };
+    const fullWordResultsLimit = (pageSize * page) - resultsGiven.length;
+    const fullWordResults = dictDb.collection.chain()
+                          .find(fullWordQuery)
+                          .limit(fullWordResultsLimit)
+                          .simplesort("i")
+                          .data();
+    resultsGiven = [...resultsGiven, ...fullWordResults.map((mpd) => mpd.$loki)]
+    // get results with partial match anywhere
+    const partialMatchQuery = {
+        e: {
+            $regex: new RegExp(`${fuzzifyEnglish(searchString)}`, "i"),
+        },
+        $loki: { $nin: resultsGiven },
+    };
+    const partialMatchLimit = (pageSize * page) - resultsGiven.length;
+    const partialMatchResults = dictDb.collection.chain()
+        .find(partialMatchQuery)
+        .limit(partialMatchLimit)
+        .simplesort("i")
+        .data();
+    const results = [
+        ...exactResults,
+        ...startingResults,
+        ...fullWordResults,
+        ...partialMatchResults,
+    ];
+    return results;
+}
+
+function pashtoExactLookup(searchString: string): Types.DictionaryEntry[] {
+    const index = isPashtoScript(searchString) ? "p" : "g";
+    const search = index === "g" ? simplifyPhonetics(searchString) : searchString;
+    return dictDb.collection.find({
+        [index]: search,
+    });
+}
+
+function pashtoFuzzyLookup({ searchString, page }: {
+    searchString: string,
+    page: number,
+}): Types.DictionaryEntry[] {
+    let resultsGiven: number[] = [];
+    // Check if it's in Pashto or Latin script
+    const searchStringToUse = sanitizePashto(makeSearchStringSafe(searchString));
+    const index = isPashtoScript(searchStringToUse) ? "p" : "g";
+    const search = index === "g" ? simplifyPhonetics(searchStringToUse) : searchStringToUse;
+    const infIndex = index === "p" ? "p" : "f"; 
+    // Get exact matches
+    const exactExpression = new RegExp("^" + search);
+    const weeBitFuzzy = new RegExp("^" + makeAWeeBitFuzzy(search, infIndex));
+    // prepare exact expression for special matching
+    // TODO: This is all a bit messy and could be done without regex
+    const expressionForInflections = getExpForInflections(search, infIndex);
+    const arabicPluralIndex = `ap${infIndex}`;
+    const pashtoPluralIndex = `pp${infIndex}`;
+    const presentStemIndex = `ps${infIndex}`;
+    const firstInfIndex = `infa${infIndex}`;
+    const secondInfIndex = `infb${infIndex}`;
+    const pashtoExactResultFields = [
+        {
+            [index]: { $regex: exactExpression },
+        }, {
+            [arabicPluralIndex]: { $regex: weeBitFuzzy },
+        }, {
+            [pashtoPluralIndex]: { $regex: weeBitFuzzy },
+        }, {
+            [presentStemIndex]: { $regex: weeBitFuzzy },
+        },
+        {
+            [firstInfIndex]: { $regex: expressionForInflections },
+        },
+        {
+            [secondInfIndex]: { $regex: expressionForInflections },
+        },
+    ];
+    const exactQuery = { $or: [...pashtoExactResultFields] };
+    // just special incase using really small limits
+    // multiple times scrolling / chunking / sorting might get a bit messed up if using a limit of less than 10
+    const exactResultsLimit = pageSize < 10 ? Math.floor(pageSize / 2) : 10;
+    const exactResults = dictDb.collection.chain()
+                          .find(exactQuery)
+                          .limit(exactResultsLimit)
+                          .simplesort("i")
+                          .data();
+    resultsGiven = exactResults.map((mpd) => mpd.$loki);
+  
+    // Get fuzzy matches
+    const pashtoRegExLogic = fuzzifyPashto(search, {
+        script: index === "p" ? "Pashto" : "Latin",
+        simplifiedLatin: index === "g",
+        allowSpacesInWords: true,
+        matchStart: "word",
+    });
+    const fuzzyPashtoExperssion = new RegExp(pashtoRegExLogic);
+    const pashtoFuzzyQuery = [
+        {
+            [index]: { $regex: fuzzyPashtoExperssion },
+        }, {                             // TODO: Issue, this fuzzy doesn't line up well because it's not the simplified phonetics - still has 's etc
+            [arabicPluralIndex]: { $regex: fuzzyPashtoExperssion },
+        }, {
+            [presentStemIndex]: { $regex: fuzzyPashtoExperssion },
+        }
+    ];
+    // fuzzy results should be allowed to take up the rest of the limit (not used up by exact results)
+    const fuzzyResultsLimit = (pageSize * page) - resultsGiven.length;
+    // don't get these fuzzy results if searching in only English
+    const fuzzyQuery = { 
+        $or: pashtoFuzzyQuery,
+        $loki: { $nin: resultsGiven },
+    };
+    const fuzzyResults = dictDb.collection.chain()
+                    .find(fuzzyQuery)
+                    .limit(fuzzyResultsLimit)
+                    .data();
+    const results = [...exactResults, ...fuzzyResults];
+    const chunksToSort = chunkOutArray(results, pageSize);
+    // sort out each chunk (based on limit used multiple times by infinite scroll)
+    // so that when infinite scrolling, it doesn't resort the previous chunks given
+    // TODO: If on the first page, only sort the fuzzyResults
+    return chunksToSort
+        .reduce((acc, cur, i) => ((i === 0)
+            ? [
+                ...sortByRelevancy(cur.slice(0, exactResults.length), search, index),
+                ...sortByRelevancy(cur.slice(exactResults.length), search, index),
+            ]
+            : [
+                ...acc,
+                ...sortByRelevancy(cur, search, index),
+            ]), []);
+}
+
+function sortByRelevancy<T>(arr: T[], searchI: string, index: string): T[] {
+    return relevancySorter.sort(arr, searchI, (obj: any, calc: any) => calc(obj[index]))
+}
+
+function relatedWordsLookup(word: Types.DictionaryEntry): Types.DictionaryEntry[] {
+    const wordArray = word.e.trim()
+        .replace(/\?/g, "")
+        .replace(/( |,|\.|!|;|\(|\))/g, " ")
+        .split(/ +/)
+        .filter((w: string) => !fillerWords.includes(w));
+    let results: Types.DictionaryEntry[] = [];
+    wordArray.forEach((w: string) => {
+        let r: RegExp;
+        try {
+            r = new RegExp(`\\b${w}\\b`, "i");
+            const relatedToWord = dictDb.collection.chain()
+                                .find({
+                                    // don't include the original word
+                                    ts: { $ne: word.ts },
+                                    e: { $regex: r },
+                                })
+                                .limit(5)
+                                .data();
+            results = [...results, ...relatedToWord];
+            // In case there's some weird regex fail
+        } catch (error) {
+            /* istanbul ignore next */
+            console.error(error);
+        }
+    });
+    // Remove duplicate items - https://stackoverflow.com/questions/40811451/remove-duplicates-from-a-array-of-objects
+    results = results.filter(function(a) {
+        // @ts-ignore
+        return !this[a.$loki] && (this[a.$loki] = true);
+    }, Object.create(null));
+    return(results);
+}
+
+export function allEntries() {
+    return dictDb.collection.find();
+}
+
+export const dictionary: DictionaryAPI = {
+    // NOTE: For some reason that I do not understand you have to pass the functions from the
+    // dictionary core class in like this... ie. initialize: dictDb.initialize will mess up the this usage
+    // in the dictionary core class
+    initialize: async () => await dictDb.initialize(),
+    update: async (notifyUpdateComing: () => void) => await dictDb.updateDictionary(notifyUpdateComing),
+    search: function(state: State): Types.DictionaryEntry[] {
+        const searchString = convertSpelling(
+            state.searchValue,
+            state.options.textOptions.spelling,
+        );
+        if (state.searchValue === "") {
+            return [];
+        }
+        return (state.options.searchType === "alphabetical" && state.options.language === "Pashto")
+            ? alphabeticalLookup({
+                searchString,
+                page: state.page
+            })
+            : fuzzyLookup({
+                searchString,
+                language: state.options.language,
+                page: state.page,
+            });
+    },
+    exactPashtoSearch: pashtoExactLookup,
+    getNewWordsThisMonth: function(): Types.DictionaryEntry[] {
+        return dictDb.collection.chain()
+          .find({ ts: { $gt: tsOneMonthBack() }})
+          .simplesort("ts")
+          .data()
+          .reverse();
+    },
+    findOneByTs: (ts: number) => dictDb.findOneByTs(ts),
+    findRelatedEntries: function(entry: Types.DictionaryEntry): Types.DictionaryEntry[] {
+        return relatedWordsLookup(entry);
+    },
+}

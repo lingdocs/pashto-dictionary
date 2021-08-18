@@ -1,0 +1,18 @@
+# Debug
+ui-debug.log
+
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+
+# File with private NPM token(s) inserted for deploying function
+.npmrc
+
+# Firebase functions config/env for running functions locally
+.runtimeconfig.json

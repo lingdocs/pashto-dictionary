@@ -1,0 +1,32 @@
+name: Website CI
+
+on:
+  push:
+    branches: [ '*' ]
+    paths:
+      - 'website/**'
+      - '.github/workflows/website-ci.yml'
+  pull_request:
+    branches: [ '*' ]
+    paths:
+      - 'website/**'
+      - '.github/workflows/website-ci.yml'
+      
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
+    env:
+      LINGDOCS_NPM_TOKEN: ${{ secrets.LINGDOCS_NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test
