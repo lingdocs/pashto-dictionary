@@ -16,6 +16,7 @@ import {
   getVerifiedEmail,
 } from "../lib/user-utils";
 import env from "../lib/env-vars";
+import * as T from "../../../website/src/lib/account-types";
 
 export const outsideProviders: ("github" | "google" | "twitter")[] = ["github", "google", "twitter"];
 
@@ -116,7 +117,7 @@ function setupPassport(passport: PassportStatic) {
   async function(req: any, accessToken: any, refreshToken: any, profileRaw: any, done: any) {
     // not getting refresh token
     const { _json, _raw, ...profile } = profileRaw;
-    const ghProfile: GitHubProfile = { ...profile, accessToken };  
+    const ghProfile: T.GitHubProfile = { ...profile, accessToken };  
     try {
       if (req.isAuthenticated()) {
         if (!req.user) done(new Error("user lost"));
@@ -142,7 +143,7 @@ function setupPassport(passport: PassportStatic) {
     cb(null, user.userId);
   });
   
-  passport.deserializeUser(async (userId: UUID, cb) => {
+  passport.deserializeUser(async (userId: T.UUID, cb) => {
     try {
       const user = await getLingdocsUser("userId", userId);
       if (!user) {

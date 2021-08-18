@@ -7,12 +7,13 @@ import {
 import { getTimestamp } from "../lib/time-utils";
 import { sendVerificationEmail } from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
+import * as T from "../../../website/src/lib/account-types";
 
-function getUUID(): UUID {
-    return uuidv4() as UUID;
+function getUUID(): T.UUID {
+    return uuidv4() as T.UUID;
 }
 
-export function canRemoveOneOutsideProvider(user: LingdocsUser): boolean {
+export function canRemoveOneOutsideProvider(user: T.LingdocsUser): boolean {
     if (user.email && user.password) {
         return true;
     }
@@ -20,7 +21,7 @@ export function canRemoveOneOutsideProvider(user: LingdocsUser): boolean {
     return providersPresent.length > 1;
 }
 
-export function getVerifiedEmail({ emails }: ProviderProfile): string | false {
+export function getVerifiedEmail({ emails }: T.ProviderProfile): string | false {
     return (
         emails
         && emails.length
@@ -29,7 +30,7 @@ export function getVerifiedEmail({ emails }: ProviderProfile): string | false {
     ) ? emails[0].value : false;
 }
 
-function getEmailFromGoogleProfile(profile: GoogleProfile): { email: string | undefined, verified: boolean } {
+function getEmailFromGoogleProfile(profile: T.GoogleProfile): { email: string | undefined, verified: boolean } {
     if (!profile.emails || profile.emails.length === 0) {
         return { email: undefined, verified: false };
     }
@@ -49,20 +50,20 @@ export async function createNewUser(input: {
     passwordPlainText: string,
 } | {
     strategy: "github",
-    profile: GitHubProfile,
+    profile: T.GitHubProfile,
 } | {
     strategy: "google",
-    profile: GoogleProfile, 
+    profile: T.GoogleProfile, 
 } | {
     strategy: "twitter",
-    profile: TwitterProfile,
-}): Promise<LingdocsUser> {
+    profile: T.TwitterProfile,
+}): Promise<T.LingdocsUser> {
     const userId = getUUID();
     const now = getTimestamp();
     if (input.strategy === "local") {
         const email = await getEmailTokenAndHash();
         const password = await getHash(input.passwordPlainText);
-        const newUser: LingdocsUser = {
+        const newUser: T.LingdocsUser = {
             _id: userId,
             userId,
             email: input.email,
@@ -80,7 +81,7 @@ export async function createNewUser(input: {
     }
     // GitHub || Twitter
     if (input.strategy === "github" || input.strategy === "twitter") {
-        const newUser: LingdocsUser = {
+        const newUser: T.LingdocsUser = {
             _id: userId,
             userId,
             emailVerified: false,
@@ -99,7 +100,7 @@ export async function createNewUser(input: {
     const { email, verified } = getEmailFromGoogleProfile(input.profile);
     if (email && !verified) {
         const em = await getEmailTokenAndHash();
-        const newUser: LingdocsUser = {
+        const newUser: T.LingdocsUser = {
             _id: userId,
             userId,
             email,
@@ -115,7 +116,7 @@ export async function createNewUser(input: {
         sendVerificationEmail(user, em.token);
         return user;
     }
-    const newUser: LingdocsUser = {
+    const newUser: T.LingdocsUser = {
         _id: userId,
         userId,
         email,

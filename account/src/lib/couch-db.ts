@@ -2,25 +2,26 @@ import Nano from "nano";
 import { DocumentInsertResponse } from "nano";
 import { getTimestamp } from "./time-utils";
 import env from "./env-vars";
+import * as T from "../../../website/src/lib/account-types";
 
 const nano = Nano(env.couchDbURL);
 const usersDb = nano.db.use("test-users");
 
-export function updateLastActive(user: LingdocsUser): LingdocsUser {
+export function updateLastActive(user: T.LingdocsUser): T.LingdocsUser {
   return {
     ...user,
     lastActive: getTimestamp(),
   };
 }
 
-export function updateLastLogin(user: LingdocsUser): LingdocsUser {
+export function updateLastLogin(user: T.LingdocsUser): T.LingdocsUser {
   return {
     ...user,
     lastLogin: getTimestamp(),
   };
 }
 
-function processAPIResponse(user: LingdocsUser, response: DocumentInsertResponse): LingdocsUser | undefined {
+function processAPIResponse(user: T.LingdocsUser, response: DocumentInsertResponse): T.LingdocsUser | undefined {
   if (response.ok !== true) return undefined;
   return {
     ...user,
@@ -29,7 +30,7 @@ function processAPIResponse(user: LingdocsUser, response: DocumentInsertResponse
   };
 }
 
-export async function getLingdocsUser(field: "email" | "userId" | "githubId" | "googleId" | "twitterId", value: string): Promise<undefined | LingdocsUser> {
+export async function getLingdocsUser(field: "email" | "userId" | "githubId" | "googleId" | "twitterId", value: string): Promise<undefined | T.LingdocsUser> {
     const user = await usersDb.find({
       selector: field === "githubId"
         ? { github: { id: value }}
@@ -42,10 +43,10 @@ export async function getLingdocsUser(field: "email" | "userId" | "githubId" | "
     if (!user.docs.length) {
       return undefined;
     }
-    return user.docs[0] as LingdocsUser;
+    return user.docs[0] as T.LingdocsUser;
 }
 
-export async function insertLingdocsUser(user: LingdocsUser): Promise<LingdocsUser> {
+export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.LingdocsUser> {
   const res = await usersDb.insert(user);
   const newUser = processAPIResponse(user, res);
   if (!newUser) {
@@ -54,7 +55,7 @@ export async function insertLingdocsUser(user: LingdocsUser): Promise<LingdocsUs
   return newUser;
 }
 
-export async function deleteLingdocsUser(uuid: UUID): Promise<void> {
+export async function deleteLingdocsUser(uuid: T.UUID): Promise<void> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) return;
   // TODO: cleanup userdbs etc
@@ -64,24 +65,24 @@ export async function deleteLingdocsUser(uuid: UUID): Promise<void> {
 
 // TODO: TO MAKE THIS SAFER, PASS IN JUST THE UPDATING FIELDS!!
 // TODO: take out the updated object - do just an ID, and then use the toUpdate safe thing
-export async function updateLingdocsUser(uuid: UUID, toUpdate:
+export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   // TODO: OR USE REDUCER??
   { name: string } |
-  { name?: string, email: string, emailVerified: Hash } |
+  { name?: string, email: string, emailVerified: T.Hash } |
   { email: string, emailVerified: true } |
-  { emailVerified: Hash } |
+  { emailVerified: T.Hash } |
   { emailVerified: true } |
-  { password: Hash } |
-  { google: GoogleProfile | undefined } |
-  { github: GitHubProfile | undefined } |
-  { twitter: TwitterProfile | undefined } |
+  { password: T.Hash } |
+  { google: T.GoogleProfile | undefined } |
+  { github: T.GitHubProfile | undefined } |
+  { twitter: T.TwitterProfile | undefined } |
   { 
     passwordReset: {
-      tokenHash: Hash,
-      requestedOn: TimeStamp,
+      tokenHash: T.Hash,
+      requestedOn: T.TimeStamp,
     },
   }
-): Promise<LingdocsUser> {
+): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
   if ("password" in toUpdate) {

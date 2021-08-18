@@ -5,15 +5,15 @@ import {
 } from "../lib/couch-db";
 import {
     getHash,
-    getURLToken,
     compareToHash,
     getEmailTokenAndHash,
 } from "../lib/password-utils";
 import {
     sendVerificationEmail,
 } from "../lib/mail-utils";
+import * as T from "../../../website/src/lib/account-types";
 
-function sendResponse(res: Response, payload: APIResponse) {
+function sendResponse(res: Response, payload: T.APIResponse) {
     return res.send(payload);
 }
 
@@ -24,7 +24,7 @@ apiRouter.use((req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
-    const r: APIResponse = { ok: false, error: "401 Unauthorized" };
+    const r: T.APIResponse = { ok: false, error: "401 Unauthorized" };
     return res.status(401).send(r);
 });
 

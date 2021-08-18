@@ -21,6 +21,7 @@ import {
 } from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
 import inProd from "../lib/inProd";
+import * as T from "../../../website/src/lib/account-types";
 
 const authRouter = (passport: PassportStatic) => {
   const router = Router();
@@ -71,7 +72,7 @@ const authRouter = (passport: PassportStatic) => {
         return res.render("login", { recaptcha: "fail", inProd });
       }
     }
-    passport.authenticate("local", (err, user: LingdocsUser | undefined, info) => {
+    passport.authenticate("local", (err, user: T.LingdocsUser | undefined, info) => {
       if (err) throw err;
       if (!user && info.message === "email not found") {
         return res.send({ ok: false, newSignup: true });
