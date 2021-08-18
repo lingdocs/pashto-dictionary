@@ -2,7 +2,8 @@ name: Website CI
 
 on:
   push:
-    branches: [ '*' ]
+    branches:
+      - master
     paths:
       - 'website/**'
       - '.github/workflows/website-ci.yml'
