@@ -1,0 +1,21 @@
+name: Deploy Account
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+    paths:
+      - 'account/**'
+      - '.github/workflows/deploy-account.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-account:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cd account
+          npm install
+      - run: pm2 restart "account"

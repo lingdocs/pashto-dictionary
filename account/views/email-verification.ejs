@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LingDocs Signin">
+    <title>E-mail Verification · LingDocs</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="text-center">
+    <div class="container">
+        <h2 class="mt-4 mb-4">LingDocs Email Verification</h2>
+        <% if (message === "not found") { %>
+            <p>Invalid Verification Link 👎</p>
+        <% } %>
+        <% if (message === "already verified") { %>
+            <p>Your e-mail has already been verified. 👍</p>
+        <% } %>
+        <% if (message === "verified") { %>
+            <p>Thank you. Your e-mail has been verified. 👍</p>
+        <% } %>
+        <!-- TODO: DYNAMIC DOMAIN HERE! -->
+        <% if (message === "invalid token") { %>
+            <p>That's an older or expired verification code. Please check for the most recent verification email or request another from the <a href="https://account.lingdocs.com/user">account page</a>.</p>
+        <% } %>
+        <% if (message === "error verifying e-mail") { %>
+            <p>Sorry! There was an error verifying your e-mail. Please try again later.</p>
+        <% } %>
+    </div> 
+  </body> 
+</html>

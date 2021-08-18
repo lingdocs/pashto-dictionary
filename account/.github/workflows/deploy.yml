@@ -1,0 +1,11 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: pm2 restart "auth.lingdocs.com"

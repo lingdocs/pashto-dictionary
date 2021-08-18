@@ -1,0 +1,249 @@
+import { Router } from "express";
+import { PassportStatic } from "passport";
+import {
+  getLingdocsUser,
+  updateLingdocsUser,
+} from "../lib/couch-db";
+import { createNewUser, canRemoveOneOutsideProvider } from "../lib/user-utils";
+import {
+  getHash,
+  getURLToken,
+  compareToHash,
+  getEmailTokenAndHash,
+} from "../lib/password-utils";
+import { validateReCaptcha } from "../lib/recaptcha";
+import {
+  getTimestamp,
+} from "../lib/time-utils";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "../lib/mail-utils";
+import { outsideProviders } from "../middleware/setup-passport";
+import inProd from "../lib/inProd";
+
+const authRouter = (passport: PassportStatic) => {
+  const router = Router();
+  router.get("/", (req, res) => {
+    if (req.isAuthenticated()) {
+      return res.redirect("/user");
+    }
+    res.render("login", { recaptcha: "", inProd });
+  });
+
+  router.get("/user", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.redirect("/");
+    }
+    res.render("user", { user: req.user, error: null, removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+  });
+
+  router.post("/user", async (req, res, next) => {
+    const page = "user";
+    if (!req.user) return next("user not found");
+    const name = req.body.name as string;
+    const email = req.body.email as string;
+    if (email !== req.user.email) {
+      if (name !== req.user.name) await updateLingdocsUser(req.user.userId, { name });
+      const withSameEmail = (email !== "") && await getLingdocsUser("email", email);
+      if (withSameEmail) {
+        return res.render(page, { user: { ...req.user, email }, error: "email taken", removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+      }
+      // TODO: ABSTRACT THE PROCESS OF GETTING A NEW EMAIL TOKEN AND MAILING!
+      const { token, hash } = await getEmailTokenAndHash();
+      const updated = await updateLingdocsUser(req.user.userId, {
+        name,
+        email,
+        emailVerified: hash,
+      });
+      sendVerificationEmail(updated, token).catch(console.error);
+      return res.render(page, { user: updated, error: null, removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+    }
+    const updated = await updateLingdocsUser(req.user.userId, { name });
+    // need to do this because sometimes the update seems slow?
+    return res.render(page, { user: updated, error: null, removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+  });
+
+  router.post("/login", async (req, res, next) => {
+    if (inProd) {
+      const success = await validateReCaptcha(req.body.token);
+      if (!success) {
+        return res.render("login", { recaptcha: "fail", inProd });
+      }
+    }
+    passport.authenticate("local", (err, user: LingdocsUser | undefined, info) => {
+      if (err) throw err;
+      if (!user && info.message === "email not found") {
+        return res.send({ ok: false, newSignup: true });
+      }
+      if (!user) res.send({
+        ok: false,
+        message: "Incorrect password",
+      });
+      else {
+        req.logIn(user, (err) => {
+          if (err) return next(err);
+          res.send({ ok: true, user });
+        });
+      }
+    })(req, res, next);
+  });
+
+  router.get(
+    "/google",
+    passport.authenticate("google", {
+      // @ts-ignore - needed for getting refreshToken]
+      accessType: "offline",
+      scope: ["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"],
+    })
+  );
+  router.get('/github', passport.authenticate("github", {
+    scope: ["read:user", "user:email"],
+  }));
+  router.get('/twitter', passport.authenticate("twitter"));
+
+  // all callback and remove routes/functions are the same for each provider 
+  outsideProviders.forEach((provider) => {
+    router.get(
+      `/${provider}/callback`,
+      passport.authenticate(provider, { successRedirect: '/user', failureRedirect: '/' }),
+    );
+    router.post(`/${provider}/remove`, async (req, res, next) => {
+      try {
+        if (!req.user) return next("user not found");
+        if (!canRemoveOneOutsideProvider(req.user)) return res.redirect("/user");
+        await updateLingdocsUser(
+          req.user.userId,
+          // @ts-ignore - shouldn't need this 
+          { [provider]: undefined }
+        );
+        return res.redirect("/user");
+      } catch(e) {
+        next(e);
+      }
+    });
+  });
+
+  router.post("/register", async (req, res, next) => {
+    try {
+      const { email, password, name } = req.body;
+      const existingUser = await getLingdocsUser("email", email);
+      if (existingUser) return res.send("Tser Already Exists");
+      const user = await createNewUser({ strategy: "local", email, passwordPlainText: password, name });
+      req.logIn(user, (err) => {
+        if (err) return next(err);
+        return res.send({ ok: true, user });
+      });
+    } catch(e) {
+      return next(e);
+    }
+  });
+  
+  router.get("/email-verification/:uuid/:token", async (req, res, next) => {
+    const page = "email-verification";
+    const { uuid, token } = req.params;
+    try {
+      const user = await getLingdocsUser("userId", uuid);
+      if (!user) {
+        return res.render(page, { ok: false, message: "not found" });
+      }
+      if (user.emailVerified === true) {
+        return res.render(page, { ok: true, message: "already verified" });
+      }
+      if (user.emailVerified === false) {
+        return res.render(page, { ok: false, message: "invalid token" });
+      }
+      const result = await compareToHash(token, user.emailVerified);
+      if (result === true) {
+        await updateLingdocsUser(user.userId, { emailVerified: true });
+        return res.render(page, { ok: true, message: "verified" });
+      } else {
+        res.render(page, { ok: false, message: "invalid token" });
+      }
+    } catch (e) {
+      return res.render(page, { ok: false, message: "error verifying e-mail" });
+    }
+  });
+
+  router.get("/password-reset", (req, res) => {
+    const email = req.query.email || ""
+    res.render("password-reset-request", { email, done: false });
+  });
+
+  router.post("/password-reset", async(req, res, next) => {
+    const page = "password-reset-request";
+    const email = req.body.email || "";
+    try {
+      const user = await getLingdocsUser("email", email);
+      if (!user) {
+        console.log("password reset attempt on non-existant e-mail");
+        return res.render(page, { email, done: false });
+      }
+      if (user.emailVerified !== true) {
+        console.log("password reset attempt on an unverified e-mail");
+        return res.render(page, { email, done: false });
+      }
+      // TODO: SHOULD THIS BE NOT ALLOWED?
+      // TODO: PROPER ERROR MESSAGING IN ALL THIS!!
+      if (!user.password) {
+        console.log("password reset attempt on an account without a password");
+        return res.render(page, { email, done: false });
+      }
+      const token = getURLToken();
+      const tokenHash = await getHash(token);
+      const u = await updateLingdocsUser(
+          user.userId,
+          { passwordReset: { tokenHash, requestedOn: getTimestamp() }},
+      );
+      await sendPasswordResetEmail(u, token);
+      return res.render(page, { email, done: true });
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.get("/password-reset/:uuid/:token", async (req, res, next) => {
+    const page = "password-reset";
+    const { uuid, token } = req.params;
+    const user = await getLingdocsUser("userId", uuid);
+    if (!user || !user.passwordReset) {
+      return res.render(page, { ok: false, user: null, message: "not found" });
+    }
+    // TODO: ALSO CHECK IF THE RESET IS FRESH ENOUGH
+    const result = await compareToHash(token, user.passwordReset.tokenHash);
+    if (result === true) {
+      return res.render(page, { ok: true, user, token, message: "" });
+    } else {
+      res.render(page, { ok: false, user: null, message: "invalid token" });
+    }
+  });
+
+  router.post("/password-reset/:uuid/:token", async (req, res, next) => {
+    const page = "password-reset";
+    const { uuid, token } = req.params;
+    const { password, passwordConfirmed } = req.body;
+    const user = await getLingdocsUser("userId", uuid);
+    if (!user || !user.passwordReset) {
+      return res.render(page, { ok: false, message: "not found" });
+    }
+    const result = await compareToHash(token, user.passwordReset.tokenHash);
+    if (!result) return res.render(page, { ok: false, user: null, message: "invalid token" });
+    const passwordsMatch = password === passwordConfirmed;
+    if (passwordsMatch) {
+      const hash = await getHash(password);
+      await updateLingdocsUser(user.userId, { password: hash });
+      return res.render(page, { ok: true, user, message: "password reset" });
+    } else {
+      return res.render(page, { ok: false, user, message: "passwords don't match" });
+    }
+  });
+
+  router.post("/sign-out", (req, res) => {
+    req.logOut();
+    res.redirect("/");
+  });
+  
+  return router;
+} 
+
+export default authRouter;
