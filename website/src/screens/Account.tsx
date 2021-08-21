@@ -1,13 +1,13 @@
 import {
     useState,
-    // useEffect,
+    useEffect,
 } from "react";
-// import { Modal, Button } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import {
-    // upgradeAccount,
-    publishDictionary,
+    upgradeAccount,
+    // publishDictionary,
 } from "../lib/backend-calls";
-// import LoadingElipses from "../components/LoadingElipses";
+import LoadingElipses from "../components/LoadingElipses";
 import { Helmet } from "react-helmet";
 import * as AT from "../lib/account-types";
 
@@ -16,48 +16,48 @@ const capitalize = (s: string): string => {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-const Account = ({ user }: { user: AT.LingdocsUser | undefined }) => {
-    // const [showingUpgradePrompt, setShowingUpgradePrompt] = useState<boolean>(false);
-    // const [upgradePassword, setUpgradePassword] = useState<string>("");
-    // const [upgradeError, setUpgradeError] = useState<string>("");
-    // const [waiting, setWaiting] = useState<boolean>(false);
-    const [publishingStatus, setPublishingStatus] = useState<undefined | "publishing" | any>(undefined);
-    // useEffect(() => {
-    //     setShowingUpgradePrompt(false);
-    //     setUpgradePassword("");
-    //     setUpgradeError("");
-    //     setWaiting(false);
-    // }, []);
-    // function closeUpgrade() {
-    //     setShowingUpgradePrompt(false);
-    //     setUpgradePassword("");
-    //     setUpgradeError("");
-    // }
-    // async function handleUpgrade() {
-    //     setUpgradeError("");
-    //     setWaiting(true);
-    //     upgradeAccount(upgradePassword).then((res) => {
-    //         setWaiting(false);
-    //         if (res.ok) {
-    //             loadUserInfo();
-    //             closeUpgrade();
-    //         } else {
-    //             setUpgradeError("Incorrect password");
-    //         }
-    //     }).catch((err) => {
-    //         setWaiting(false);
-    //         setUpgradeError(err.message);
-    //     });
-    // }
-    function handlePublish() {
-        setPublishingStatus("publishing");
-        publishDictionary().then((response) => {
-            setPublishingStatus(response);
+const Account = ({ user, loadUserInfo }: { user: AT.LingdocsUser | undefined, loadUserInfo: () => void }) => {
+    const [showingUpgradePrompt, setShowingUpgradePrompt] = useState<boolean>(false);
+    const [upgradePassword, setUpgradePassword] = useState<string>("");
+    const [upgradeError, setUpgradeError] = useState<string>("");
+    const [waiting, setWaiting] = useState<boolean>(false);
+    // const [publishingStatus, setPublishingStatus] = useState<undefined | "publishing" | any>(undefined);
+    useEffect(() => {
+        setShowingUpgradePrompt(false);
+        setUpgradePassword("");
+        setUpgradeError("");
+        setWaiting(false);
+    }, []);
+    function closeUpgrade() {
+        setShowingUpgradePrompt(false);
+        setUpgradePassword("");
+        setUpgradeError("");
+    }
+    async function handleUpgrade() {
+        setUpgradeError("");
+        setWaiting(true);
+        upgradeAccount(upgradePassword).then((res) => {
+            setWaiting(false);
+            if (res.ok) {
+                loadUserInfo();
+                closeUpgrade();
+            } else {
+                setUpgradeError("Incorrect password");
+            }
         }).catch((err) => {
-            console.error(err);
-            setPublishingStatus("Offline or connection error");
+            setWaiting(false);
+            setUpgradeError(err.message);
         });
     }
+    // function handlePublish() {
+    //     setPublishingStatus("publishing");
+    //     publishDictionary().then((response) => {
+    //         setPublishingStatus(response);
+    //     }).catch((err) => {
+    //         console.error(err);
+    //         setPublishingStatus("Offline or connection error");
+    //     });
+    // }
     if (!user) {
         return <div className="text-center mt-3">
             <Helmet>
@@ -76,7 +76,7 @@ const Account = ({ user }: { user: AT.LingdocsUser | undefined }) => {
                 <title>Account - LingDocs Pashto Dictionary</title>
             </Helmet>
             <h2 className="mb-4">Account</h2>   
-            {user.level === "editor" &&
+            {/* {user.level === "editor" &&
                 <div className="mb-3">
                     <h4>Editor Tools</h4>
                     {publishingStatus !== "publishing" &&
@@ -95,7 +95,7 @@ const Account = ({ user }: { user: AT.LingdocsUser | undefined }) => {
                         </>
                     }
                 </div>
-            }
+            } */}
             <div style={{ maxWidth: "35rem" }}>
                 {/* {user.p && <div className="mb-4 mt-3" style={{ textAlign: "center" }}>
                     <img src={user.photoURL} data-testid="userAvatar" alt="avatar" style={{ borderRadius: "50%", width: "5rem", height: "5rem" }}/>
@@ -123,7 +123,7 @@ const Account = ({ user }: { user: AT.LingdocsUser | undefined }) => {
                 <i className="fa fa-sign-out-alt"></i> Sign Out
             </button> */}
             <h4 className="mb-3">Account Admin</h4>
-            {/* <div className="mb-4">
+            <div className="mb-4">
                 {user.level === "basic" && <button
                     type="button"
                     className="btn btn-outline-secondary mr-3 mb-3"
@@ -132,8 +132,8 @@ const Account = ({ user }: { user: AT.LingdocsUser | undefined }) => {
                 >
                     <i className="fa fa-level-up-alt"></i> Upgrade Account
                 </button>}
-            </div> */}
-            {/* <Modal show={showingUpgradePrompt} onHide={closeUpgrade}>
+            </div>
+            <Modal show={showingUpgradePrompt} onHide={closeUpgrade}>
                 <Modal.Header closeButton>
                     <Modal.Title>Upgrade Account</Modal.Title>
                 </Modal.Header>
@@ -163,7 +163,7 @@ const Account = ({ user }: { user: AT.LingdocsUser | undefined }) => {
                         Upgrade my account
                     </Button>
                 </Modal.Footer>
-            </Modal> */}
+            </Modal>
         </div>
     );
 };
