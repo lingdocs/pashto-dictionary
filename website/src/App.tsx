@@ -134,6 +134,7 @@ class App extends Component<RouteComponentProps, State> {
                 dictionaryStatus: "ready",
                 dictionaryInfo: r.dictionaryInfo,
             });
+            this.handleLoadUser();
             // incase it took forever and timed out - might need to reinitialize the wordlist here ??
             if (this.state.user) {
                 startLocalDbs(this.state.user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
