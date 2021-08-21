@@ -129,9 +129,11 @@ const booleanOptions: {
 
 function Options({
     options,
+    state,
     optionsDispatch,
 }: {
     options: Options,
+    state: State,
     optionsDispatch: (action: OptionsAction) => void,
 }) {
     return <div style={{ maxWidth: "700px", marginBottom: "150px" }}>
@@ -152,7 +154,7 @@ function Options({
                     <td><kbd>ctrl / ⌘</kbd> + <kbd>b</kbd></td>
                     <td>clear search</td>
                 </tr>
-                {wordlistEnabled(options.level) && <tr>
+                {wordlistEnabled(state.user) && <tr>
                     <td><kbd>ctrl / ⌘</kbd> + <kbd>\</kbd></td>
                     <td>show/hide wordlist</td>
                 </tr>}
@@ -173,7 +175,7 @@ function Options({
             handleChange={(p) => optionsDispatch({ type: "changeSearchBarPosition", payload: p as SearchBarPosition })}
         />
         <div className="small mt-2">Bottom position doesn't work well with iPhones.</div>
-        {wordlistEnabled(options.level) && <>
+        {wordlistEnabled(state.user) && <>
             <h4 className="mt-3">Show Number of Wordlist Words for Review</h4>
             <ButtonSelect
                 small

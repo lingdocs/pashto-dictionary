@@ -1,28 +1,22 @@
-import * as BT from "./backend-types";
-import { auth } from "./firebase";
+import * as FT from "./functions-types";
+import * as AT from "./account-types";
 import {
     postSubmissions,
 } from "./backend-calls";
 import {
-    initializeLocalDb,
     addToLocalDb,
     getAllDocsLocalDb,
     deleteFromLocalDb,
 } from "./pouch-dbs";
 
-initializeLocalDb("submissions", () => null);
-
-export function submissionBase(): BT.SubmissionBase {
-    if (!auth.currentUser) {
-        throw new Error("not signed in");
-    }
+export function submissionBase(user: AT.LingdocsUser): FT.SubmissionBase {
     return {
         sTs: Date.now(),
         _id: new Date().toJSON(),
         user: {
-            uid: auth.currentUser.uid,
-            email: auth.currentUser.email,
-            displayName: auth.currentUser.displayName,
+            name: user.name,
+            email: user.email || "",
+            userId: user.userId,
         },
     };
 }
@@ -48,8 +42,8 @@ export async function sendSubmissions() {
     }
 }
 
-export async function addSubmission(submission: BT.Submission, level: BT.UserLevel) {
-    if (level === "editor" && (submission.type === "issue" || submission.type === "entry suggestion" || submission.type === "edit suggestion")) {
+export async function addSubmission(submission: FT.Submission, user: AT.LingdocsUser) {
+    if (user.level === "editor" && (submission.type === "issue" || submission.type === "entry suggestion" || submission.type === "edit suggestion")) {
         await addToLocalDb({ type: "reviewTasks", doc: submission })
     } else {
         await addToLocalDb({ type: "submissions", doc: submission });

@@ -6,7 +6,7 @@
  *
  */
 
-import { saveOptions, readOptions, optionsLocalStorageName } from "./options-storage";
+import { saveOptions, readOptions, optionsLocalStorageName } from "./local-storage";
 import {
     defaultTextOptions,
 } from "@lingdocs/pashto-inflector";
@@ -16,7 +16,6 @@ const optionsStub: Options = {
     searchType: "fuzzy",
     theme: "dark",
     textOptions: defaultTextOptions,
-    level: "student",
     wordlistMode: "browse",
     wordlistReviewLanguage: "Pashto",
     wordlistReviewBadge: true,

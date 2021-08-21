@@ -22,7 +22,6 @@ type Options = {
     searchType: SearchType,
     theme: Theme,
     textOptions: import("@lingdocs/pashto-inflector").Types.TextOptions,
-    level: UserLevel,
     wordlistMode: WordlistMode,
     wordlistReviewLanguage: Language,
     wordlistReviewBadge: boolean,
@@ -39,8 +38,9 @@ type State = {
     isolatedEntry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry | undefined,
     results: import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
     wordlist: WordlistWord[],
-    reviewTasks: import("./lib/backend-types").ReviewTask[],
+    reviewTasks: import("./lib/functions-types").ReviewTask[],
     dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo | undefined,
+    user: undefined | import("./lib/account-types").LingdocsUser,
 }
 
 type OptionsAction = {

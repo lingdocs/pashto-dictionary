@@ -23,12 +23,6 @@ function optionsReducer(options: Options, action: OptionsAction): Options {
         searchBarPosition: action.payload,
       };
     }
-    if (action.type === "changeUserLevel") {
-      return {
-        ...options,
-        level: action.payload,
-      };
-    }
     if (action.type === "changeWordlistMode") {
       return {
         ...options,

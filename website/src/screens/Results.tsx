@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import * as BT from "../lib/backend-types";
+import * as FT from "../lib/functions-types";
 import { 
     submissionBase,
     addSubmission,
@@ -15,7 +15,6 @@ import {
 import { isPashtoScript } from "../lib/is-pashto";
 import Entry from "../components/Entry";
 import { Helmet } from "react-helmet";
-import { auth } from "../lib/firebase";
 import { allEntries } from "../lib/dictionary";
 import {
     standardizePashto,
@@ -63,16 +62,17 @@ function Results({ state, isolateEntry }: {
     }
     function submitSuggestion(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         event.preventDefault();
+        if (!state.user) return;
         const p = pashto;
         const f = phonetics;
         const e = english; 
-        const newEntry: BT.EntrySuggestion = {
-            ...submissionBase(),
+        const newEntry: FT.EntrySuggestion = {
+            ...submissionBase(state.user),
             type: "entry suggestion",
             entry: { ts: 0, i: 0, p, f, g: "", e },
             comment,
         };
-        addSubmission(newEntry, state.options.level);
+        addSubmission(newEntry, state.user);
         setSuggestionState("received");
     }
     function handlePowerSearch() {
@@ -91,16 +91,16 @@ function Results({ state, isolateEntry }: {
         <Helmet>
             <title>LingDocs Pashto Dictionary</title>
         </Helmet>
-        {(auth.currentUser && (window.location.pathname !== "/word") && suggestionState === "none" && powerResults === undefined) && <button
+        {(state.user && (window.location.pathname !== "/word") && suggestionState === "none" && powerResults === undefined) && <button
             type="button"
-            className={`btn btn-outline-secondary bg-white entry-suggestion-button${state.options.searchBarPosition === "bottom" ? " entry-suggestion-button-with-bottom-searchbar" : ""}`}
+            className={`ftn ftn-outline-secondary bg-white entry-suggestion-button${state.options.searchBarPosition === "bottom" ? " entry-suggestion-button-with-bottom-searchbar" : ""}`}
             onClick={startSuggestion}
         >
             <i className="fas fa-plus" style={{ padding: "3px" }} />
         </button>}
         {(powerResults === undefined && suggestionState === "none" && window.location.pathname === "/search") && <button
             type="button"
-            className={`btn btn-outline-secondary bg-white conjugation-search-button${state.options.searchBarPosition === "bottom" ? " conjugation-search-button-with-bottom-searchbar" : ""}`}
+            className={`ftn ftn-outline-secondary bg-white conjugation-search-button${state.options.searchBarPosition === "bottom" ? " conjugation-search-button-with-bottom-searchbar" : ""}`}
             onClick={handlePowerSearch}
         >
             <i className={inflectionSearchIcon} style={{ padding: "3px" }} />
@@ -142,7 +142,7 @@ function Results({ state, isolateEntry }: {
                 isolateEntry={isolateEntry}
             />
         ))}
-        {(auth.currentUser && (suggestionState === "editing")) && <div className="my-3">
+        {(state.user && (suggestionState === "editing")) && <div className="my-3">
             <h5 className="mb-3">Suggest an entry for the dictionary:</h5>
             <div className="form-group mt-4" style={{ maxWidth: "500px" }}>
                 <div className="row mb-2">
@@ -199,7 +199,7 @@ function Results({ state, isolateEntry }: {
             </div>
             <button
                 type="button"
-                className="btn btn-secondary mr-3"
+                className="ftn ftn-secondary mr-3"
                 onClick={submitSuggestion}
                 data-testid="editWordSubmitButton"
             >
@@ -207,7 +207,7 @@ function Results({ state, isolateEntry }: {
             </button>
             <button
                 type="button"
-                className="btn btn-outline-secondary"
+                className="ftn ftn-outline-secondary"
                 onClick={cancelSuggestion}
                 data-testid="editWordCancelButton"
             >

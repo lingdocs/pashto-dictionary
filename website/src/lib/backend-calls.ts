@@ -1,56 +1,53 @@
-import { auth } from "./firebase";
-import * as BT from "./backend-types";
+import * as FT from "./functions-types";
+import * as AT from "./account-types";
 
-const functionsBaseUrl = // process.env.NODE_ENV === "development"
-    // "http://127.0.0.1:5001/lingdocs/europe-west1/"
-    "https://europe-west1-lingdocs.cloudfunctions.net/";
+// const functionsBaseUrl = // process.env.NODE_ENV === "development"
+//     // "http://127.0.0.1:5001/lingdocs/europe-west1/"
+//     "https://europe-west1-lingdocs.cloudfunctions.net/";
 
+const accountBaseUrl = "https://account.lingdocs.com/api/";
 
-export async function publishDictionary(): Promise<BT.PublishDictionaryResponse> {
-    const res = await tokenFetch("publishDictionary");
-    if (!res) {
-        throw new Error("Connection error/offline");
+async function accountApiFetch(url: string, method: "GET" | "POST" | "PUT" | "DELETE" = "GET"): Promise<AT.APIResponse> {
+    const response = await fetch(accountBaseUrl + url, {
+        method,
+        credentials: "include", 
+    });
+    return await response.json() as AT.APIResponse;
+}
+
+export async function publishDictionary(): Promise<FT.PublishDictionaryResponse> {
+    return {
+        ok: true,
+        // @ts-ignore
+        info: {},
+    };
+}
+
+export async function upgradeAccount(password: string): Promise<FT.UpgradeUserResponse> {
+    return {
+        ok: false,
+        error: "incorrect password",
+    };
+}
+
+export async function postSubmissions(submissions: FT.SubmissionsRequest): Promise<FT.SubmissionsResponse> {
+    // return await tokenFetch("submissions", "POST", submissions) as FT.SubmissionsResponse;
+    return {
+        ok: true,
+        message: "received",
+        submissions: [],
     }
-    return res;
 }
 
-export async function upgradeAccount(password: string): Promise<BT.UpgradeUserResponse> {
-    const res = await tokenFetch("upgradeUser", "POST", { password });
-    if (!res) {
-        throw new Error("Connection error/offline");
-    }
-    return res;
-}
-
-export async function postSubmissions(submissions: BT.SubmissionsRequest): Promise<BT.SubmissionsResponse> {
-    return await tokenFetch("submissions", "POST", submissions) as BT.SubmissionsResponse;
-}
-
-export async function loadUserInfo(): Promise<undefined | BT.CouchDbUser> {
-    const res = await tokenFetch("getUserInfo", "GET") as BT.GetUserInfoResponse;
-    return "user" in res ? res.user : undefined;
-}
-
-// TODO: HARD TYPING OF THIS WITH THE subUrl and return values etc?
-async function tokenFetch(subUrl: string, method?: "GET" | "POST", body?: any): Promise<any> {
-    if (!auth.currentUser) {
-        throw new Error("not signed in");
-    }
+export async function getUser(): Promise<undefined | AT.LingdocsUser | "offline"> {
     try {
-        const token = await auth.currentUser.getIdToken();
-        const response = await fetch(`${functionsBaseUrl}${subUrl}`, {
-            method,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            ...body ? {
-                body: JSON.stringify(body),
-            } : {},
-        });
-        return await response.json();
-    } catch (err) {
-        console.error(err);
-        throw err;
+        const response = await accountApiFetch("user"); 
+        if ("user" in response) {
+            return response.user;
+        }
+        return undefined;
+    } catch (e) {
+        console.error(e);
+        return "offline";
     }
 }

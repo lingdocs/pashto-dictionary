@@ -28,7 +28,7 @@ function fFuzzy(f: string): string {
 }
 
 export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[] {
-    const timerLabel = "Search inflections";
+    // const timerLabel = "Search inflections";
     const beg = fFuzzy(searchValue.slice(0, 2));
     const preSearchFun = isPashtoScript(searchValue)
         ? (ps: T.PsString) => ps.p.slice(0, 2) === beg
@@ -37,7 +37,7 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
     const searchFun = isPashtoScript(searchValue)
         ? (ps: T.PsString)  =>  ps.p === searchValue
         : (ps: T.PsString) => !!ps.f.match(fRegex);
-    console.time(timerLabel);
+    // console.time(timerLabel);
     const results = allDocs.reduce((all: { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[], entry) => {
         const type = isNounAdjOrVerb(entry);
         if (entry.c && type === "verb") {
@@ -74,6 +74,6 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
         }
         return all;
     }, []);
-    console.timeEnd(timerLabel);
+    // console.timeEnd(timerLabel);
     return results;
 }

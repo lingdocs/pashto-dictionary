@@ -6,7 +6,6 @@ const options: Options = {
     language: "Pashto",
     searchType: "fuzzy",
     theme: "light",
-    level: "basic",
     wordlistMode: "browse",
     wordlistReviewLanguage: "Pashto",
     wordlistReviewBadge: true,
@@ -32,11 +31,6 @@ test("options reducer should work", () => {
         .toEqual({
             ...options,
             theme: "dark",
-        });
-    expect(optionsReducer(options, { type: "changeUserLevel", payload: "student" }))
-        .toEqual({
-            ...options,
-            level: "student",
         });
     expect(optionsReducer(options, { type: "changeWordlistMode", payload: "review" }))
         .toEqual({
@@ -66,12 +60,12 @@ test("options reducer should work", () => {
                 pTextSize: "largest",
             },
         });
-    expect(optionsReducer(options, { type: "changeSpelling", payload: "Pakistani" }))
+    expect(optionsReducer(options, { type: "changeSpelling", payload: "Pakistani ی" }))
         .toEqual({
             ...options,
             textOptions: {
                 ...defaultTextOptions,
-                spelling: "Pakistani",
+                spelling: "Pakistani ی",
             },
         });
     expect(optionsReducer(options, { type: "changePhonetics", payload: "ipa" }))

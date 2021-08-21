@@ -18,7 +18,7 @@ import {
     validateEntry,
 } from "@lingdocs/pashto-inflector";
 import Entry from "../components/Entry";
-import * as BT from "../lib/backend-types";
+import * as FT from "../lib/functions-types";
 import {
     submissionBase,
     addSubmission,
@@ -136,18 +136,20 @@ function EntryEditor({ state, dictionary, searchParams }: {
         }
     }
     function handleDelete() {
-        const submission: BT.EntryDeletion = {
-            ...submissionBase(),
+        if (!state.user) return;
+        const submission: FT.EntryDeletion = {
+            ...submissionBase(state.user),
             type: "entry deletion",
             ts: entry.ts,
         };
-        addSubmission(submission, state.options.level);
+        addSubmission(submission, state.user);
         setDeleted(true);
     }
     function handleSubmit(e: any) {
         setErroneousFields([]);
         setErrors([]);
         e.preventDefault();
+        if (!state.user) return;
         const result = validateEntry(entry);
         if ("errors" in result) {
             setErroneousFields(result.erroneousFields);
@@ -155,12 +157,12 @@ function EntryEditor({ state, dictionary, searchParams }: {
             return;
         }
         // TODO: Check complement if checkComplement
-        const submission: BT.NewEntry | BT.EntryEdit = {
-            ...submissionBase(),
+        const submission: FT.NewEntry | FT.EntryEdit = {
+            ...submissionBase(state.user),
             type: entry.ts === 1 ? "new entry" : "entry edit",
             entry: { ...entry, ts: entry.ts === 1 ? Date.now() : entry.ts },
         };
-        addSubmission(submission, state.options.level);
+        addSubmission(submission, state.user);
         setSubmitted(true);
         // TODO: Remove from suggestions
         // if (willDeleteSuggestion && sTs) {
@@ -306,8 +308,8 @@ function EntryEditor({ state, dictionary, searchParams }: {
                         </div>
                     ))}
                     <div className="form-group">
-                        <button type="submit" className="btn btn-primary mr-4" onClick={handleSubmit}>Submit</button>
-                        <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete Entry</button>
+                        <button type="submit" className="ftn ftn-primary mr-4" onClick={handleSubmit}>Submit</button>
+                        <button type="button" className="ftn ftn-danger" onClick={handleDelete}>Delete Entry</button>
                         {sTs && <div className="ml-3 form-group form-check-inline">
                             <input
                                 id={"deleteSts"}
