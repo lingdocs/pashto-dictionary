@@ -16,7 +16,7 @@ const capitalize = (s: string): string => {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-const Account = ({ user, loadUserInfo }: { user: AT.LingdocsUser | undefined, loadUser: () => void }) => {
+const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUser: () => void }) => {
     const [showingUpgradePrompt, setShowingUpgradePrompt] = useState<boolean>(false);
     const [upgradePassword, setUpgradePassword] = useState<string>("");
     const [upgradeError, setUpgradeError] = useState<string>("");
