@@ -72,12 +72,3 @@ export type SubmissionsResponse = {
     message: string,
     submissions: Submission[],
 };
-
-export type UpgradeUserResponse = {
-    ok: false,
-    error: "incorrect password",
-} | {
-    ok: true,
-    message: "user already upgraded" | "user upgraded to student",
-};
-

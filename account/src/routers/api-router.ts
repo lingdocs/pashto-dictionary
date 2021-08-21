@@ -1,7 +1,9 @@
 import express, { Response } from "express";
 import {
     deleteLingdocsUser,
+    getLingdocsUser,
     updateLingdocsUser,
+    createWordlistDatabase,
 } from "../lib/couch-db";
 import {
     getHash,
@@ -12,6 +14,8 @@ import {
     sendVerificationEmail,
 } from "../lib/mail-utils";
 import * as T from "../../../website/src/lib/account-types";
+import * as FT from "../../../website/src/lib/functions-types";
+import env from "../lib/env-vars";
 
 function sendResponse(res: Response, payload: T.APIResponse) {
     return res.send(payload);
@@ -85,6 +89,39 @@ apiRouter.put("/email-verification", async (req, res, next) => {
     } catch (e) {
         next(e);
     }
+});
+
+apiRouter.post("/user/upgrade", async (req, res, next) => {
+    if (!req.user) throw new Error("user not found");
+    const givenPassword = (req.body.password || "") as string;
+    const studentPassword = env.upgradePassword;
+    if (givenPassword.toLowerCase().trim() !== studentPassword.toLowerCase()) {
+        const wrongPass: T.UpgradeUserResponse = {
+            ok: false,
+            error: "incorrect password",
+        };
+        res.send(wrongPass);
+        return;
+    }
+    const { userId } = req.user;
+    const user = await getLingdocsUser("userId", userId);
+    if (user) {
+        const alreadyUpgraded: T.UpgradeUserResponse = {
+            ok: true,
+            message: "user already upgraded",
+            user,
+        };
+        res.send(alreadyUpgraded);
+        return;
+    }
+    const { name, password } = await createWordlistDatabase(userId);
+    const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: name, userDbPassword: password });
+    const upgraded: T.UpgradeUserResponse = {
+        ok: true,
+        message: "user upgraded to student",
+        user: u,
+    };
+    res.send(upgraded);
 });
 
 /**

@@ -71,11 +71,15 @@ export function stopLocalDbs() {
 }
 
 function initializeLocalDb(type: LocalDbType, refresh: () => void, user: AT.LingdocsUser) {
-    const name = type === "wordlist"
-        ? `userdb-${stringToHex(user.userId)}`
+    if (type !== "submissions" && "wordlistDb" in user) return 
+    const name = type === "reviewTasks"
+        ? "review-tasks"
         : type === "submissions"
         ? "submissions"
-        : "review-tasks";
+        : (type === "wordlist" && "wordlistDbName" in user)
+        ? user.wordlistDbName
+        : "";
+    const password = "userDbPassword" in user ? user.userDbPassword : "";
     const db = dbs[type];
     // only initialize the db if it doesn't exist or if it has a different name
     if ((!db) || (db.db?.name !== name)) {
@@ -87,12 +91,11 @@ function initializeLocalDb(type: LocalDbType, refresh: () => void, user: AT.Ling
         } else {
             dbs[type]?.sync.cancel();
             const db = new PouchDB(name);
-            const pass = "userDbPassword" in user ? user.userDbPassword : "";
             dbs[type] = {
                 db,
                 refresh,
                 sync: db.sync(
-                    `https://${user.userId}:${pass}@couch.lingdocs.com/${name}`, 
+                    `https://${user.userId}:${password}@couch.lingdocs.com/${name}`, 
                     { live: true, retry: true },
                 ).on("change", (info) => {
                     if (info.direction === "pull") {

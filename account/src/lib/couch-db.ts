@@ -81,6 +81,11 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
       tokenHash: T.Hash,
       requestedOn: T.TimeStamp,
     },
+  } |
+  {
+    level: "student",
+    wordlistDbName: T.WordlistDbName,
+    userDbPassword: T.UserDbPassword,
   }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
@@ -96,4 +101,47 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     ...user,
     ...toUpdate,
   });
+}
+
+export async function createWordlistDatabase(uuid: T.UUID): Promise<{ name: T.WordlistDbName, password: T.UserDbPassword }> {
+  const password = generateWordlistDbPassword();
+  const name = getWordlistDbName(uuid);
+  // create wordlist database for user
+  await nano.db.create(name);
+  const securityInfo = {
+      admins: {
+          names: [uuid],
+          roles: ["_admin"]
+      },
+      members: {
+          names: [uuid],
+          roles: ["_admin"],
+      },
+  };
+  const userDb = nano.db.use(name);
+  await userDb.insert(securityInfo as any, "_security");
+  return { password, name };
+}
+
+function generateWordlistDbPassword(): T.UserDbPassword {
+  function makeChunk(): string {
+      return Math.random().toString(36).slice(2)
+  }
+  const password = new Array(4).fill(0).reduce((acc: string): string => (
+      acc + makeChunk()
+  ), "");
+  return password as T.UserDbPassword;
+}
+
+function stringToHex(str: string) {
+	const arr1 = [];
+	for (let n = 0, l = str.length; n < l; n ++) {
+		const hex = Number(str.charCodeAt(n)).toString(16);
+		arr1.push(hex);
+	}
+	return arr1.join('');
+}
+
+export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
+    return `wordlist-${stringToHex(uid)}` as T.WordlistDbName;
 }

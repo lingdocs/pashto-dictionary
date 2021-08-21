@@ -2,6 +2,7 @@ export type Hash = string & { __brand: "Hashed String" };
 export type UUID = string & { __brand: "Random Unique UID" };
 export type TimeStamp = number & { __brand: "UNIX Timestamp in milliseconds" };
 export type UserDbPassword = string & { __brand: "password for an individual user couchdb" };
+export type WordlistDbName = string & { __brand: "name for an individual user couchdb" };
 export type URLToken = string & { __brand: "Base 64 URL Token" };
 export type EmailVerified = true | Hash | false;
 export type ActionComplete = { ok: true, message: string };
@@ -33,5 +34,20 @@ export type LingdocsUser = {
     tests: [],
     lastLogin: TimeStamp,
     lastActive: TimeStamp,
-} & ({ level: "basic"} | { level: "student" | "editor", userDbPassword: UserDbPassword })
-& import("nano").MaybeDocument;
+} & (
+    { level: "basic"} |
+    {
+        level: "student" | "editor",
+        userDbPassword: UserDbPassword,
+        wordlistDbName: WordlistDbName,
+    }
+) & import("nano").MaybeDocument;
+
+export type UpgradeUserResponse = {
+    ok: false,
+    error: "incorrect password",
+} | {
+    ok: true,
+    message: "user already upgraded" | "user upgraded to student",
+    user: LingdocsUser,
+};

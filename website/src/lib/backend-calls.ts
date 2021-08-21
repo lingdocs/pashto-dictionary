@@ -7,10 +7,14 @@ import * as AT from "./account-types";
 
 const accountBaseUrl = "https://account.lingdocs.com/api/";
 
-async function accountApiFetch(url: string, method: "GET" | "POST" | "PUT" | "DELETE" = "GET"): Promise<AT.APIResponse> {
+// TODO: TYPE BODY
+async function accountApiFetch(url: string, method: "GET" | "POST" | "PUT" | "DELETE" = "GET", body?: any): Promise<AT.APIResponse> {
     const response = await fetch(accountBaseUrl + url, {
         method,
-        credentials: "include", 
+        credentials: "include",
+        ...body ? {
+            body: JSON.stringify(body),
+        } : {},
     });
     return await response.json() as AT.APIResponse;
 }
@@ -23,11 +27,9 @@ export async function publishDictionary(): Promise<FT.PublishDictionaryResponse>
     };
 }
 
-export async function upgradeAccount(password: string): Promise<FT.UpgradeUserResponse> {
-    return {
-        ok: false,
-        error: "incorrect password",
-    };
+export async function upgradeAccount(password: string): Promise<AT.UpgradeUserResponse> {
+    const response = await accountApiFetch(accountBaseUrl + "user/upgrade", "PUT", { password });
+    return response as AT.UpgradeUserResponse;
 }
 
 export async function postSubmissions(submissions: FT.SubmissionsRequest): Promise<FT.SubmissionsResponse> {
