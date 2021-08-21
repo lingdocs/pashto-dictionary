@@ -425,7 +425,7 @@ class App extends Component<RouteComponentProps, State> {
                             }
                         </Route>
                         <Route path="/account">
-                            <Account user={this.state.user} />
+                            <Account user={this.state.user} loadUser={this.handleLoadUser} />
                         </Route>
                         <Route path="/word">
                             <IsolatedEntry

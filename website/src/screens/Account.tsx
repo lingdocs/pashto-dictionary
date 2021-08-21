@@ -16,7 +16,7 @@ const capitalize = (s: string): string => {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-const Account = ({ user, loadUserInfo }: { user: AT.LingdocsUser | undefined, loadUserInfo: () => void }) => {
+const Account = ({ user, loadUserInfo }: { user: AT.LingdocsUser | undefined, loadUser: () => void }) => {
     const [showingUpgradePrompt, setShowingUpgradePrompt] = useState<boolean>(false);
     const [upgradePassword, setUpgradePassword] = useState<string>("");
     const [upgradeError, setUpgradeError] = useState<string>("");
@@ -39,7 +39,7 @@ const Account = ({ user, loadUserInfo }: { user: AT.LingdocsUser | undefined, lo
         upgradeAccount(upgradePassword).then((res) => {
             setWaiting(false);
             if (res.ok) {
-                loadUserInfo();
+                loadUser();
                 closeUpgrade();
             } else {
                 setUpgradeError("Incorrect password");
