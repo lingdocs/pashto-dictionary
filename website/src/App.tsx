@@ -130,6 +130,7 @@ class App extends Component<RouteComponentProps, State> {
             ReactGA.pageview(window.location.pathname + window.location.search);
         }
         dictionary.initialize().then((r) => {
+            this.networkCronJob.stop();
             this.setState({
                 dictionaryStatus: "ready",
                 dictionaryInfo: r.dictionaryInfo,
@@ -334,8 +335,8 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private networkCronJob = new CronJob("1/5 * * * *", () => {
-        // TODO: check for new dictionary (in a seperate cron job - not dependant on the user being signed in)
+    private networkCronJob = new CronJob("* * * * *", () => {
+        // TODO: check for new dictionary (in a seperate cron job - not dependant on the user being signed in)\
         this.handleLoadUser();
         sendSubmissions();
         this.handleDictionaryUpdate();
