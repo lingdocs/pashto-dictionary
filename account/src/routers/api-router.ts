@@ -91,37 +91,41 @@ apiRouter.put("/email-verification", async (req, res, next) => {
     }
 });
 
-apiRouter.post("/user/upgrade", async (req, res, next) => {
+apiRouter.put("/user/upgrade", async (req, res, next) => {
     if (!req.user) throw new Error("user not found");
-    const givenPassword = (req.body.password || "") as string;
-    const studentPassword = env.upgradePassword;
-    if (givenPassword.toLowerCase().trim() !== studentPassword.toLowerCase()) {
-        const wrongPass: T.UpgradeUserResponse = {
-            ok: false,
-            error: "incorrect password",
-        };
-        res.send(wrongPass);
-        return;
-    }
-    const { userId } = req.user;
-    const user = await getLingdocsUser("userId", userId);
-    if (user) {
-        const alreadyUpgraded: T.UpgradeUserResponse = {
+    try {
+        const givenPassword = (req.body.password || "") as string;
+        const studentPassword = env.upgradePassword;
+        if (givenPassword.toLowerCase().trim() !== studentPassword.toLowerCase()) {
+            const wrongPass: T.UpgradeUserResponse = {
+                ok: false,
+                error: "incorrect password",
+            };
+            res.send(wrongPass);
+            return;
+        }
+        const { userId } = req.user;
+        const user = await getLingdocsUser("userId", userId);
+        if (user) {
+            const alreadyUpgraded: T.UpgradeUserResponse = {
+                ok: true,
+                message: "user already upgraded",
+                user,
+            };
+            res.send(alreadyUpgraded);
+            return;
+        }
+        const { name, password } = await createWordlistDatabase(userId);
+        const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: name, userDbPassword: password });
+        const upgraded: T.UpgradeUserResponse = {
             ok: true,
-            message: "user already upgraded",
-            user,
+            message: "user upgraded to student",
+            user: u,
         };
-        res.send(alreadyUpgraded);
-        return;
+        res.send(upgraded);
+    } catch (e) {
+        next(e);
     }
-    const { name, password } = await createWordlistDatabase(userId);
-    const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: name, userDbPassword: password });
-    const upgraded: T.UpgradeUserResponse = {
-        ok: true,
-        message: "user upgraded to student",
-        user: u,
-    };
-    res.send(upgraded);
 });
 
 /**
