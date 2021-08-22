@@ -44,8 +44,10 @@ export type LingdocsUser = {
 ) & import("nano").MaybeDocument;
 
 export type CouchDbAuthUser = {
+    type: "user",
     name: UUID,
     password: UserDbPassword,
+    roles: [],
 } & import("nano").MaybeDocument;
 
 export type UpgradeUserResponse = {
