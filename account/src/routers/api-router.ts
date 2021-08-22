@@ -4,6 +4,7 @@ import {
     getLingdocsUser,
     updateLingdocsUser,
     createWordlistDatabase,
+    deleteWordlistDatabase,
 } from "../lib/couch-db";
 import {
     getHash,
@@ -14,7 +15,6 @@ import {
     sendVerificationEmail,
 } from "../lib/mail-utils";
 import * as T from "../../../website/src/lib/account-types";
-import * as FT from "../../../website/src/lib/functions-types";
 import env from "../lib/env-vars";
 
 function sendResponse(res: Response, payload: T.APIResponse) {
@@ -135,7 +135,9 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
 apiRouter.delete("/user", async (req, res, next) => {
     try {
         if (!req.user) throw new Error("user not found");
-        await deleteLingdocsUser(req.user.userId);
+        const dUser = deleteLingdocsUser(req.user.userId);
+        const dDb = deleteWordlistDatabase(req.user.userId);
+        await Promise.all([dUser, dDb]);
         sendResponse(res, { ok: true, message: "user delted" });
     } catch (e) {
         next(e);
