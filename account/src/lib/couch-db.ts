@@ -107,7 +107,6 @@ export async function createWordlistDatabase(uuid: T.UUID): Promise<{ name: T.Wo
   const password = generateWordlistDbPassword();
   const name = getWordlistDbName(uuid);
   // create wordlist database for user
-  console.log("creating db for", uuid);
   await nano.db.create(name);
   const securityInfo = {
       admins: {
