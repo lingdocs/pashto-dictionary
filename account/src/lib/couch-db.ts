@@ -63,6 +63,14 @@ export async function deleteLingdocsUser(uuid: T.UUID): Promise<void> {
   await usersDb.destroy(user._id as string, user._rev as string);
 }
 
+export async function deleteCouchDbAuthUser(uuid: T.UUID): Promise<void> {
+  const authUsers = nano.db.use("_users");
+  const user = await authUsers.find({ selector: { name: uuid }});
+  if (!user.docs.length) return;
+  const u = user.docs[0];
+  await authUsers.destroy(u._id, u._rev);
+}
+
 // TODO: TO MAKE THIS SAFER, PASS IN JUST THE UPDATING FIELDS!!
 // TODO: take out the updated object - do just an ID, and then use the toUpdate safe thing
 export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
@@ -103,8 +111,19 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   });
 }
 
-export async function createWordlistDatabase(uuid: T.UUID): Promise<{ name: T.WordlistDbName, password: T.UserDbPassword }> {
+export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.UserDbPassword }> {
   const password = generateWordlistDbPassword();
+  const usersDb = nano.db.use("_users");
+  const authUser: T.CouchDbAuthUser = {
+    name: uuid,
+    password,
+  };
+  await usersDb.insert(authUser);
+  return { password };
+}
+
+export async function createWordlistDatabase(uuid: T.UUID, password: T.UserDbPassword): Promise<{ name: T.WordlistDbName, password: T.UserDbPassword }> {
+
   const name = getWordlistDbName(uuid);
   // create wordlist database for user
   await nano.db.create(name);

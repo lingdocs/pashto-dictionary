@@ -5,6 +5,8 @@ import {
     updateLingdocsUser,
     createWordlistDatabase,
     deleteWordlistDatabase,
+    addCouchDbAuthUser,
+    deleteCouchDbAuthUser,
 } from "../lib/couch-db";
 import {
     getHash,
@@ -116,7 +118,11 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
             res.send(alreadyUpgraded);
             return;
         }
-        const { name, password } = await createWordlistDatabase(userId);
+        // add user to couchdb authentication db
+        const { password } = await addCouchDbAuthUser(userId);
+        // create user db
+        const { name } = await createWordlistDatabase(userId, password);
+        // update LingdocsUser
         const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: name, userDbPassword: password });
         const upgraded: T.UpgradeUserResponse = {
             ok: true,
@@ -135,8 +141,9 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
 apiRouter.delete("/user", async (req, res, next) => {
     try {
         if (!req.user) throw new Error("user not found");
-        await deleteWordlistDatabase(req.user.userId),
-        await deleteLingdocsUser(req.user.userId),
+        await deleteWordlistDatabase(req.user.userId);
+        await deleteCouchDbAuthUser(req.user.userId);
+        await deleteLingdocsUser(req.user.userId);
         sendResponse(res, { ok: true, message: "user deleted" });
     } catch (e) {
         next(e);
