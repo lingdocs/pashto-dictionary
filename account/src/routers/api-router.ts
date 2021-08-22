@@ -105,7 +105,9 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
             return;
         }
         const { userId } = req.user;
+        console.log("taking upgrade for", userId, req.user.name);
         const user = await getLingdocsUser("userId", userId);
+        console.log("got user for upgrade", user);
         if (!user) throw new Error("user lost");
         if (user.level !== "basic") {
             const alreadyUpgraded: T.UpgradeUserResponse = {
@@ -117,7 +119,9 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
             return;
         }
         const { name, password } = await createWordlistDatabase(userId);
+        console.log("made db for user", name, password);
         const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: name, userDbPassword: password });
+        console.log("updated user", u);
         const upgraded: T.UpgradeUserResponse = {
             ok: true,
             message: "user upgraded to student",
