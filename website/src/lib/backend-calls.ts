@@ -13,6 +13,9 @@ async function accountApiFetch(url: string, method: "GET" | "POST" | "PUT" | "DE
         method,
         credentials: "include",
         ...body ? {
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify(body),
         } : {},
     });
@@ -28,6 +31,7 @@ export async function publishDictionary(): Promise<FT.PublishDictionaryResponse>
 }
 
 export async function upgradeAccount(password: string): Promise<AT.UpgradeUserResponse> {
+
     const response = await accountApiFetch("user/upgrade", "PUT", { password });
     return response as AT.UpgradeUserResponse;
 }

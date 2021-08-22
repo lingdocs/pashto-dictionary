@@ -124,7 +124,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
             </button> */}
             <h4 className="mb-3">Account Admin</h4>
             <div className="mb-4">
-                {user.level !== "basic" && <button
+                {user.level === "basic" && <button
                     type="button"
                     className="btn btn-outline-secondary mr-3 mb-3"
                     onClick={() => setShowingUpgradePrompt(true)}
