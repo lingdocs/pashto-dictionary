@@ -31,7 +31,6 @@ export async function publishDictionary(): Promise<FT.PublishDictionaryResponse>
 }
 
 export async function upgradeAccount(password: string): Promise<AT.UpgradeUserResponse> {
-
     const response = await accountApiFetch("user/upgrade", "PUT", { password });
     return response as AT.UpgradeUserResponse;
 }
