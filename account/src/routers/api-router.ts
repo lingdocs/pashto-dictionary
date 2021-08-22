@@ -19,6 +19,8 @@ import {
 import * as T from "../../../website/src/lib/account-types";
 import env from "../lib/env-vars";
 
+// TODO: ADD PROPER ERROR HANDLING THAT WILL RETURN JSON ALWAYS
+
 function sendResponse(res: Response, payload: T.APIResponse) {
     return res.send(payload);
 }
