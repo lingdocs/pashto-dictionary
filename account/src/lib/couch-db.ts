@@ -115,6 +115,7 @@ export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.Us
   const password = generateWordlistDbPassword();
   const usersDb = nano.db.use("_users");
   const authUser: T.CouchDbAuthUser = {
+    _id: `org.couchdb.user:${uuid}`,
     type: "user",
     roles: [],
     name: uuid,
