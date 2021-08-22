@@ -123,6 +123,11 @@ export async function createWordlistDatabase(uuid: T.UUID): Promise<{ name: T.Wo
   return { password, name };
 }
 
+export async function deleteWordlistDatabase(uuid: T.UUID): Promise<void> {
+  const name = getWordlistDbName(uuid);
+  await nano.db.destroy(name);
+}
+
 function generateWordlistDbPassword(): T.UserDbPassword {
   function makeChunk(): string {
       return Math.random().toString(36).slice(2)

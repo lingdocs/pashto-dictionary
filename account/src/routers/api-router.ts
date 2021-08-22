@@ -106,7 +106,8 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
         }
         const { userId } = req.user;
         const user = await getLingdocsUser("userId", userId);
-        if (user) {
+        if (!user) throw new Error("user lost");
+        if (user.level !== "basic") {
             const alreadyUpgraded: T.UpgradeUserResponse = {
                 ok: true,
                 message: "user already upgraded",

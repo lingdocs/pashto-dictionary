@@ -128,8 +128,9 @@ const authRouter = (passport: PassportStatic) => {
   router.post("/register", async (req, res, next) => {
     try {
       const { email, password, name } = req.body;
+      console.log(email, password, name);
       const existingUser = await getLingdocsUser("email", email);
-      if (existingUser) return res.send("Tser Already Exists");
+      if (existingUser) return res.send("User Already Exists");
       const user = await createNewUser({ strategy: "local", email, passwordPlainText: password, name });
       req.logIn(user, (err) => {
         if (err) return next(err);
