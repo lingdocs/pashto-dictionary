@@ -125,7 +125,14 @@ export async function createWordlistDatabase(uuid: T.UUID): Promise<{ name: T.Wo
 
 export async function deleteWordlistDatabase(uuid: T.UUID): Promise<void> {
   const name = getWordlistDbName(uuid);
-  await nano.db.destroy(name);
+  try {
+    await nano.db.destroy(name);
+  } catch (e) {
+    // allow the error to pass if we're just trying to delete a database that never existed
+    if (e.message !== "Database does not exist.") {
+      throw new Error("error deleting database");
+    }
+  }
 }
 
 function generateWordlistDbPassword(): T.UserDbPassword {

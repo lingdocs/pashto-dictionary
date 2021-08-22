@@ -16,9 +16,7 @@ async function accountApiFetch(url: string, method: "GET" | "POST" | "PUT" | "DE
             body: JSON.stringify(body),
         } : {},
     });
-    const raw = await response.text();
-    console.log("api response:", raw);
-    return JSON.parse(raw) as AT.APIResponse;
+    return await response.json() as AT.APIResponse;
 }
 
 export async function publishDictionary(): Promise<FT.PublishDictionaryResponse> {
