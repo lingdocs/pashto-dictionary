@@ -135,10 +135,8 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
 apiRouter.delete("/user", async (req, res, next) => {
     try {
         if (!req.user) throw new Error("user not found");
-        await Promise.all([
-            deleteWordlistDatabase(req.user.userId),
-            deleteLingdocsUser(req.user.userId),
-        ]);
+        await deleteWordlistDatabase(req.user.userId),
+        await deleteLingdocsUser(req.user.userId),
         sendResponse(res, { ok: true, message: "user deleted" });
     } catch (e) {
         next(e);
