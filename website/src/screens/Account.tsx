@@ -38,6 +38,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setWaiting(true);
         upgradeAccount(upgradePassword).then((res) => {
             setWaiting(false);
+            console.log(res);
             if (res.ok) {
                 loadUser();
                 closeUpgrade();
