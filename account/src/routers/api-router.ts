@@ -96,6 +96,7 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
     try {
         const givenPassword = (req.body.password || "") as string;
         const studentPassword = env.upgradePassword;
+        console.log("comparing", givenPassword.toLocaleLowerCase().trim(), "to", studentPassword.toLowerCase());
         if (givenPassword.toLowerCase().trim() !== studentPassword.toLowerCase()) {
             const wrongPass: T.UpgradeUserResponse = {
                 ok: false,
