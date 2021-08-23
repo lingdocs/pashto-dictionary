@@ -123,7 +123,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                     <img src={user.photoURL} data-testid="userAvatar" alt="avatar" style={{ borderRadius: "50%", width: "5rem", height: "5rem" }}/>
                 </div>} */}
                 <div className="card mb-4">
-                    Info here
                     <ul className="list-group list-group-flush">
                         <li className="list-group-item">Name: {user.name}</li>
                         {user.email && <li className="list-group-item">
