@@ -130,7 +130,8 @@ class App extends Component<RouteComponentProps, State> {
             ReactGA.pageview(window.location.pathname + window.location.search);
         }
         dictionary.initialize().then((r) => {
-            this.networkCronJob.stop();
+            this.checkUserCronJob.start();
+            this.networkCronJob.start();
             this.setState({
                 dictionaryStatus: "ready",
                 dictionaryInfo: r.dictionaryInfo,
@@ -204,6 +205,7 @@ class App extends Component<RouteComponentProps, State> {
 
     public componentWillUnmount() {
         window.removeEventListener("scroll", this.handleScroll);
+        this.checkUserCronJob.stop();
         this.networkCronJob.stop();
         stopLocalDbs();
         Mousetrap.unbind(["ctrl+down", "ctrl+up", "command+down", "command+up"]);
@@ -335,10 +337,11 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private networkCronJob = new CronJob("* * * * *", () => {
-        // TODO: check for new dictionary (in a seperate cron job - not dependant on the user being signed in)\
-        console.log("cron job running");
+    private checkUserCronJob = new CronJob("* * * * *", () => {
         this.handleLoadUser();
+    })
+
+    private networkCronJob = new CronJob("1/5 * * * *", () => {
         sendSubmissions();
         this.handleDictionaryUpdate();
     });
