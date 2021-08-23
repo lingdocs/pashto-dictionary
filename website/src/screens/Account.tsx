@@ -16,18 +16,19 @@ const capitalize = (s: string): string => {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+let popupRef: Window | null = null;
+
 const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUser: () => void }) => {
     const [showingUpgradePrompt, setShowingUpgradePrompt] = useState<boolean>(false);
     const [upgradePassword, setUpgradePassword] = useState<string>("");
     const [upgradeError, setUpgradeError] = useState<string>("");
     const [waiting, setWaiting] = useState<boolean>(false);
-    const [popup, setPopup] = useState<WindowProxy | null>(null);
+    // const [popup, setPopup] = useState<WindowProxy | null>(null);
     // const [publishingStatus, setPublishingStatus] = useState<undefined | "publishing" | any>(undefined);
     useEffect(() => {
         setShowingUpgradePrompt(false);
         setUpgradeError("");
         setWaiting(false);
-        setPopup(null);
         window.addEventListener("message", handleIncomingMessage);
         return () => {
             window.removeEventListener("message", handleIncomingMessage);
@@ -35,7 +36,13 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         // eslint-disable-next-line
     }, []);
     function handleIncomingMessage(event: MessageEvent<any>) {
-        if (event.data === "signed in" && popup) popup.close();
+        console.log("message incoming", event.data);
+        console.log("popup is", popupRef);
+        if (event.data === "signed in" && popupRef) {
+            console.log("will execute");
+            loadUser();
+            popupRef.close();
+        }
     }
     function closeUpgrade() {
         setShowingUpgradePrompt(false);
@@ -60,7 +67,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         });
     }
     function handleOpenSignup() {
-        setPopup(window.open("https://account.lingdocs.com"));
+        popupRef = window.open("https://account.lingdocs.com");
     }
     // function handlePublish() {
     //     setPublishingStatus("publishing");
