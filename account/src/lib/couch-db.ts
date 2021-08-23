@@ -111,8 +111,9 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   });
 }
 
-export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.UserDbPassword }> {
+export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.UserDbPassword, userDbName: T.WordlistDbName }> {
   const password = generateWordlistDbPassword();
+  const userDbName = getWordlistDbName(uuid);
   const usersDb = nano.db.use("_users");
   const authUser: T.CouchDbAuthUser = {
     _id: `org.couchdb.user:${uuid}`,
@@ -122,40 +123,40 @@ export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.Us
     password,
   };
   await usersDb.insert(authUser);
-  return { password };
+  return { password, userDbName };
 }
 
-export async function createWordlistDatabase(uuid: T.UUID, password: T.UserDbPassword): Promise<{ name: T.WordlistDbName, password: T.UserDbPassword }> {
+// Instead of these functions, I'm using couch_peruser
+// export async function createWordlistDatabase(uuid: T.UUID, password: T.UserDbPassword): Promise<{ name: T.WordlistDbName, password: T.UserDbPassword }> {
+//   const name = getWordlistDbName(uuid);
+//   // create wordlist database for user
+//   await nano.db.create(name);
+//   const securityInfo = {
+//       admins: {
+//           names: [uuid],
+//           roles: ["_admin"]
+//       },
+//       members: {
+//           names: [uuid],
+//           roles: ["_admin"],
+//       },
+//   };
+//   const userDb = nano.db.use(name);
+//   await userDb.insert(securityInfo as any, "_security");
+//   return { password, name };
+// }
 
-  const name = getWordlistDbName(uuid);
-  // create wordlist database for user
-  await nano.db.create(name);
-  const securityInfo = {
-      admins: {
-          names: [uuid],
-          roles: ["_admin"]
-      },
-      members: {
-          names: [uuid],
-          roles: ["_admin"],
-      },
-  };
-  const userDb = nano.db.use(name);
-  await userDb.insert(securityInfo as any, "_security");
-  return { password, name };
-}
-
-export async function deleteWordlistDatabase(uuid: T.UUID): Promise<void> {
-  const name = getWordlistDbName(uuid);
-  try {
-    await nano.db.destroy(name);
-  } catch (e) {
-    // allow the error to pass if we're just trying to delete a database that never existed
-    if (e.message !== "Database does not exist.") {
-      throw new Error("error deleting database");
-    }
-  }
-}
+// export async function deleteWordlistDatabase(uuid: T.UUID): Promise<void> {
+//   const name = getWordlistDbName(uuid);
+//   try {
+//     await nano.db.destroy(name);
+//   } catch (e) {
+//     // allow the error to pass if we're just trying to delete a database that never existed
+//     if (e.message !== "Database does not exist.") {
+//       throw new Error("error deleting database");
+//     }
+//   }
+// }
 
 function generateWordlistDbPassword(): T.UserDbPassword {
   function makeChunk(): string {
