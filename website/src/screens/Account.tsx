@@ -36,10 +36,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         // eslint-disable-next-line
     }, []);
     function handleIncomingMessage(event: MessageEvent<any>) {
-        console.log("message incoming", event.data);
-        console.log("popup is", popupRef);
         if (event.data === "signed in" && popupRef) {
-            console.log("will execute");
             loadUser();
             popupRef.close();
         }
@@ -54,7 +51,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setWaiting(true);
         upgradeAccount(upgradePassword).then((res) => {
             setWaiting(false);
-            console.log("password", upgradePassword, "response", res);
             if (res.ok) {
                 loadUser();
                 closeUpgrade();
