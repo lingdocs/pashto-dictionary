@@ -44,6 +44,14 @@ export async function postSubmissions(submissions: FT.SubmissionsRequest): Promi
     }
 }
 
+export async function signOut() {
+    try {
+        await accountApiFetch("sign-out", "POST");
+    } catch (e) {
+        return;
+    }
+}
+
 export async function getUser(): Promise<undefined | AT.LingdocsUser | "offline"> {
     try {
         const response = await accountApiFetch("user"); 

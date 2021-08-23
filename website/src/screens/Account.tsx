@@ -5,6 +5,7 @@ import {
 import { Modal, Button } from "react-bootstrap";
 import {
     upgradeAccount,
+    signOut,
     // publishDictionary,
 } from "../lib/backend-calls";
 import LoadingElipses from "../components/LoadingElipses";
@@ -40,6 +41,10 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
             loadUser();
             popupRef.close();
         }
+    }
+    async function handleSignOut() {
+        await signOut();
+        loadUser();
     }
     function closeUpgrade() {
         setShowingUpgradePrompt(false);
@@ -86,7 +91,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         </div>
     }
     return (
-        <div style={{ marginBottom: "100px" }}>
+        <div style={{ marginBottom: "100px", maxWidth: "40rem" }}>
             <Helmet>
                 <link rel="canonical" href="https://dictionary.lingdocs.com/account" />
                 <meta name="description" content="Account for the LingDocs Pashto Dictionary" />
@@ -113,11 +118,12 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                     }
                 </div>
             } */}
-            <div style={{ maxWidth: "35rem" }}>
+            <div>
                 {/* {user.p && <div className="mb-4 mt-3" style={{ textAlign: "center" }}>
                     <img src={user.photoURL} data-testid="userAvatar" alt="avatar" style={{ borderRadius: "50%", width: "5rem", height: "5rem" }}/>
                 </div>} */}
                 <div className="card mb-4">
+                    Info here
                     <ul className="list-group list-group-flush">
                         <li className="list-group-item">Name: {user.name}</li>
                         {user.email && <li className="list-group-item">
@@ -131,24 +137,28 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                     </ul>
                 </div>
             </div>
-            {/* <button
-                type="button"
-                className="btn btn-secondary mr-3 mb-4"
-                onClick={handleSignOut}
-                data-testid="signoutButton"
-            >
-                <i className="fa fa-sign-out-alt"></i> Sign Out
-            </button> */}
             <h4 className="mb-3">Account Admin</h4>
-            <div className="mb-4">
-                {user.level === "basic" && <button
-                    type="button"
-                    className="btn btn-outline-secondary mr-3 mb-3"
-                    onClick={() => setShowingUpgradePrompt(true)}
-                    data-testid="upgradeButton"
-                >
-                    <i className="fa fa-level-up-alt"></i> Upgrade Account
-                </button>}
+            <div className="row mb-4">
+                <div className="col-sm mb-3">
+                    {user.level === "basic" && <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => setShowingUpgradePrompt(true)}
+                        data-testid="upgradeButton"
+                    >
+                        <i className="fa fa-level-up-alt"></i> Upgrade Account
+                    </button>}
+                </div>
+                <div className="col-sm mb-3">
+                    <a className="btn btn-outline-secondary" href="https://account.lingdocs.com/user">
+                        <i className="fas fa-user mr-2"></i> Edit Account
+                    </a>
+                </div>
+                <div className="col-sm mb-3">
+                    <button className="btn btn-outline-secondary" onClick={handleSignOut}>
+                        <i className="fas fa-sign-out-alt mr-2"></i> Sign Out
+                    </button>
+                </div>
             </div>
             <Modal show={showingUpgradePrompt} onHide={closeUpgrade}>
                 <Modal.Header closeButton>
