@@ -337,6 +337,7 @@ class App extends Component<RouteComponentProps, State> {
 
     private networkCronJob = new CronJob("* * * * *", () => {
         // TODO: check for new dictionary (in a seperate cron job - not dependant on the user being signed in)\
+        console.log("cron job running");
         this.handleLoadUser();
         sendSubmissions();
         this.handleDictionaryUpdate();

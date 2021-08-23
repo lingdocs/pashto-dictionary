@@ -178,5 +178,5 @@ function stringToHex(str: string) {
 }
 
 export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
-    return `wordlist-${stringToHex(uid)}` as T.WordlistDbName;
+    return `user-${stringToHex(uid)}` as T.WordlistDbName;
 }
