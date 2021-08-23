@@ -139,6 +139,9 @@
 
   </body>
   <script>
+    if (window.opener) {
+      window.opener.postMessage("signed in", "*");
+    }
     function clearPasswordForm() {
       document.getElementById("oldPassword").value = "";
       document.getElementById("password").value = "";

@@ -21,12 +21,22 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
     const [upgradePassword, setUpgradePassword] = useState<string>("");
     const [upgradeError, setUpgradeError] = useState<string>("");
     const [waiting, setWaiting] = useState<boolean>(false);
+    const [popup, setPopup] = useState<WindowProxy | null>(null);
     // const [publishingStatus, setPublishingStatus] = useState<undefined | "publishing" | any>(undefined);
     useEffect(() => {
         setShowingUpgradePrompt(false);
         setUpgradeError("");
         setWaiting(false);
+        setPopup(null);
+        window.addEventListener("message", handleIncomingMessage);
+        return () => {
+            window.removeEventListener("message", handleIncomingMessage);
+        };
+        // eslint-disable-next-line
     }, []);
+    function handleIncomingMessage(event: MessageEvent<any>) {
+        if (event.data === "signed in" && popup) popup.close();
+    }
     function closeUpgrade() {
         setShowingUpgradePrompt(false);
         setUpgradePassword("");
@@ -49,6 +59,9 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
             setUpgradeError(err.message);
         });
     }
+    function handleOpenSignup() {
+        setPopup(window.open("https://account.lingdocs.com"));
+    }
     // function handlePublish() {
     //     setPublishingStatus("publishing");
     //     publishDictionary().then((response) => {
@@ -66,6 +79,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <title>Sign In - LingDocs Pashto Dictionary</title>
             </Helmet>
             <h4 className="mb-4">Sign in to be able to suggest words/edits</h4>
+            <button className="btn btn-primary my-4" onClick={handleOpenSignup}>Sign In</button>
         </div>
     }
     return (
@@ -103,13 +117,13 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <div className="card mb-4">
                     <ul className="list-group list-group-flush">
                         <li className="list-group-item">Name: {user.name}</li>
-                        <li className="list-group-item">
-                            {user.email && <div className="d-flex justify-content-between align-items-center">
+                        {user.email && <li className="list-group-item">
+                            <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div>Email: {user.email}</div>
                                 </div>
-                            </div>}
-                        </li>
+                            </div>
+                        </li>}
                         <li className="list-group-item">Account Level: {capitalize(user.level)}</li>
                     </ul>
                 </div>
