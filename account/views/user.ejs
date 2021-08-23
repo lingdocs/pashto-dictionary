@@ -140,8 +140,9 @@
   </body>
   <script>
     if (window.opener) {
-      window.opener.postMessage("signed in", "https://dev.dictionary.lingdocs.com");
-      window.opener.postMessage("signed in", "https://dictionary.lingdocs.com");
+      const w = window.opener
+      w.postMessage("signed in", "https://dev.dictionary.lingdocs.com");
+      // window.opener.postMessage("signed in", "https://dictionary.lingdocs.com");
     }
     function clearPasswordForm() {
       document.getElementById("oldPassword").value = "";
