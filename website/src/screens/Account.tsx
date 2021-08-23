@@ -36,8 +36,9 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         };
         // eslint-disable-next-line
     }, []);
+    // TODO put the account url in an imported constant
     function handleIncomingMessage(event: MessageEvent<any>) {
-        if (event.data === "signed in" && popupRef) {
+        if (event.origin === "https://account.lingdocs.com" && event.data === "signed in" && popupRef) {
             loadUser();
             popupRef.close();
         }
