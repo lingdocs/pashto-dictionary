@@ -93,7 +93,7 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   {
     level: "student",
     wordlistDbName: T.WordlistDbName,
-    userDbPassword: T.UserDbPassword,
+    couchDbPassword: T.UserDbPassword,
   }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);

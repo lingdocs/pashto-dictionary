@@ -123,7 +123,7 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
         // // create user db
         // const { name } = await createWordlistDatabase(userId, password);
         // update LingdocsUser
-        const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: userDbName, userDbPassword: password });
+        const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: userDbName, couchDbPassword: password });
         const upgraded: T.UpgradeUserResponse = {
             ok: true,
             message: "user upgraded to student",
