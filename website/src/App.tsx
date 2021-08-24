@@ -35,6 +35,8 @@ import { dictionary, pageSize } from "./lib/dictionary";
 import {
     optionsReducer,
     textOptionsReducer,
+    resolveTextOptions,
+    removePTextSize,
 } from "./lib/options-reducer";
 import hitBottom from "./lib/hitBottom";
 import getWordId from "./lib/get-word-id";
@@ -69,6 +71,8 @@ import "./custom-bootstrap.scss";
 // tslint:disable-next-line: ordered-imports
 import "./App.css";
 import classNames from "classnames";
+import { Types as IT } from "@lingdocs/pashto-inflector";
+import { getTextOptions } from "./lib/get-text-options";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -260,12 +264,35 @@ class App extends Component<RouteComponentProps, State> {
 
     private async handleLoadUser(): Promise<void> {
         try {
-            const user = await getUser();
-            if (user === "offline") return;
-            if (user) sendSubmissions();
+            const prevUser = this.state.user;
+            const userOnServer = await getUser();
+            if (userOnServer === "offline") return;
+            if (userOnServer) sendSubmissions();
+            if (!userOnServer) {
+                this.setState({ user: undefined });
+                saveUser(undefined);
+                return;
+            }
+            const { userTextOptionsRecord, serverOptionsAreNewer } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord); 
+            const user: AT.LingdocsUser | undefined = {
+                ...userOnServer,
+                userTextOptionsRecord,
+            };
             this.setState({ user });
-            // TODO: LOAD AND RESOLVE THE USER'S TEXT OPTIONS ETC.
             saveUser(user);
+            const textOptions: IT.TextOptions = {
+                ...userTextOptionsRecord.userTextOptions,
+                pTextSize: getTextOptions(this.state).pTextSize,
+            };
+            const textOptionsRecord: TextOptionsRecord = {
+                lastModified: userTextOptionsRecord.lastModified,
+                textOptions,
+            };
+            this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
+            // TODO: LOAD AND RESOLVE THE USER'S TEXT OPTIONS ETC.
+            if (!serverOptionsAreNewer) {
+                updateUserTextOptionsRecord(userTextOptionsRecord);
+            }
             if (user) {
                 startLocalDbs(user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
             } else {
@@ -322,12 +349,12 @@ class App extends Component<RouteComponentProps, State> {
         this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
         // try to save the new text options to the user 
         if (this.state.user) {
-            const { pTextSize, ...userTextOptions } = textOptions;
+            const userTextOptions = removePTextSize(textOptions);
             const userTextOptionsRecord = {
                 userTextOptions,
                 lastModified,
             };
-            updateUserTextOptionsRecord(userTextOptionsRecord);
+            updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
         }
     }
 
