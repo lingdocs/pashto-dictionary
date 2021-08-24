@@ -27,7 +27,6 @@ export const submissions = functions.runWith({
     memory: "1GB"
 }).https.onRequest(lingdocsAuth(
     async (req, res: functions.Response<FT.SubmissionsResponse | FT.FunctionError>) => {
-        res.send({ ok: false, error: "function under maintenance" });
         if (!Array.isArray(req.body)) {
             res.status(400).send({
                 ok: false,

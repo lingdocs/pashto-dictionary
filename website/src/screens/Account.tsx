@@ -68,7 +68,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         });
     }
     function handleOpenSignup() {
-        popupRef = window.open("https://account.lingdocs.com", "account", "height=800,width=500,top=50,left=100");
+        popupRef = window.open("https://account.lingdocs.com", "account", "height=800,width=500,top=50,left=400");
     }
     function handlePublish() {
         setPublishingStatus("publishing");
