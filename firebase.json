@@ -11,8 +11,8 @@
         "function": "/publishDictionary"
       },
       {
-        "source": "/willError",
-        "function": "/willError"
+        "source": "/testAuth",
+        "function": "/testAuth"
       }
     ]
   }

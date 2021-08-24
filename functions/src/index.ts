@@ -4,18 +4,24 @@ import auth from "./middleware/lingdocs-auth";
 import publish from "./publish";
 
 export const publishDictionary = functions.https.onRequest(
-    auth((req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
+    auth(async (req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
         if (req.user.level !== "editor") {
             res.status(403).send({ ok: false, error: "403 forbidden" });
             return;
         }
-        publish().then(res.send);
+        try {
+            res.send(await publish());
+        } catch (e) {
+            const error: string = ("message" in e && typeof e.message === "string") ? e.message : "server error";
+            res.status(500).send({ ok: false, error });
+        }
     })
 );
 
-export const willError = functions.https.onRequest((req, res) => {
-    auth((req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
-        throw new Error("this is an error");
+export const testAuth = functions.https.onRequest((req, res) => {
+    auth(async (req, res) => {
+        // @ts-ignore
+        res.send({ ok: true, user: req.user })
     })
 })
     

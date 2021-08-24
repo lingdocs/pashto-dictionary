@@ -30,9 +30,9 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setUpgradeError("");
         setWaiting(false);
         window.addEventListener("message", handleIncomingMessage);
-        console.log("send test erroring func");
-        fetch("https://functions.lingdocs.com/willError", { credentials: "include" }).then((res) => res.text()).then((res) => {
-            console.log("test error here");
+        console.log("send test auth func");
+        fetch("https://functions.lingdocs.com/testAuth", { credentials: "include" }).then((res) => res.text()).then((res) => {
+            console.log("test auth here");
             console.log(res);
         });
         return () => {
