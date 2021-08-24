@@ -20,8 +20,7 @@ export default function makeHandler(toRun: (req: ReqWUser, res: Response<FT.Func
         console.log("first level");
         useCors(reqPlain, resPlain, async () => {
             console.log("got in here");
-            const { req, res } = await lingdocsAuth(reqPlain, resPlain);
-            console.log("did the auth");
+            const { req, res } = await authorize(reqPlain, resPlain);
             if (!req) {
                 res.status(401).send({ ok: false, error: "unauthorized" });
                 return;
@@ -32,7 +31,7 @@ export default function makeHandler(toRun: (req: ReqWUser, res: Response<FT.Func
     }
 }
 
-async function lingdocsAuth(req: https.Request, res: Response<any>): Promise<{ req: ReqWUser | null, res: Response<FT.FunctionResponse> }> {
+async function authorize(req: https.Request, res: Response<any>): Promise<{ req: ReqWUser | null, res: Response<FT.FunctionResponse> }> {
     const { headers: { cookie }} = req;
     if (!cookie) {
         return { req: null, res };

@@ -1,13 +1,13 @@
 import * as functions from "firebase-functions";
 import * as FT from "../../website/src/lib/functions-types";
 import { receiveSubmissions } from "./submissions";
-import auth from "./middleware/lingdocs-auth";
+import lingdocsAuth from "./middleware/lingdocs-auth";
 import publish from "./publish";
 
 export const publishDictionary = functions.runWith({
     timeoutSeconds: 60,
     memory: "2GB"
-}).https.onRequest(auth(
+}).https.onRequest(lingdocsAuth(
     async (req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
         if (req.user.level !== "editor") {
             res.status(403).send({ ok: false, error: "403 forbidden" });
@@ -25,7 +25,7 @@ export const publishDictionary = functions.runWith({
 export const submissions = functions.runWith({
     timeoutSeconds: 30,
     memory: "1GB"
-}).https.onRequest(auth(
+}).https.onRequest(lingdocsAuth(
     async (req, res: functions.Response<FT.SubmissionsResponse | FT.FunctionError>) => {
         res.send({ ok: false, error: "function under maintenance" });
         if (!Array.isArray(req.body)) {
@@ -37,7 +37,7 @@ export const submissions = functions.runWith({
         }
         const suggestions = req.body as FT.SubmissionsRequest;
         try {
-            const response = await receiveSubmissions(suggestions, req.user === "editor");
+            const response = await receiveSubmissions(suggestions, req.user.level === "editor");
             // TODO: WARN IF ANY OF THE EDITS DIDN'T HAPPEN
             res.send(response);
         } catch (e) {
