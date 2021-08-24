@@ -280,13 +280,12 @@ class App extends Component<RouteComponentProps, State> {
             };
             this.setState({ user });
             saveUser(user);
-            const textOptions: IT.TextOptions = {
-                ...userTextOptionsRecord.userTextOptions,
-                pTextSize: getTextOptions(this.state).pTextSize,
-            };
             const textOptionsRecord: TextOptionsRecord = {
                 lastModified: userTextOptionsRecord.lastModified,
-                textOptions,
+                textOptions: {
+                    ...userTextOptionsRecord.userTextOptions,
+                    pTextSize: getTextOptions(this.state).pTextSize,
+                },
             };
             this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
             if (!serverOptionsAreNewer) {
