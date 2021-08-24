@@ -6,6 +6,7 @@ import * as T from "../../../website/src/lib/account-types";
 
 const nano = Nano(env.couchDbURL);
 const usersDb = nano.db.use("test-users");
+const userDbPrefix = "userdb-";
 
 export function updateLastActive(user: T.LingdocsUser): T.LingdocsUser {
   return {
@@ -178,5 +179,5 @@ function stringToHex(str: string) {
 }
 
 export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
-    return `user-${stringToHex(uid)}` as T.WordlistDbName;
+    return `${userDbPrefix}${stringToHex(uid)}` as T.WordlistDbName;
 }

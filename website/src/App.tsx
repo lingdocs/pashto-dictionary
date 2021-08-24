@@ -252,6 +252,7 @@ class App extends Component<RouteComponentProps, State> {
         try {
             const user = await getUser();
             if (user === "offline") return;
+            if (user) sendSubmissions();
             this.setState({ user });
             saveUser(user);
             if (user) {
@@ -342,7 +343,6 @@ class App extends Component<RouteComponentProps, State> {
     })
 
     private networkCronJob = new CronJob("1/5 * * * *", () => {
-        sendSubmissions();
         this.handleDictionaryUpdate();
     });
 

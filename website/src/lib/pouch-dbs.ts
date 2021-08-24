@@ -145,7 +145,7 @@ export async function getAllDocsLocalDb(type: "reviewTasks", limit?: number): Pr
 export async function getAllDocsLocalDb(type: LocalDbType, limit?: number): Promise<FT.Submission[] | WordlistWordDoc[] | FT.ReviewTask[]> {
     const localDb = dbs[type];
     if (!localDb) {
-        throw new Error(`unable to get all docs from ${type} database - not initialized`);
+        return [];
     }
     const descending = type !== "reviewTasks";
     const result = await localDb.db.allDocs({
