@@ -264,6 +264,7 @@ class App extends Component<RouteComponentProps, State> {
 
     private async handleLoadUser(): Promise<void> {
         try {
+            console.log("loading user");
             const prevUser = this.state.user;
             const userOnServer = await getUser();
             if (userOnServer === "offline") return;
@@ -273,8 +274,10 @@ class App extends Component<RouteComponentProps, State> {
                 saveUser(undefined);
                 return;
             }
-            const { userTextOptionsRecord, serverOptionsAreNewer } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord); 
-            const user: AT.LingdocsUser | undefined = {
+            const { userTextOptionsRecord, serverOptionsAreNewer } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord);
+            console.log("resolvedUserTextOptionsRecord", userTextOptionsRecord);
+            console.log("serverRecordIsNewer", serverOptionsAreNewer);
+            const user: AT.LingdocsUser = {
                 ...userOnServer,
                 userTextOptionsRecord,
             };
@@ -289,6 +292,7 @@ class App extends Component<RouteComponentProps, State> {
             };
             this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
             if (!serverOptionsAreNewer) {
+                console.log("gonna save the new text options");
                 updateUserTextOptionsRecord(userTextOptionsRecord);
             }
             if (user) {
@@ -394,7 +398,7 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private checkUserCronJob = new CronJob("* * * * *", () => {
+    private checkUserCronJob = new CronJob("1/20 * * * * *", () => {
         this.handleLoadUser();
     })
 
