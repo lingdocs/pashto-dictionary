@@ -5,7 +5,7 @@ import env from "./env-vars";
 import * as T from "../../../website/src/lib/account-types";
 
 const nano = Nano(env.couchDbURL);
-const usersDb = nano.db.use("test-users");
+const usersDb = nano.db.use("lingdocs-users");
 const userDbPrefix = "userdb-";
 
 export function updateLastActive(user: T.LingdocsUser): T.LingdocsUser {

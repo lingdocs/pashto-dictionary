@@ -1,3 +1,4 @@
+import Nano from "nano";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import {
     dictionaryEntryTextFields,
@@ -13,8 +14,8 @@ const fieldsForEdit = [
     ...dictionaryEntryBooleanFields,
 ].filter(field => !(["ts", "i"].includes(field)));
 
-// TODO: PASS NANO INTO FUNCTIONu
-const nano = require("nano")(functions.config().couchdb.couchdb_url);
+
+const nano = Nano(functions.config().couchdb.couchdb_url);
 const reviewTasksDb = nano.db.use("review-tasks");
 
 export async function receiveSubmissions(e: FT.SubmissionsRequest, editor: boolean): Promise<FT.SubmissionsResponse> {
@@ -25,7 +26,6 @@ export async function receiveSubmissions(e: FT.SubmissionsRequest, editor: boole
     // 2. Edit dictionary entries
     // 3. Add new dictionary entries
 
-    
     if (reviewTasks.length) {
         const docs = reviewTasks.map((task) => ({
             ...task,

@@ -86,8 +86,12 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <meta name="description" content="Sign in to the LingDocs Pashto Dictionary" />
                 <title>Sign In - LingDocs Pashto Dictionary</title>
             </Helmet>
-            <h4 className="mb-4">Sign in to be able to suggest words/edits</h4>
-            <button className="btn btn-primary my-4" onClick={handleOpenSignup}>Sign In</button>
+            <h2 className="my-4">Sign in to LingDocs</h2>
+            <p className="lead mb-4">When you sign in or make a LingDocs account you can:</p>
+            <div className="mb-3"><i className="fas fa-pen mr-2" /> contribute by suggesting corrections and new words</div>
+            <div className="mb-3"><i className="fas fa-star mr-2" /> upgrade your account and start collecting a personal <strong>wordlist</strong></div>
+            <div className="mb-3"><i className="fas fa-sync mr-2" /> save your text preferences across devices (👷‍♂️ coming soon)</div>
+            <button className="btn btn-lg btn-primary my-4" onClick={handleOpenSignup}><i className="fas fa-sign-in-alt mr-2" /> Sign In</button>
         </div>
     }
     return (

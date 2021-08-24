@@ -308,8 +308,8 @@ function EntryEditor({ state, dictionary, searchParams }: {
                         </div>
                     ))}
                     <div className="form-group">
-                        <button type="submit" className="ftn ftn-primary mr-4" onClick={handleSubmit}>Submit</button>
-                        <button type="button" className="ftn ftn-danger" onClick={handleDelete}>Delete Entry</button>
+                        <button type="submit" className="btn btn-primary mr-4" onClick={handleSubmit}>Submit</button>
+                        <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete Entry</button>
                         {sTs && <div className="ml-3 form-group form-check-inline">
                             <input
                                 id={"deleteSts"}

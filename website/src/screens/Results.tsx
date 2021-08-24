@@ -93,14 +93,14 @@ function Results({ state, isolateEntry }: {
         </Helmet>
         {(state.user && (window.location.pathname !== "/word") && suggestionState === "none" && powerResults === undefined) && <button
             type="button"
-            className={`ftn ftn-outline-secondary bg-white entry-suggestion-button${state.options.searchBarPosition === "bottom" ? " entry-suggestion-button-with-bottom-searchbar" : ""}`}
+            className={`btn btn-outline-secondary bg-white entry-suggestion-button${state.options.searchBarPosition === "bottom" ? " entry-suggestion-button-with-bottom-searchbar" : ""}`}
             onClick={startSuggestion}
         >
             <i className="fas fa-plus" style={{ padding: "3px" }} />
         </button>}
         {(powerResults === undefined && suggestionState === "none" && window.location.pathname === "/search") && <button
             type="button"
-            className={`ftn ftn-outline-secondary bg-white conjugation-search-button${state.options.searchBarPosition === "bottom" ? " conjugation-search-button-with-bottom-searchbar" : ""}`}
+            className={`btn btn-outline-secondary bg-white conjugation-search-button${state.options.searchBarPosition === "bottom" ? " conjugation-search-button-with-bottom-searchbar" : ""}`}
             onClick={handlePowerSearch}
         >
             <i className={inflectionSearchIcon} style={{ padding: "3px" }} />
@@ -199,7 +199,7 @@ function Results({ state, isolateEntry }: {
             </div>
             <button
                 type="button"
-                className="ftn ftn-secondary mr-3"
+                className="btn btn-secondary mr-3"
                 onClick={submitSuggestion}
                 data-testid="editWordSubmitButton"
             >
@@ -207,7 +207,7 @@ function Results({ state, isolateEntry }: {
             </button>
             <button
                 type="button"
-                className="ftn ftn-outline-secondary"
+                className="btn btn-outline-secondary"
                 onClick={cancelSuggestion}
                 data-testid="editWordCancelButton"
             >
