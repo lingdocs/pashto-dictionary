@@ -7,8 +7,8 @@
     "public": "public",
     "rewrites": [
       { 
-        "source": "/authory",
-        "function": "authory"
+        "source": "/testme",
+        "function": "testme"
       }
     ]
   }

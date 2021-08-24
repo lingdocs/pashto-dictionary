@@ -29,5 +29,5 @@ jobs:
           cd ..
           cd functions
           npm install
-      - name: deploy functions
+      - name: deploy functions and hosting routes
         run: firebase deploy -f --token ${FIREBASE_TOKEN}

@@ -4,7 +4,7 @@ import {
     dictionaryEntryBooleanFields,
     dictionaryEntryNumberFields,
 } from "@lingdocs/pashto-inflector";
-import * as BT from "../../website/src/lib/backend-types";
+import * as FT from "../../website/src/lib/functions-types";
 import * as functions from "firebase-functions";
 
 const fieldsForEdit = [
@@ -17,7 +17,7 @@ const fieldsForEdit = [
 const nano = require("nano")(functions.config().couchdb.couchdb_url);
 const reviewTasksDb = nano.db.use("review-tasks");
 
-export async function receiveSubmissions(e: BT.SubmissionsRequest, editor: boolean): Promise<BT.SubmissionsResponse> {
+export async function receiveSubmissions(e: FT.SubmissionsRequest, editor: boolean): Promise<FT.SubmissionsResponse> {
     const { edits, reviewTasks } = sortSubmissions(e);
 
     // TODO: BETTER PROMISE MULTI-TASKING
@@ -111,11 +111,11 @@ export async function receiveSubmissions(e: BT.SubmissionsRequest, editor: boole
 }
 
 type SortedSubmissions = {
-    edits: BT.Edit[],
-    reviewTasks: BT.ReviewTask[], 
+    edits: FT.Edit[],
+    reviewTasks: FT.ReviewTask[], 
 };
 
-export function sortSubmissions(submissions: BT.Submission[]): SortedSubmissions {
+export function sortSubmissions(submissions: FT.Submission[]): SortedSubmissions {
     const base: SortedSubmissions = {
         edits: [],
         reviewTasks: [],
@@ -131,12 +131,12 @@ export function sortSubmissions(submissions: BT.Submission[]): SortedSubmissions
 }
 
 type SortedEdits = {
-    entryEdits: BT.EntryEdit[],
-    newEntries: BT.NewEntry[],
-    entryDeletions: BT.EntryDeletion[],
+    entryEdits: FT.EntryEdit[],
+    newEntries: FT.NewEntry[],
+    entryDeletions: FT.EntryDeletion[],
 }
 
-export function sortEdits(edits: BT.Edit[]): SortedEdits {
+export function sortEdits(edits: FT.Edit[]): SortedEdits {
     const base: SortedEdits = {
         entryEdits: [],
         newEntries: [],

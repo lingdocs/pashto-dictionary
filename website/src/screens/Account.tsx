@@ -31,6 +31,11 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setUpgradeError("");
         setWaiting(false);
         window.addEventListener("message", handleIncomingMessage);
+        console.log("send test func");
+        fetch("https://functions.lingdocs.com/testme", { credentials: "include" }).then((res) => res.text()).then((res) => {
+            console.log("test func here");
+            console.log(res);
+        });
         return () => {
             window.removeEventListener("message", handleIncomingMessage);
         };

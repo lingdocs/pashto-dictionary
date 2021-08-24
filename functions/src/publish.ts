@@ -16,7 +16,7 @@ import {
 // } from "./word-list-maker";
 import {
     PublishDictionaryResponse,
-} from "../../website/src/lib/backend-types";
+} from "../../website/src/lib/functions-types";
 import { Storage } from "@google-cloud/storage";
 const storage = new Storage({
     projectId: "lingdocs",
