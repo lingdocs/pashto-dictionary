@@ -14,10 +14,14 @@ interface ReqWUser extends https.Request {
  * creates a handler to pass to a firebase https.onRequest function 
  *
  */
-export default function makeHandler(toRun: (req: ReqWUser, res: Response<FT.FunctionResponse>) => any | Promise<any>): (req: https.Request, res: Response<any>) => void | Promise<void> {
+export default function makeHandler(toRun: (req: ReqWUser, res: Response<FT.FunctionResponse>) => any | Promise<any>) {
+    console.log("returning handler");
     return function(reqPlain: https.Request, resPlain: Response<any>) {
-        return useCors(reqPlain, resPlain, async () => {
+        console.log("first level");
+        useCors(reqPlain, resPlain, async () => {
+            console.log("got in here");
             const { req, res } = await lingdocsAuth(reqPlain, resPlain);
+            console.log("did the auth");
             if (!req) {
                 res.status(401).send({ ok: false, error: "unauthorized" });
                 return;
@@ -33,7 +37,7 @@ async function lingdocsAuth(req: https.Request, res: Response<any>): Promise<{ r
     if (!cookie) {
         return { req: null, res };
     }
-    const r = await fetch("https://account.lingdocs.com/api/user", { headers: { cookie }})
+    const r = await fetch("https://account.lingdocs.com/api/user", { headers: { cookie }});
     const { ok, user } = await r.json();
     if (ok === true && user) {
         req.user = user;

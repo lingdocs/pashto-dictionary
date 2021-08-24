@@ -30,11 +30,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setUpgradeError("");
         setWaiting(false);
         window.addEventListener("message", handleIncomingMessage);
-        console.log("send test auth func");
-        fetch("https://functions.lingdocs.com/testAuth", { credentials: "include" }).then((res) => res.text()).then((res) => {
-            console.log("test auth here");
-            console.log(res);
-        });
         return () => {
             window.removeEventListener("message", handleIncomingMessage);
         };
@@ -73,7 +68,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         });
     }
     function handleOpenSignup() {
-        popupRef = window.open("https://account.lingdocs.com");
+        popupRef = window.open("https://account.lingdocs.com", "account", "height=800,width=500,top=50,left=100");
     }
     function handlePublish() {
         setPublishingStatus("publishing");
