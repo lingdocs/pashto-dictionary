@@ -71,7 +71,6 @@ import "./custom-bootstrap.scss";
 // tslint:disable-next-line: ordered-imports
 import "./App.css";
 import classNames from "classnames";
-import { Types as IT } from "@lingdocs/pashto-inflector";
 import { getTextOptions } from "./lib/get-text-options";
 
 // to allow Moustrap key combos even when input fields are in focus
@@ -264,7 +263,6 @@ class App extends Component<RouteComponentProps, State> {
 
     private async handleLoadUser(): Promise<void> {
         try {
-            console.log("loading user");
             const prevUser = this.state.user;
             const userOnServer = await getUser();
             if (userOnServer === "offline") return;
@@ -275,8 +273,6 @@ class App extends Component<RouteComponentProps, State> {
                 return;
             }
             const { userTextOptionsRecord, serverOptionsAreNewer } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord);
-            console.log("resolvedUserTextOptionsRecord", userTextOptionsRecord);
-            console.log("serverRecordIsNewer", serverOptionsAreNewer);
             const user: AT.LingdocsUser = {
                 ...userOnServer,
                 userTextOptionsRecord,
@@ -292,8 +288,7 @@ class App extends Component<RouteComponentProps, State> {
             };
             this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
             if (!serverOptionsAreNewer) {
-                console.log("gonna save the new text options");
-                updateUserTextOptionsRecord(userTextOptionsRecord);
+                updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
             }
             if (user) {
                 startLocalDbs(user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
