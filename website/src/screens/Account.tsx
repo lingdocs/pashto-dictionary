@@ -142,16 +142,16 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
             </div>
             <h4 className="mb-3">Account Admin</h4>
             <div className="row mb-4">
-                <div className="col-sm mb-3">
-                    {user.level === "basic" && <button
+                {user.level === "basic" && <div className="col-sm mb-3">
+                    <button
                         type="button"
                         className="btn btn-outline-secondary"
                         onClick={() => setShowingUpgradePrompt(true)}
                         data-testid="upgradeButton"
                     >
                         <i className="fa fa-level-up-alt"></i> Upgrade Account
-                    </button>}
-                </div>
+                    </button>
+                </div>}
                 <div className="col-sm mb-3">
                     <a className="btn btn-outline-secondary" href="https://account.lingdocs.com/user">
                         <i className="fas fa-user mr-2"></i> Edit Account
