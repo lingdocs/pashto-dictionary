@@ -209,7 +209,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             <Modal.Title>Delete from wordlist?</Modal.Title>
             </Modal.Header>
             <Modal.Body>Delete <InlinePs
-                    opts={state.options.textOptions}
+                    opts={textOptions}
                 >{{ p: entry.p, f: entry.f }}</InlinePs> from your wordlist?
             </Modal.Body>
             <Modal.Footer>

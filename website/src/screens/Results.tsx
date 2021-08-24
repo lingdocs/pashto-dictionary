@@ -23,6 +23,7 @@ import {
 } from "@lingdocs/pashto-inflector";
 import InflectionSearchResult from "../components/InflectionSearchResult";
 import { searchAllInflections } from "../lib/search-all-inflections";
+import { getTextOptions } from "../lib/get-text-options";
 
 const inflectionSearchIcon = "fas fa-search-plus";
 
@@ -41,7 +42,7 @@ function Results({ state, isolateEntry }: {
     const [pashto, setPashto] = useState<string>("");
     const [phonetics, setPhonetics] = useState<string>("");
     const [english, setEnglish] = useState<string>("");
-    const textOptions = state.user?.textOptions ? state.user.textOptions : state.options.textOptions;
+    const textOptions = getTextOptions(state);
     useEffect(() => {
         setPowerResults(undefined);
     }, [state.searchValue])
