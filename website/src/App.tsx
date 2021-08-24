@@ -120,6 +120,7 @@ class App extends Component<RouteComponentProps, State> {
             user: readUser(),
         };
         this.handleOptionsUpdate = this.handleOptionsUpdate.bind(this);
+        this.handleTextOptionsUpdate = this.handleTextOptionsUpdate.bind(this);
         this.handleSearchValueChange = this.handleSearchValueChange.bind(this);
         this.handleIsolateEntry = this.handleIsolateEntry.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
