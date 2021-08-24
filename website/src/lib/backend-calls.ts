@@ -1,6 +1,5 @@
 import * as FT from "./functions-types";
 import * as AT from "./account-types";
-import { Types as IT } from "@lingdocs/pashto-inflector";
 
 type Service = "account" | "functions";
 
