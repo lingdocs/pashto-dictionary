@@ -32,7 +32,10 @@ import {
     readUser,
 } from "./lib/local-storage";
 import { dictionary, pageSize } from "./lib/dictionary";
-import optionsReducer from "./lib/options-reducer";
+import {
+    optionsReducer,
+    textOptionsReducer,
+} from "./lib/options-reducer";
 import hitBottom from "./lib/hitBottom";
 import getWordId from "./lib/get-word-id";
 import { CronJob } from "cron";
@@ -42,6 +45,7 @@ import {
 } from "./lib/submissions";
 import { 
     getUser,
+    updateUserTextOptionsRecord,
 } from "./lib/backend-calls";
 import {
     getWordlist,
@@ -57,6 +61,7 @@ import {
 import {
     textBadge,
 } from "./lib/badges";
+import * as AT from "./lib/account-types";
 import ReactGA from "react-ga";
 // tslint:disable-next-line
 import "@fortawesome/fontawesome-free/css/all.css";
@@ -91,12 +96,16 @@ class App extends Component<RouteComponentProps, State> {
         this.state = {
             dictionaryStatus: "loading",
             dictionaryInfo: undefined,
+            // TODO: Choose between the saved options and the options in the saved user
             options: savedOptions ? savedOptions : {
               language: "Pashto",
               searchType: "fuzzy",
               theme: /* istanbul ignore next */ (window.matchMedia &&
                 window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light",
-              textOptions: defaultTextOptions,
+              textOptionsRecord: {
+                lastModified: Date.now() as AT.TimeStamp,
+                textOptions: defaultTextOptions,
+              },
               wordlistMode: "browse",
               wordlistReviewLanguage: "Pashto",
               wordlistReviewBadge: true,
@@ -254,6 +263,7 @@ class App extends Component<RouteComponentProps, State> {
             if (user === "offline") return;
             if (user) sendSubmissions();
             this.setState({ user });
+            // TODO: LOAD AND RESOLVE THE USER'S TEXT OPTIONS ETC.
             saveUser(user);
             if (user) {
                 startLocalDbs(user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
@@ -282,6 +292,7 @@ class App extends Component<RouteComponentProps, State> {
         if (action.type === "changeTheme") {
             document.documentElement.setAttribute("data-theme", action.payload);
         }
+        // TODO: use a seperate reducer for changing text options (otherwise you could just be updating the saved text options instead of the user text options that the program is going off of)
         const options = optionsReducer(this.state.options, action);
         saveOptions(options);
         if (action.type === "toggleLanguage" || action.type === "toggleSearchType") {
@@ -297,6 +308,25 @@ class App extends Component<RouteComponentProps, State> {
             }
         } else {
             this.setState({ options });
+        }
+    }
+
+    private handleTextOptionsUpdate(action: TextOptionsAction) {
+        const textOptions = textOptionsReducer(this.state.options.textOptionsRecord.textOptions, action);
+        const lastModified = Date.now() as AT.TimeStamp;
+        const textOptionsRecord: TextOptionsRecord = {
+            lastModified,
+            textOptions,
+        };
+        this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
+        // try to save the new text options to the user 
+        if (this.state.user) {
+            const { pTextSize, ...userTextOptions } = textOptions;
+            const userTextOptionsRecord = {
+                userTextOptions,
+                lastModified,
+            };
+            updateUserTextOptionsRecord(userTextOptionsRecord);
         }
     }
 
@@ -416,7 +446,12 @@ class App extends Component<RouteComponentProps, State> {
                             <About state={this.state} />
                         </Route>
                         <Route path="/settings">
-                            <Options state={this.state} options={this.state.options} optionsDispatch={this.handleOptionsUpdate} />
+                            <Options
+                                state={this.state}
+                                options={this.state.options}
+                                optionsDispatch={this.handleOptionsUpdate}
+                                textOptionsDispatch={this.handleTextOptionsUpdate}
+                            />
                         </Route>
                         <Route path="/search">
                             <Results state={this.state} isolateEntry={this.handleIsolateEntry} />

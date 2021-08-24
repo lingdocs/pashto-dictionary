@@ -17,6 +17,13 @@ export type TwitterProfile = WoutRJ<import("passport-twitter").Profile> & { toke
 export type ProviderProfile = GoogleProfile | GitHubProfile | TwitterProfile;
 export type UserLevel = "basic" | "student" | "editor"; 
 
+export type UserTextOptions = Omit<import("@lingdocs/pashto-inflector").Types.TextOptions, "pTextSize">;
+
+export type UserTextOptionsRecord = {
+    lastModified: TimeStamp,
+    userTextOptions: UserTextOptions,
+};
+
 // TODO: TYPE GUARDING SO WE NEVER HAVE A USER WITH NO Id or Password
 export type LingdocsUser = {
     userId: UUID,
@@ -34,8 +41,9 @@ export type LingdocsUser = {
     tests: [],
     lastLogin: TimeStamp,
     lastActive: TimeStamp,
+    userTextOptionsRecord: undefined | UserTextOptionsRecord,
 } & (
-    { level: "basic"} |
+    { level: "basic" } |
     {
         level: "student" | "editor",
         couchDbPassword: UserDbPassword,
@@ -56,5 +64,13 @@ export type UpgradeUserResponse = {
 } | {
     ok: true,
     message: "user already upgraded" | "user upgraded to student",
+    user: LingdocsUser,
+};
+
+export type UpdateUserTextOptionsRecordBody = { userTextOptionsRecord: UserTextOptionsRecord };
+
+export type UpdateUserTextOptionsRecordResponse = {
+    ok: true,
+    message: "updated userTextOptionsRecord",
     user: LingdocsUser,
 };

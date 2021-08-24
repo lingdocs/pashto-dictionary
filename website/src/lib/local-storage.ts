@@ -8,27 +8,20 @@
 
 import * as AT from "./account-types";
 
-export const optionsLocalStorageName = "options2";
+export const optionsLocalStorageName = "options3";
 export const userLocalStorageName = "user1";
 
 export function saveOptions(options: Options): void {
   localStorage.setItem(optionsLocalStorageName, JSON.stringify(options));
 };
 
-export const readOptions = (): Options | undefined => {
+export const readOptions = (): undefined | Options => {
   const optionsRaw = localStorage.getItem(optionsLocalStorageName);
   if (!optionsRaw) {
     return undefined;
   }
   try {
     const options = JSON.parse(optionsRaw) as Options;
-    // check for new options here
-    if (options.wordlistReviewBadge === undefined) {
-      options.wordlistReviewBadge = true;
-    }
-    if (options.searchBarPosition === undefined) {
-      options.searchBarPosition = "top";
-    }
     return options;
   } catch (e) {
     console.error("error parsing saved state JSON", e);

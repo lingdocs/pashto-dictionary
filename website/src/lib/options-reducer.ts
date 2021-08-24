@@ -1,4 +1,6 @@
-function optionsReducer(options: Options, action: OptionsAction): Options {
+import { Types as IT } from "@lingdocs/pashto-inflector";
+
+export function optionsReducer(options: Options, action: OptionsAction): Options {
     if (action.type === "toggleLanguage") {
       return {
         ...options,
@@ -41,52 +43,45 @@ function optionsReducer(options: Options, action: OptionsAction): Options {
         wordlistReviewLanguage: action.payload,
       };
     }
-    if (action.type === "changePTextSize") {
+    if (action.type === "updateTextOptionsRecord") {
       return {
         ...options,
-        textOptions: {
-          ...options.textOptions,
-          pTextSize: action.payload,
-        },
+        textOptionsRecord: action.payload,
       };
     }
-    if (action.type === "changeSpelling") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          spelling: action.payload,
-        }
-      };
-    }
-    if (action.type === "changePhonetics") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          phonetics: action.payload,
-        }
-      };
-    }
-    if (action.type === "changeDialect") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          dialect: action.payload,
-        }
-      };
-    }
-    if (action.type === "changeDiacritics") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          diacritics: action.payload,
-        }
-      };
-    }
-    throw new Error("action type not recognized in reducer");
-  }
+    throw new Error("action type not recognized in options reducer");
+}
 
-export default optionsReducer;
+export function textOptionsReducer(textOptions: IT.TextOptions, action: TextOptionsAction): IT.TextOptions {
+  if (action.type === "changePTextSize") {
+    return {
+      ...textOptions,
+      pTextSize: action.payload,
+    };
+  }
+  if (action.type === "changeSpelling") {
+    return {
+      ...textOptions,
+      spelling: action.payload,
+    };
+  }
+  if (action.type === "changePhonetics") {
+    return {
+      ...textOptions,
+      phonetics: action.payload,
+    };
+  }
+  if (action.type === "changeDialect") {
+    return {
+      ...textOptions,
+      dialect: action.payload,
+    };
+  }
+  if (action.type === "changeDiacritics") {
+    return {
+      ...textOptions,
+      diacritics: action.payload,
+    };
+  }
+  throw new Error("action type not recognized in text options reducer");
+}

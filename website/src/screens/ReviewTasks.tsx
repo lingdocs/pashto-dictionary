@@ -8,6 +8,7 @@ import {
     Types as T,
 } from "@lingdocs/pashto-inflector";
 import { Helmet } from "react-helmet";
+import { getTextOptions } from "../lib/get-text-options";
 
 function ReviewTask({ reviewTask, textOptions }: { reviewTask: FT.ReviewTask, textOptions: T.TextOptions }) {
     function handleDelete() {
@@ -50,13 +51,14 @@ function ReviewTask({ reviewTask, textOptions }: { reviewTask: FT.ReviewTask, te
 }
 
 export default function ReviewTasks({ state }: { state: State }) {
+    const textOptions = getTextOptions(state);
     return <div className="width-limiter" style={{ marginBottom: "70px" }}>
         <Helmet>
             <title>Review Tasks - LingDocs Pashto Dictionary</title>
         </Helmet>
         <h3 className="mb-4">Review Tasks</h3>
         {state.reviewTasks.length ?
-            state.reviewTasks.map((reviewTask, i) => <ReviewTask key={i} reviewTask={reviewTask} textOptions={state.options.textOptions} />)
+            state.reviewTasks.map((reviewTask, i) => <ReviewTask key={i} reviewTask={reviewTask} textOptions={textOptions} />)
             : <p>None</p>
         } 
     </div>;

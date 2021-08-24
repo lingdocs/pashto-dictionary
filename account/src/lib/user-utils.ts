@@ -74,6 +74,7 @@ export async function createNewUser(input: {
             tests: [],
             lastLogin: now,
             lastActive: now,
+            textOptions: undefined,
         };
         const user = await insertLingdocsUser(newUser);
         sendVerificationEmail(user, email.token).catch(console.error);
@@ -91,6 +92,7 @@ export async function createNewUser(input: {
             tests: [],
             lastLogin: now,
             lastActive: now,
+            textOptions: undefined,
         };
         const user = await insertLingdocsUser(newUser);
         return user;
@@ -111,6 +113,7 @@ export async function createNewUser(input: {
             tests: [],
             lastActive: now,
             level: "basic",
+            textOptions: undefined,
         }
         const user = await insertLingdocsUser(newUser);
         sendVerificationEmail(user, em.token);
@@ -127,6 +130,7 @@ export async function createNewUser(input: {
         tests: [],
         lastActive: now,
         level: "basic",
+        textOptions: undefined,
     }
     const user = await insertLingdocsUser(newUser);
     return user;

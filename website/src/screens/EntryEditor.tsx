@@ -23,6 +23,7 @@ import {
     submissionBase,
     addSubmission,
 } from "../lib/submissions";
+import { getTextOptions } from "../lib/get-text-options";
 import { Helmet } from "react-helmet";
 
 const textFields: {field: T.DictionaryEntryTextField, label: string}[] = [
@@ -116,6 +117,7 @@ function EntryEditor({ state, dictionary, searchParams }: {
         setMatchingEntries(state.isolatedEntry ? searchForMatchingEntries(state.isolatedEntry.p) : []);
         // eslint-disable-next-line
     }, [state]);
+    const textOptions = getTextOptions(state);
     function searchForMatchingEntries(s: string): T.DictionaryEntry[] {
         return dictionary.exactPashtoSearch(s)
             .filter((w) => w.ts !== state.isolatedEntry?.ts);
@@ -181,15 +183,15 @@ function EntryEditor({ state, dictionary, searchParams }: {
     })();
     const linkField: { field: "l", label: string | JSX.Element } = {
         field: "l",
-        label: <>link {entry.l ? (complement ? <InlinePs opts={state.options.textOptions}>{complement}</InlinePs> : "not found") : ""}</>,
+        label: <>link {entry.l ? (complement ? <InlinePs opts={textOptions}>{complement}</InlinePs> : "not found") : ""}</>,
     };
     return <div className="width-limiter" style={{ marginBottom: "70px" }}>
         <Helmet>
             <link rel="canonical" href="https://dictionary.lingdocs.com/edit" />
             <title>Edit - LingDocs Pashto Dictionary</title>
         </Helmet>
-        {state.isolatedEntry && <Entry nonClickable entry={state.isolatedEntry} textOptions={state.options.textOptions} isolateEntry={() => null} />}
-        {suggestedWord && <InlinePs opts={state.options.textOptions}>{suggestedWord}</InlinePs>}
+        {state.isolatedEntry && <Entry nonClickable entry={state.isolatedEntry} textOptions={textOptions} isolateEntry={() => null} />}
+        {suggestedWord && <InlinePs opts={textOptions}>{suggestedWord}</InlinePs>}
         {comment && <p>Comment: "{comment}"</p>}
         {submitted ? "Edit submitted/saved" : deleted ? "Entry Deleted" :
             <div>
@@ -198,7 +200,7 @@ function EntryEditor({ state, dictionary, searchParams }: {
                     {matchingEntries.map((entry) => (
                         <div key={entry.ts}>
                             <Link to={`/edit?id=${entry.ts}`} className="plain-link">
-                                <InlinePs opts={state.options.textOptions}>{entry}</InlinePs>
+                                <InlinePs opts={textOptions}>{entry}</InlinePs>
                             </Link>
                         </div>
                     ))}
@@ -330,12 +332,12 @@ function EntryEditor({ state, dictionary, searchParams }: {
                         </ul>
                     </div>}
                 </form>
-            {inflections && <InflectionsTable inf={inflections} textOptions={state.options.textOptions} />}
+            {inflections && <InflectionsTable inf={inflections} textOptions={textOptions} />}
             {/* TODO: aay tail from state options */}
             <ConjugationViewer
                 entry={entry}
                 complement={complement}
-                textOptions={state.options.textOptions}
+                textOptions={textOptions}
             />
         </div>}
     </div>;

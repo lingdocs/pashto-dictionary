@@ -31,6 +31,7 @@ import { wordlistEnabled } from "../lib/level-management";
 import AudioPlayButton  from "../components/AudioPlayButton";
 import { Helmet } from "react-helmet";
 import { Modal } from "react-bootstrap";
+import { getTextOptions } from "../lib/get-text-options";
 
 function IsolatedEntry({ state, dictionary, isolateEntry }: {
     state: State,
@@ -47,6 +48,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         setEditSubmitted(false);
     }, [state]);
     const wordlistWord = state.wordlist.find((w) => w.entry.ts === state.isolatedEntry?.ts);
+    const textOptions = getTextOptions(state);
     function submitEdit() {
         if (!state.isolatedEntry) return;
         if (!state.user) return;
@@ -102,7 +104,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 <Entry
                     nonClickable
                     entry={entry}
-                    textOptions={state.options.textOptions}
+                    textOptions={textOptions}
                     isolateEntry={isolateEntry}
                 />
             </div>
@@ -178,12 +180,12 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             </div>
         }
         {editSubmitted && <p>Thank you for your help!</p>}
-        {inflections && <InflectionsTable inf={inflections} textOptions={state.options.textOptions} />}
+        {inflections && <InflectionsTable inf={inflections} textOptions={textOptions} />}
         {/* TODO: State options for tail type here */}
         <ConjugationViewer
             entry={entry}
             complement={complement}
-            textOptions={state.options.textOptions}
+            textOptions={textOptions}
         />
         {relatedEntries && <>
             {relatedEntries.length ? 

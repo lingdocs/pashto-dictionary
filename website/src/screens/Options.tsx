@@ -131,10 +131,12 @@ function Options({
     options,
     state,
     optionsDispatch,
+    textOptionsDispatch,
 }: {
     options: Options,
     state: State,
     optionsDispatch: (action: OptionsAction) => void,
+    textOptionsDispatch: (action: TextOptionsAction) => void,
 }) {
     return <div style={{ maxWidth: "700px", marginBottom: "150px" }}>
         <Helmet>
@@ -188,22 +190,22 @@ function Options({
         <ButtonSelect
             small
             options={fontSizeOptions}
-            value={options.textOptions.pTextSize}
-            handleChange={(p) => optionsDispatch({ type: "changePTextSize", payload: p as PTextSize })}
+            value={options.textOptionsRecord.textOptions.pTextSize}
+            handleChange={(p) => textOptionsDispatch({ type: "changePTextSize", payload: p as PTextSize })}
         />
         <h4 className="mt-3">Diacritics</h4>
         <ButtonSelect
             small
             options={booleanOptions}
-            value={options.textOptions.diacritics.toString()}
-            handleChange={(p) => optionsDispatch({ type: "changeDiacritics", payload: p === "true" })}
+            value={options.textOptionsRecord.textOptions.diacritics.toString()}
+            handleChange={(p) => textOptionsDispatch({ type: "changeDiacritics", payload: p === "true" })}
         />
         <h4 className="mt-3">Pashto Spelling</h4>
         <ButtonSelect
             small
             options={spellingOptions}
-            value={options.textOptions.spelling}
-            handleChange={(p) => optionsDispatch({ type: "changeSpelling", payload: p as T.Spelling })}
+            value={options.textOptionsRecord.textOptions.spelling}
+            handleChange={(p) => textOptionsDispatch({ type: "changeSpelling", payload: p as T.Spelling })}
         />
         {/* NEED TO UPDATE THE PHONETICS DIALECT OPTION THING */}
         {/* <h4 className="mt-3">Phonetics</h4>

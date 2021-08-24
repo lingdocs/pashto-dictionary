@@ -41,6 +41,7 @@ function Results({ state, isolateEntry }: {
     const [pashto, setPashto] = useState<string>("");
     const [phonetics, setPhonetics] = useState<string>("");
     const [english, setEnglish] = useState<string>("");
+    const textOptions = state.user?.textOptions ? state.user.textOptions : state.options.textOptions;
     useEffect(() => {
         setPowerResults(undefined);
     }, [state.searchValue])
@@ -82,7 +83,7 @@ function Results({ state, isolateEntry }: {
             const allDocs = allEntries();
             const results = searchAllInflections(
                 allDocs,
-                prepValueForSearch(state.searchValue, state.options.textOptions),
+                prepValueForSearch(state.searchValue, textOptions),
             );
             setPowerResults(results);
         }, 20);
@@ -118,14 +119,14 @@ function Results({ state, isolateEntry }: {
                     <Entry
                         key={p.entry.i}
                         entry={p.entry}
-                        textOptions={state.options.textOptions}
+                        textOptions={textOptions}
                         isolateEntry={isolateEntry}
                     />
                     <div className="mb-3 ml-2">
                         {p.results.map((result: InflectionSearchResult, i) => (
                             <InflectionSearchResult
                                 key={"inf-result" + i}
-                                textOptions={state.options.textOptions}
+                                textOptions={textOptions}
                                 result={result}
                                 entry={p.entry}
                             />
@@ -138,7 +139,7 @@ function Results({ state, isolateEntry }: {
             <Entry
                 key={entry.i}
                 entry={entry}
-                textOptions={state.options.textOptions}
+                textOptions={textOptions}
                 isolateEntry={isolateEntry}
             />
         ))}

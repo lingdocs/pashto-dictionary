@@ -1,5 +1,6 @@
 import * as FT from "./functions-types";
 import * as AT from "./account-types";
+import { Types as IT } from "@lingdocs/pashto-inflector";
 
 type Service = "account" | "functions";
 
@@ -21,6 +22,11 @@ export async function postSubmissions(submissions: FT.SubmissionsRequest): Promi
 export async function upgradeAccount(password: string): Promise<AT.UpgradeUserResponse> {
     const response = await myFetch("account", "user/upgrade", "PUT", { password });
     return response as AT.UpgradeUserResponse;
+}
+
+export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.UserTextOptionsRecord): Promise<AT.UpdateUserTextOptionsRecordResponse> {
+    const response = await myFetch("account", "user/userTextOptionsRecord", "PUT", { userTextOptionsRecord }) as AT.UpdateUserTextOptionsRecordResponse;
+    return response;
 }
 
 export async function signOut() {
@@ -48,7 +54,7 @@ async function myFetch(
     service: Service,
     url: string,
     method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-    body?: FT.SubmissionsRequest | { password: string },
+    body?: FT.SubmissionsRequest | { password: string } | AT.UpdateUserTextOptionsRecordBody,
 ): Promise<AT.APIResponse> {
     const response = await fetch(baseUrl[service] + url, {
         method,

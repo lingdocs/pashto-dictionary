@@ -17,11 +17,16 @@ type SearchBarPosition = "top" | "bottom";
 
 type WordlistMode = "browse" | "review";
 
+type TextOptionsRecord = {
+    lastModified: import("./lib/account-types").TimeStamp,
+    textOptions: import("@lingdocs/pashto-inflector").Types.TextOptions,
+};
+
 type Options = {
     language: Language,
     searchType: SearchType,
     theme: Theme,
-    textOptions: import("@lingdocs/pashto-inflector").Types.TextOptions,
+    textOptionsRecord: TextOptionsRecord,
     wordlistMode: WordlistMode,
     wordlistReviewLanguage: Language,
     wordlistReviewBadge: boolean,
@@ -48,26 +53,11 @@ type OptionsAction = {
 } | {
     type: "toggleLanguage",
 } | {
-    type: "changePTextSize",
-    payload: PTextSize,
-} | {
     type: "changeTheme",
     payload: Theme,
 } | {
     type: "changeSearchBarPosition",
     payload: SearchBarPosition,
-} | {
-    type: "changeSpelling",
-    payload: import("@lingdocs/pashto-inflector").Types.Spelling,
-} | {
-    type: "changePhonetics",
-    payload: import("@lingdocs/pashto-inflector").Types.Phonetics,
-} | {
-    type: "changeDialect",
-    payload: import("@lingdocs/pashto-inflector").Types.Dialect,
-} | {
-    type: "changeDiacritics",
-    payload: boolean,
 } | {
     type: "changeUserLevel",
     payload: UserLevel,
@@ -79,6 +69,26 @@ type OptionsAction = {
     payload: Language,
 } | {
     type: "changeWordlistReviewBadge",
+    payload: boolean,
+} | {
+    type: "updateTextOptionsRecord",
+    payload: TextOptionsRecord,
+};
+
+type TextOptionsAction = {
+    type: "changePTextSize",
+    payload: PTextSize,
+} | {
+    type: "changeSpelling",
+    payload: import("@lingdocs/pashto-inflector").Types.Spelling,
+} | {
+    type: "changePhonetics",
+    payload: import("@lingdocs/pashto-inflector").Types.Phonetics,
+} | {
+    type: "changeDialect",
+    payload: import("@lingdocs/pashto-inflector").Types.Dialect,
+} | {
+    type: "changeDiacritics",
     payload: boolean,
 };
 
