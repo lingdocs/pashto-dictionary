@@ -289,7 +289,6 @@ class App extends Component<RouteComponentProps, State> {
                 textOptions,
             };
             this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
-            // TODO: LOAD AND RESOLVE THE USER'S TEXT OPTIONS ETC.
             if (!serverOptionsAreNewer) {
                 updateUserTextOptionsRecord(userTextOptionsRecord);
             }
