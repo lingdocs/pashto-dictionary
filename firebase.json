@@ -6,9 +6,13 @@
   "hosting": {
     "public": "public",
     "rewrites": [
-      { 
-        "source": "/testme",
-        "function": "testme"
+      {
+        "source": "/publishDictionary",
+        "function": "/publishDictionary"
+      },
+      {
+        "source": "/willError",
+        "function": "/willError"
       }
     ]
   }

@@ -22,12 +22,11 @@ async function accountApiFetch(url: string, method: "GET" | "POST" | "PUT" | "DE
     return await response.json() as AT.APIResponse;
 }
 
-export async function publishDictionary(): Promise<FT.PublishDictionaryResponse> {
-    return {
-        ok: true,
-        // @ts-ignore
-        info: {},
-    };
+export async function publishDictionary(): Promise<FT.PublishDictionaryResponse | FT.FunctionError> {
+    const r = await fetch("https://functions.lingdocs.com/publishDictionary", {
+        credentials: "include",
+    });
+    return (await r.json()) as FT.PublishDictionaryResponse | FT.FunctionError;
 }
 
 export async function upgradeAccount(password: string): Promise<AT.UpgradeUserResponse> {

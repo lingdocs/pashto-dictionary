@@ -1,29 +1,24 @@
 import * as functions from "firebase-functions";
-import fetch from "node-fetch";
-import cors from "cors";
-// import publish from "./publish";
-// import * as BT from "../../website/src/lib/backend-types"
+import * as FT from "../../website/src/lib/functions-types";
+import auth from "./middleware/lingdocs-auth";
+import publish from "./publish";
 
-export const testme = functions
-    // .runWith({
-    //     timeoutSeconds: 200,
-    //     memory: "2GB"
-    // })
-    .https.onRequest((req, res) => {
-        return cors({ credentials: true, origin: /\.lingdocs\.com$/ })(req, res, () => {
-            const { headers: { cookie }} = req;
-            if (!cookie) {
-                return res.status(401).send({ ok: false, error: "unauthorized" });
-            }
-            fetch("https://account.lingdocs.com/api/user", {
-                headers: { cookie },
-            }).then(r => r.json()).then(r => {
-                res.send({ ok: true, r });
-            }).catch((error) => res.send({ ok: false, error }));
+export const publishDictionary = functions.https.onRequest(
+    auth((req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
+        if (req.user.level !== "editor") {
+            res.status(403).send({ ok: false, error: "403 forbidden" });
             return;
-        });
-});
+        }
+        publish().then(res.send);
+    })
+);
 
+export const willError = functions.https.onRequest((req, res) => {
+    auth((req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
+        throw new Error("this is an error");
+    })
+})
+    
 // TODO: BETTER HANDLING OF EXPRESS MIDDLEWARE
 
 export const submissions = functions

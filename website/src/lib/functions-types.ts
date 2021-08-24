@@ -9,6 +9,10 @@
 import { Types as T } from "@lingdocs/pashto-inflector";
 import * as AT from "./account-types";
 
+export type FunctionResponse = PublishDictionaryResponse | SubmissionsResponse | FunctionError;
+
+export type FunctionError = { ok: false, error: string };
+
 export type PublishDictionaryResponse = {
     ok: true,
     info: T.DictionaryInfo,

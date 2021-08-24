@@ -6,7 +6,7 @@ import { Modal, Button } from "react-bootstrap";
 import {
     upgradeAccount,
     signOut,
-    // publishDictionary,
+    publishDictionary,
 } from "../lib/backend-calls";
 import LoadingElipses from "../components/LoadingElipses";
 import { Helmet } from "react-helmet";
@@ -24,16 +24,15 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
     const [upgradePassword, setUpgradePassword] = useState<string>("");
     const [upgradeError, setUpgradeError] = useState<string>("");
     const [waiting, setWaiting] = useState<boolean>(false);
-    // const [popup, setPopup] = useState<WindowProxy | null>(null);
-    // const [publishingStatus, setPublishingStatus] = useState<undefined | "publishing" | any>(undefined);
+    const [publishingStatus, setPublishingStatus] = useState<undefined | "publishing" | any>(undefined);
     useEffect(() => {
         setShowingUpgradePrompt(false);
         setUpgradeError("");
         setWaiting(false);
         window.addEventListener("message", handleIncomingMessage);
-        console.log("send test func");
-        fetch("https://functions.lingdocs.com/testme", { credentials: "include" }).then((res) => res.text()).then((res) => {
-            console.log("test func here");
+        console.log("send test erroring func");
+        fetch("https://functions.lingdocs.com/willError", { credentials: "include" }).then((res) => res.text()).then((res) => {
+            console.log("test error here");
             console.log(res);
         });
         return () => {
@@ -76,15 +75,15 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
     function handleOpenSignup() {
         popupRef = window.open("https://account.lingdocs.com");
     }
-    // function handlePublish() {
-    //     setPublishingStatus("publishing");
-    //     publishDictionary().then((response) => {
-    //         setPublishingStatus(response);
-    //     }).catch((err) => {
-    //         console.error(err);
-    //         setPublishingStatus("Offline or connection error");
-    //     });
-    // }
+    function handlePublish() {
+        setPublishingStatus("publishing");
+        publishDictionary().then((response) => {
+            setPublishingStatus(response);
+        }).catch((err) => {
+            console.error(err);
+            setPublishingStatus("Offline or connection error");
+        });
+    }
     if (!user) {
         return <div className="text-center mt-3">
             <Helmet>
@@ -104,7 +103,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <title>Account - LingDocs Pashto Dictionary</title>
             </Helmet>
             <h2 className="mb-4">Account</h2>   
-            {/* {user.level === "editor" &&
+            {user.level === "editor" &&
                 <div className="mb-3">
                     <h4>Editor Tools</h4>
                     {publishingStatus !== "publishing" &&
@@ -123,7 +122,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                         </>
                     }
                 </div>
-            } */}
+            }
             <div>
                 {/* {user.p && <div className="mb-4 mt-3" style={{ textAlign: "center" }}>
                     <img src={user.photoURL} data-testid="userAvatar" alt="avatar" style={{ borderRadius: "50%", width: "5rem", height: "5rem" }}/>
