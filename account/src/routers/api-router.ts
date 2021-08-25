@@ -3,7 +3,6 @@ import {
     deleteLingdocsUser,
     getLingdocsUser,
     updateLingdocsUser,
-    addCouchDbAuthUser,
     deleteCouchDbAuthUser,
 } from "../lib/couch-db";
 import {
@@ -12,10 +11,12 @@ import {
     getEmailTokenAndHash,
 } from "../lib/password-utils";
 import {
-    sendAccountUpgradeMessage,
     sendUpgradeRequestToAdmin,
     sendVerificationEmail,
 } from "../lib/mail-utils";
+import {
+    upgradeUser,
+} from "../lib/user-utils";
 import * as T from "../../../website/src/lib/account-types";
 import env from "../lib/env-vars";
 
@@ -132,22 +133,7 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
             res.send(alreadyUpgraded);
             return;
         }
-        // add user to couchdb authentication db
-        const { password, userDbName } = await addCouchDbAuthUser(userId);
-        // // create user db
-        // update LingdocsUser
-        const u = await updateLingdocsUser(userId, {
-            level: "student",
-            wordlistDbName: userDbName,
-            couchDbPassword: password,
-            requestedUpgradeToStudent: undefined,
-        });
-        sendAccountUpgradeMessage(u).catch(console.error);
-        const upgraded: T.UpgradeUserResponse = {
-            ok: true,
-            message: "user upgraded to student",
-            user: u,
-        };
+        const upgraded: T.UpgradeUserResponse = await upgradeUser(userId);
         res.send(upgraded);
     } catch (e) {
         next(e);
@@ -163,6 +149,7 @@ apiRouter.post("/user/upgradeToStudentRequest", async (req, res, next) => {
         }
         sendUpgradeRequestToAdmin(req.user).catch(console.error);
         await updateLingdocsUser(req.user.userId, { requestedUpgradeToStudent: true });
+        res.send({ ok: true, message: "request for upgrade sent" });
     } catch (e) {
         next(e);
     }

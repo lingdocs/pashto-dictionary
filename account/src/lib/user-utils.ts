@@ -1,11 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
-import { insertLingdocsUser } from "../lib/couch-db";
+import {
+    insertLingdocsUser,
+    addCouchDbAuthUser,
+    updateLingdocsUser,
+} from "../lib/couch-db";
 import {
     getHash,
     getEmailTokenAndHash,
 } from "../lib/password-utils";
 import { getTimestamp } from "../lib/time-utils";
-import { sendVerificationEmail } from "../lib/mail-utils";
+import {
+    sendVerificationEmail,
+    sendAccountUpgradeMessage,
+} from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
 import * as T from "../../../website/src/lib/account-types";
 
@@ -41,6 +48,28 @@ function getEmailFromGoogleProfile(profile: T.GoogleProfile): { email: string | 
         email: em.value,
         verified,
     };
+}
+
+export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse> {
+    // add user to couchdb authentication db
+    const { password, userDbName } = await addCouchDbAuthUser(userId);
+    // // create user db
+    // update LingdocsUser
+    const u = await updateLingdocsUser(userId, {
+        level: "student",
+        wordlistDbName: userDbName,
+        couchDbPassword: password,
+        requestedUpgradeToStudent: undefined,
+    });
+    if (u.email) {
+        sendAccountUpgradeMessage(u).catch(console.error);
+    }
+    const upgraded: T.UpgradeUserResponse = {
+        ok: true,
+        message: "user upgraded to student",
+        user: u,
+    };
+    return upgraded;
 }
 
 export async function createNewUser(input: {

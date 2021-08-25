@@ -12,6 +12,9 @@ import {
   compareToHash,
   getEmailTokenAndHash,
 } from "../lib/password-utils";
+import {
+  upgradeUser,
+} from "../lib/user-utils";
 import { validateReCaptcha } from "../lib/recaptcha";
 import {
   getTimestamp,
@@ -151,7 +154,20 @@ const authRouter = (passport: PassportStatic) => {
     } catch (e) {
       next(e);
     }
-  })
+  });
+
+  router.post("/admin/upgradeToStudent/:userId", async (req, res, next) => {
+    try {
+      if (!req.user.admin) {
+        return res.redirect("/");
+      }
+      const userId = req.params.userId;
+      await upgradeUser(userId as T.UUID);
+      res.redirect("/admin");
+    } catch (e) {
+      next(e);
+    }
+  });
 
   router.get("/email-verification/:uuid/:token", async (req, res, next) => {
     const page = "email-verification";
