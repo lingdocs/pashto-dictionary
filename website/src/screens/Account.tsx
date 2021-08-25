@@ -13,6 +13,8 @@ import LoadingElipses from "../components/LoadingElipses";
 import { Helmet } from "react-helmet";
 import * as AT from "../lib/account-types";
 
+const providers: ("google" | "twitter" | "github")[] = ["google", "twitter", "github"];
+
 const capitalize = (s: string): string => {
     // if (!s) return "";
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -154,6 +156,16 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                             </div>
                         </li>}
                         <li className="list-group-item">Account Level: {capitalize(user.level)} {user.requestedUpgradeToStudent ? "(Upgrade Requested)" : ""}</li>
+                        <li className="list-group-item">Sign in with: 
+                            {(user.password && user.email) && <span>
+                                <i className="fas fa-key mr-2"></i> Password,
+                            </span>}
+                            {providers.map((provider) => (
+                               user[provider] && <span>
+                                <i className={`fab fa-${provider} mr-2`}></i>
+                                </span> 
+                            ))}
+                        </li>
                     </ul>
                 </div>
             </div>
