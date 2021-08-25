@@ -24,7 +24,7 @@ export async function upgradeAccount(password: string): Promise<AT.UpgradeUserRe
 }
 
 export async function upgradeToStudentRequest(): Promise<AT.APIResponse> {
-    return await myFetch("account", "upgradeToStudentRequest", "POST") as AT.APIResponse;
+    return await myFetch("account", "user/upgradeToStudentRequest", "POST") as AT.APIResponse;
 }
 
 export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.UserTextOptionsRecord): Promise<AT.UpdateUserTextOptionsRecordResponse> {

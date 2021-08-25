@@ -24,7 +24,15 @@
             <tr>
               <td><%= users[i].name %></td>
               <td><%= users[i].email %></td>
-              <td><%= users[i].level %></td>
+              <td>
+                <% if (users[i].requestedUpgradeToStudent) { %>
+                  Requested Upgrade - <form action="/admin/upgradeToStudent/<%= users[i].userId %>" method="post">
+                    <button class="btn btn-sm btn-primary" type="submit">Grant</button>
+                  </form>
+                <% } else { %>
+                  <%= users[i].level %>
+                <% } %>
+              </td>
             </tr>
           <% } %>
         </tbody>
