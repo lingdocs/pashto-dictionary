@@ -146,7 +146,7 @@ const authRouter = (passport: PassportStatic) => {
   
   router.get("/admin", async (req, res, next) => {
     try {
-      if (!req.user.admin) {
+      if (!req.user || !req.user.admin) {
         return res.redirect("/");
       }
       const users = await getAllLingdocsUsers();
