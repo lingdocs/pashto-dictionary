@@ -47,6 +47,11 @@ export async function getLingdocsUser(field: "email" | "userId" | "githubId" | "
     return user.docs[0] as T.LingdocsUser;
 }
 
+export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
+  const users = await usersDb.find({ selector: { userId: { $exists: true }}});
+  return users.docs as T.LingdocsUser[];
+}
+
 export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.LingdocsUser> {
   const res = await usersDb.insert(user);
   const newUser = processAPIResponse(user, res);

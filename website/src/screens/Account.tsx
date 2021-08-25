@@ -184,7 +184,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <Modal.Header closeButton>
                     <Modal.Title>Upgrade Account</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Enter the secret upgrade password to upgrade your account or <a href="javascript:;" onClick={handleUpgradeRequest}>request an upgrade</a>.</Modal.Body>
+                <Modal.Body>Enter the secret upgrade password to upgrade your account or <button className="btn btn-sm btn-outline-secondary" onClick={handleUpgradeRequest}>request an upgrade</button>.</Modal.Body>
                 <div className="form-group px-3">
                     <label htmlFor="upgradePasswordForm">Upgrade password:</label>
                     <input

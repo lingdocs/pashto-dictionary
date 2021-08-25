@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PassportStatic } from "passport";
 import {
+  getAllLingdocsUsers,
   getLingdocsUser,
   updateLingdocsUser,
 } from "../lib/couch-db";
@@ -136,10 +137,22 @@ const authRouter = (passport: PassportStatic) => {
         return res.send({ ok: true, user });
       });
     } catch(e) {
-      return next(e);
+      next(e);
     }
   });
   
+  router.get("/admin", async (req, res, next) => {
+    try {
+      if (!req.user.admin) {
+        return res.redirect("/");
+      }
+      const users = await getAllLingdocsUsers();
+      res.render("admin", { users });
+    } catch (e) {
+      next(e);
+    }
+  })
+
   router.get("/email-verification/:uuid/:token", async (req, res, next) => {
     const page = "email-verification";
     const { uuid, token } = req.params;

@@ -27,6 +27,7 @@ export type UserTextOptionsRecord = {
 // TODO: TYPE GUARDING SO WE NEVER HAVE A USER WITH NO Id or Password
 export type LingdocsUser = {
     userId: UUID,
+    admin?: boolean,
     password?: Hash,
     name: string,
     email?: string,
