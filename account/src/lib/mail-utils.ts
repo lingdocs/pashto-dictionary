@@ -63,7 +63,7 @@ LingDocs Admin`;
 }
 
 export async function sendAccountUpgradeMessage(user: T.LingdocsUser) {
-    const subject = "You've Upgraded to Student";
+    const subject = "You're Upgraded to Student";
     const content = `Hello ${user.name},
     
 Congratulations on your upgrade to a LingDocs Student account! 👨‍🎓
@@ -75,9 +75,9 @@ LingDocs Admin`;
     await sendEmail(getAddress(user), subject, content);
 }
 
-export async function sendUpgradeRequestToAdmin(user: T.LingdocsUser) {
+export async function sendUpgradeRequestToAdmin(userWantingToUpgrade: T.LingdocsUser) {
     const subject = "Account Upgrade Request";
-    const content = `${user.name} - ${user.email} - ${user.userId} is requesting to upgrade to student.`;
-
+    const content = `${userWantingToUpgrade.name} - ${userWantingToUpgrade.email} - ${userWantingToUpgrade.userId} is requesting to upgrade to student.`;
+    console.log("sending notice of upgrade request to ", adminAddress);
     await sendEmail(adminAddress, subject, content);
 }
