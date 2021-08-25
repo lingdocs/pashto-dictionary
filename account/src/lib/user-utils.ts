@@ -55,21 +55,20 @@ export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse
     const { password, userDbName } = await addCouchDbAuthUser(userId);
     // // create user db
     // update LingdocsUser
-    const u = await updateLingdocsUser(userId, {
+    const user = await updateLingdocsUser(userId, {
         level: "student",
         wordlistDbName: userDbName,
         couchDbPassword: password,
         requestedUpgradeToStudent: undefined,
     });
-    if (u.email) {
-        sendAccountUpgradeMessage(u).catch(console.error);
+    if (user.email) {
+        sendAccountUpgradeMessage(user).catch(console.error);
     }
-    const upgraded: T.UpgradeUserResponse = {
+    return {
         ok: true,
         message: "user upgraded to student",
-        user: u,
+        user,
     };
-    return upgraded;
 }
 
 export async function createNewUser(input: {

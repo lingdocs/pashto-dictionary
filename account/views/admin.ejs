@@ -8,6 +8,21 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
   </head>
+  <script>
+    function handleDeleteUser(uid, name) {
+      const answer = confirm(`Are you sure you want to delete ${name}?`);
+      if (answer) {
+        fetch(`/admin/${uid}`, {
+          method: "DELETE",
+        }).then((res) => res.json()).then((res) => {
+          console.log(res);
+          if (res.ok) {
+            window.location = "/admin";
+          }
+        }).catch(console.error);
+      }
+    }
+  </script>
   <body>
     <div class="container">
       <h1 class="my-4">LingDocs Auth Admin</h1>
@@ -16,22 +31,48 @@
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
+            <th scope="col">Providers</th>
             <th scope="col">Level</th>
+            <th scope="col">Last Active</th>
+            <th shope="col"></th>
           </tr>
         </thead>
         <tbody>
           <% for(var i=0; i < users.length; i++) { %>
             <tr>
-              <td><%= users[i].name %></td>
+              <td><%= users[i].name %> <% if (users[i].admin) { %>
+                <i class="fas fa-id-badge ml-2"></i>
+              <% } %>
+              </td>
               <td><%= users[i].email %></td>
               <td>
+                <% if (users[i].password && users[i].email) { %>
+                  <i class="fas fa-key mr-2"></i>
+                <% } %>
+                <% if (users[i].google) { %>
+                  <i class="fab fa-google mr-2"></i>
+                <% } %>
+                <% if (users[i].twitter) { %>
+                  <i class="fab fa-twitter mr-2"></i>
+                <% } %>
+                <% if (users[i].github) { %>
+                  <i class="fab fa-github mr-2"></i>
+                <% } %>
+              </td>
+              <td>
                 <% if (users[i].requestedUpgradeToStudent) { %>
-                  Requested Upgrade - <form action="/admin/upgradeToStudent/<%= users[i].userId %>" method="post">
-                    <button class="btn btn-sm btn-primary" type="submit">Grant</button>
+                  <form action="/admin/upgradeToStudent/<%= users[i].userId %>" method="POST">
+                    <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-stamp mr-2"></i> Grant Upgrade Request</button>
                   </form>
                 <% } else { %>
                   <%= users[i].level %>
                 <% } %>
+              </td>
+              <td>
+                <%= new Date(users[i].lastActive).toUTCString() %>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-danger" onClick="handleDeleteUser('<%= users[i].userId %>', '<%= users[i].name %>')"><i class="fa fa-trash"></i></button>
               </td>
             </tr>
           <% } %>

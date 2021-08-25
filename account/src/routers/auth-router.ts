@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PassportStatic } from "passport";
 import {
+  deleteLingdocsUser,
   getAllLingdocsUsers,
   getLingdocsUser,
   updateLingdocsUser,
@@ -158,12 +159,26 @@ const authRouter = (passport: PassportStatic) => {
 
   router.post("/admin/upgradeToStudent/:userId", async (req, res, next) => {
     try {
-      if (!req.user.admin) {
+      if (!req.user || !req.user.admin) {
         return res.redirect("/");
       }
       const userId = req.params.userId;
       await upgradeUser(userId as T.UUID);
       res.redirect("/admin");
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.delete("/admin/:userId", async (req, res, next) => {
+    try {
+      // TODO: MAKE PROPER MIDDLEWARE WITH TYPING
+      if (!req.user || !req.user.admin) {
+        return res.redirect("/");
+      }
+      const toDelete = req.params.userId as T.UUID;
+      await deleteLingdocsUser(toDelete);
+      res.send({ ok: true, message: "user deleted" });
     } catch (e) {
       next(e);
     }
