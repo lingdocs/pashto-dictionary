@@ -63,6 +63,7 @@ export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.Lingdo
 
 export async function deleteLingdocsUser(uuid: T.UUID): Promise<void> {
   const user = await getLingdocsUser("userId", uuid);
+  await deleteCouchDbAuthUser(uuid);
   if (!user) return;
   // TODO: cleanup userdbs etc
   // TODO: Better type certainty here... obviously there is an _id and _rev here

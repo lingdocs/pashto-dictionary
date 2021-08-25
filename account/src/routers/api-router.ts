@@ -161,8 +161,6 @@ apiRouter.post("/user/upgradeToStudentRequest", async (req, res, next) => {
 apiRouter.delete("/user", async (req, res, next) => {
     try {
         if (!req.user) throw new Error("user not found");
-        // await deleteWordlistDatabase(req.user.userId);
-        await deleteCouchDbAuthUser(req.user.userId);
         await deleteLingdocsUser(req.user.userId);
         sendResponse(res, { ok: true, message: "user deleted" });
     } catch (e) {

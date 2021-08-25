@@ -78,6 +78,5 @@ LingDocs Admin`;
 export async function sendUpgradeRequestToAdmin(userWantingToUpgrade: T.LingdocsUser) {
     const subject = "Account Upgrade Request";
     const content = `${userWantingToUpgrade.name} - ${userWantingToUpgrade.email} - ${userWantingToUpgrade.userId} is requesting to upgrade to student.`;
-    console.log("sending notice of upgrade request to ", adminAddress);
     await sendEmail(adminAddress, subject, content);
 }
