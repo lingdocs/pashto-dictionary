@@ -11,6 +11,9 @@
   <body>
     <div class="container" style="max-width: 400px;">
       <h2 class="mt-4 mb-4 text-center">LingDocs Account</h2>
+      <% if (user.admin) { %>
+        <a href="/admin"><h5>Admin Console</h5></a>
+      <% } %>
       <h4>Profile:</h4>
       <form method="POST" class="mb-4">
         <div>
