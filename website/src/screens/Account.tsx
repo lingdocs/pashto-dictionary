@@ -156,13 +156,13 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                             </div>
                         </li>}
                         <li className="list-group-item">Account Level: {capitalize(user.level)} {user.requestedUpgradeToStudent ? "(Upgrade Requested)" : ""}</li>
-                        <li className="list-group-item">Sign in with: 
+                        <li className="list-group-item">Signs in with: 
                             {(user.password && user.email) && <span>
-                                <i className="fas fa-key mr-2"></i> Password,
+                                <i className="fas fa-key mx-1"></i> <span className="small">Password</span>
                             </span>}
                             {providers.map((provider) => (
                                user[provider] && <span>
-                                <i className={`fab fa-${provider} mr-2`}></i>
+                                <i className={`fab fa-${provider} mx-1`}></i>
                                 </span> 
                             ))}
                         </li>
