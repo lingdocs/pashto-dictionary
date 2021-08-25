@@ -7,6 +7,7 @@ import {
     upgradeAccount,
     signOut,
     publishDictionary,
+    upgradeToStudentRequest,
 } from "../lib/backend-calls";
 import LoadingElipses from "../components/LoadingElipses";
 import { Helmet } from "react-helmet";
@@ -50,6 +51,22 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setShowingUpgradePrompt(false);
         setUpgradePassword("");
         setUpgradeError("");
+    }
+    async function handleUpgradeRequest() {
+        setUpgradeError("");
+        setWaiting(true);
+        upgradeToStudentRequest().then((res) => {
+            setWaiting(false);
+            if (res.ok) {
+                loadUser();
+                closeUpgrade();
+            } else {
+                setUpgradeError("Error requesting upgrade");
+            }
+        }).catch((err) => {
+            setWaiting(false);
+            setUpgradeError(err.message);
+        });
     }
     async function handleUpgrade() {
         setUpgradeError("");
@@ -136,7 +153,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                                 </div>
                             </div>
                         </li>}
-                        <li className="list-group-item">Account Level: {capitalize(user.level)}</li>
+                        <li className="list-group-item">Account Level: {capitalize(user.level)} {user.requestedUpgradeToStudent ? "(Upgrade Requested)" : ""}</li>
                     </ul>
                 </div>
             </div>
@@ -167,7 +184,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <Modal.Header closeButton>
                     <Modal.Title>Upgrade Account</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Enter the secret upgrade password to upgrade your account.</Modal.Body>
+                <Modal.Body>Enter the secret upgrade password to upgrade your account or <a href="javascript:;" onClick={handleUpgradeRequest}>request an upgrade</a>.</Modal.Body>
                 <div className="form-group px-3">
                     <label htmlFor="upgradePasswordForm">Upgrade password:</label>
                     <input

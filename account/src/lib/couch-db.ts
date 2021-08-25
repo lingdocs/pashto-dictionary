@@ -95,8 +95,10 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     level: "student",
     wordlistDbName: T.WordlistDbName,
     couchDbPassword: T.UserDbPassword,
+    requestedUpgradeToStudent: undefined,
   } |
-  { userTextOptionsRecord: T.UserTextOptionsRecord }
+  { userTextOptionsRecord: T.UserTextOptionsRecord } |
+  { requestedUpgradeToStudent: true }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);

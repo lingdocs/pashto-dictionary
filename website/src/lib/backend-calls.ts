@@ -23,6 +23,10 @@ export async function upgradeAccount(password: string): Promise<AT.UpgradeUserRe
     return response as AT.UpgradeUserResponse;
 }
 
+export async function upgradeToStudentRequest(): Promise<AT.APIResponse> {
+    return await myFetch("account", "upgradeToStudentRequest", "POST") as AT.APIResponse;
+}
+
 export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.UserTextOptionsRecord): Promise<AT.UpdateUserTextOptionsRecordResponse> {
     const response = await myFetch("account", "user/userTextOptionsRecord", "PUT", { userTextOptionsRecord }) as AT.UpdateUserTextOptionsRecordResponse;
     return response;

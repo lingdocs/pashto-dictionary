@@ -203,7 +203,7 @@ server {
 When a user upgrades their account level to `student` or `editor`:
 
 1. A doc in the `_users` db is created with their Firebase Authentication info, account level, and a password they can use for syncing their personal wordlistdb
-2. A user database is created (by the firebase functions - *not* by the couchdb_peruser) which they use to sync their personal wordlist.  
+2. A user database is created (automatically by `couchdb_peruser`) which they use to sync their personal wordlist.  
 
 There is also a `review-tasks` database which is used to store all the review tasks for editors and syncs with the review tasks in the app for the editor(s). 
 

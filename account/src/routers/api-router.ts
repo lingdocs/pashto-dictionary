@@ -12,6 +12,8 @@ import {
     getEmailTokenAndHash,
 } from "../lib/password-utils";
 import {
+    sendAccountUpgradeMessage,
+    sendUpgradeRequestToAdmin,
     sendVerificationEmail,
 } from "../lib/mail-utils";
 import * as T from "../../../website/src/lib/account-types";
@@ -103,7 +105,7 @@ apiRouter.put("/user/userTextOptionsRecord", async (req, res, next) => {
     } catch (e) {
         next(e);
     }
-})
+});
 
 apiRouter.put("/user/upgrade", async (req, res, next) => {
     if (!req.user) throw new Error("user not found");
@@ -133,15 +135,34 @@ apiRouter.put("/user/upgrade", async (req, res, next) => {
         // add user to couchdb authentication db
         const { password, userDbName } = await addCouchDbAuthUser(userId);
         // // create user db
-        // const { name } = await createWordlistDatabase(userId, password);
         // update LingdocsUser
-        const u = await updateLingdocsUser(userId, { level: "student", wordlistDbName: userDbName, couchDbPassword: password });
+        const u = await updateLingdocsUser(userId, {
+            level: "student",
+            wordlistDbName: userDbName,
+            couchDbPassword: password,
+            requestedUpgradeToStudent: undefined,
+        });
+        sendAccountUpgradeMessage(u).catch(console.error);
         const upgraded: T.UpgradeUserResponse = {
             ok: true,
             message: "user upgraded to student",
             user: u,
         };
         res.send(upgraded);
+    } catch (e) {
+        next(e);
+    }
+});
+
+apiRouter.post("/user/upgradeToStudentRequest", async (req, res, next) => {
+    if (!req.user) throw new Error("user not found");
+    try {
+        if (req.user.level === "student" || req.user.level === "editor") {
+           res.send({ ok: true, message: "user already upgraded "});
+           return;
+        }
+        sendUpgradeRequestToAdmin(req.user).catch(console.error);
+        await updateLingdocsUser(req.user.userId, { requestedUpgradeToStudent: true });
     } catch (e) {
         next(e);
     }
