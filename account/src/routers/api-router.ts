@@ -148,7 +148,7 @@ apiRouter.post("/user/upgradeToStudentRequest", async (req, res, next) => {
            return;
         }
         sendUpgradeRequestToAdmin(req.user).catch(console.error);
-        await updateLingdocsUser(req.user.userId, { requestedUpgradeToStudent: true });
+        await updateLingdocsUser(req.user.userId, { upgradeToStudentRequest: "waiting" });
         res.send({ ok: true, message: "request for upgrade sent" });
     } catch (e) {
         next(e);

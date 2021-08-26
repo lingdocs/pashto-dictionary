@@ -39,7 +39,7 @@ export type LingdocsUser = {
         tokenHash: Hash,
         requestedOn: TimeStamp,
     },
-    requestedUpgradeToStudent?: boolean,
+    upgradeToStudentRequest?: "waiting" | "denied",
     tests: [],
     lastLogin: TimeStamp,
     lastActive: TimeStamp,

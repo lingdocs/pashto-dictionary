@@ -71,6 +71,12 @@ export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse
     };
 }
 
+export async function denyUserUpgradeRequest(userId: T.UUID): Promise<void> {
+    await updateLingdocsUser(userId, {
+        upgradeToStudentRequest: "denied",
+    });
+}
+
 export async function createNewUser(input: {
     strategy: "local",
     email: string,

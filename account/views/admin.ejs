@@ -60,10 +60,22 @@
                 <% } %>
               </td>
               <td>
-                <% if (users[i].requestedUpgradeToStudent) { %>
-                  <form action="/admin/upgradeToStudent/<%= users[i].userId %>" method="POST">
-                    <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-stamp mr-2"></i> Grant Upgrade Request</button>
-                  </form>
+                <% if (users[i].upgradeToStudentRequest === "waiting") { %>
+                  <div class="d-flex flex-row">
+                    <div>Requested Upgrade </div>
+                    <div>
+                      <form action="/admin/upgradeToStudent/<%= users[i].userId %>/grand" method="POST">
+                        <button class="btn btn-sm btn-success" type="submit"><i class="fas fa-thumbs-up mr-2"></i> Grant </button>
+                      </form>
+                    </div>
+                    <div>
+                      <form action="/admin/upgradeToStudent/<%= users[i].userId %>/deny" method="POST">
+                        <button class="btn btn-sm btn-danger" type="submit"><i class="fas fa-thumbs-down mr-2"></i> Deny </button>
+                      </form>
+                    </div>
+                  </div>
+                <% } else if (users[i].upgradeToStudentRequest === "waiting"){ %>
+                  Upgrade Denied
                 <% } else { %>
                   <%= users[i].level %>
                 <% } %>

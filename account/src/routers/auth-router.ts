@@ -15,6 +15,7 @@ import {
 } from "../lib/password-utils";
 import {
   upgradeUser,
+  denyUserUpgradeRequest,
 } from "../lib/user-utils";
 import { validateReCaptcha } from "../lib/recaptcha";
 import {
@@ -157,13 +158,21 @@ const authRouter = (passport: PassportStatic) => {
     }
   });
 
-  router.post("/admin/upgradeToStudent/:userId", async (req, res, next) => {
+  /**
+   * Grant request for upgrade to student
+   */
+  router.post("/admin/upgradeToStudent/:userId/:grantOrDeny", async (req, res, next) => {
     try {
       if (!req.user || !req.user.admin) {
         return res.redirect("/");
       }
-      const userId = req.params.userId;
-      await upgradeUser(userId as T.UUID);
+      const userId = req.params.userId as T.UUID;
+      const grantOrDeny = req.params.grantOrDeny as "grant" | "deny";
+      if (grantOrDeny === "grant") {
+        await upgradeUser(userId);
+      } else {
+        await denyUserUpgradeRequest(userId);
+      }
       res.redirect("/admin");
     } catch (e) {
       next(e);
