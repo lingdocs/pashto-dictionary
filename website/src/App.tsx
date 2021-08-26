@@ -438,7 +438,7 @@ class App extends Component<RouteComponentProps, State> {
             paddingBottom: "60px",    
         }}>
             <Helmet>
-                <title>LingDocs Dictionary - Dev Branch</title>
+                <title>LingDocs Dictionary</title>
             </Helmet>
                 {this.state.options.searchBarPosition === "top" && <SearchBar
                     state={this.state}
@@ -452,7 +452,7 @@ class App extends Component<RouteComponentProps, State> {
                     <>
                         <Route path="/" exact>
                             <div className="text-center mt-4">
-                                <h4 className="font-weight-light p-3 mb-4">LingDocs Pashto Dictionary - DEV</h4>
+                                <h4 className="font-weight-light p-3 mb-4">LingDocs Pashto Dictionary</h4>
                                 {this.state.options.searchType === "alphabetical" && <div className="mt-4 font-weight-light">
                                     <div className="mb-3"><span className="fa fa-book mr-2" ></span> Alphabetical browsing mode</div>
                                 </div>}
