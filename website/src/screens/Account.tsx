@@ -157,8 +157,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                         </li>}
                         <li className="list-group-item">Account Level: {capitalize(user.level)} {user.upgradeToStudentRequest === "waiting"
                             ? "(Upgrade Requested)"
-                            : user.upgradeToStudentRequest === "denied"
-                            ? "(Upgrade Denied)"
                             : ""}</li>
                         <li className="list-group-item">Signs in with: 
                             {(user.password && user.email) && <span>
