@@ -143,6 +143,7 @@ class App extends Component<RouteComponentProps, State> {
             ReactGA.pageview(window.location.pathname + window.location.search);
         }
         dictionary.initialize().then((r) => {
+            console.log(this.props.location.pathname);
             this.checkUserCronJob.start();
             this.networkCronJob.start();
             this.setState({
@@ -172,7 +173,8 @@ class App extends Component<RouteComponentProps, State> {
                 if (this.state.options.language === "English") {
                     this.handleOptionsUpdate({ type: "toggleLanguage" });
                 }
-                const queryString = window.location.search;
+                console.log(this.props.history.location);
+                const queryString = this.props.history.location.search;
                 alert("query string is: " + queryString);
                 const urlParams = new URLSearchParams(queryString);
                 const searchString = urlParams.get("text") || "";
