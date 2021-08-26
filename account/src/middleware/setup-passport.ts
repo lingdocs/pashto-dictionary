@@ -17,6 +17,7 @@ import {
 } from "../lib/user-utils";
 import env from "../lib/env-vars";
 import * as T from "../../../website/src/lib/account-types";
+import { getTimestamp } from "../lib/time-utils";
 
 export const outsideProviders: ("github" | "google" | "twitter")[] = ["github", "google", "twitter"];
 
@@ -150,7 +151,7 @@ function setupPassport(passport: PassportStatic) {
         cb(null, false);
         return;
       }
-      const newUser = await insertLingdocsUser(updateLastActive(user));
+      const newUser = await updateLingdocsUser(userId, { lastActive: getTimestamp() });
       cb(null, newUser);
     } catch (err) {
       cb(err, null);
