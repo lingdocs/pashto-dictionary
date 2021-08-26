@@ -101,7 +101,7 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     level: "student",
     wordlistDbName: T.WordlistDbName,
     couchDbPassword: T.UserDbPassword,
-    requestedUpgradeToStudent: undefined,
+    upgradeToStudentRequest: undefined,
   } |
   { userTextOptionsRecord: T.UserTextOptionsRecord } |
   { upgradeToStudentRequest: "waiting" } | 
@@ -126,6 +126,7 @@ export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.Us
   const password = generateWordlistDbPassword();
   const userDbName = getWordlistDbName(uuid);
   const usersDb = nano.db.use("_users");
+  // TODO: prevent conflict if adding an existing user for some reason
   const authUser: T.CouchDbAuthUser = {
     _id: `org.couchdb.user:${uuid}`,
     type: "user",

@@ -59,7 +59,7 @@ export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse
         level: "student",
         wordlistDbName: userDbName,
         couchDbPassword: password,
-        requestedUpgradeToStudent: undefined,
+        upgradeToStudentRequest: undefined,
     });
     if (user.email) {
         sendAccountUpgradeMessage(user).catch(console.error);
