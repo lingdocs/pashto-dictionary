@@ -173,13 +173,11 @@ class App extends Component<RouteComponentProps, State> {
                 if (this.state.options.language === "English") {
                     this.handleOptionsUpdate({ type: "toggleLanguage" });
                 }
-                console.log(this.props.history.location);
                 const queryString = this.props.history.location.search;
-                alert("query string is: " + queryString);
                 const urlParams = new URLSearchParams(queryString);
-                const searchString = urlParams.get("text") || "";
-                alert("text value us:" + searchString);
-                this.handleSearchValueChange(searchString);
+                const text = urlParams.get("text") || "";
+                const inQuotes = text.match(/^"(.+)"/) || ["", ""];
+                this.handleSearchValueChange(inQuotes[1]);
             }
             if (this.props.location.pathname === "/new-entries") {
                 this.setState({
