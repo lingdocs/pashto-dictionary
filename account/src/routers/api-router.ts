@@ -144,7 +144,7 @@ apiRouter.post("/user/upgradeToStudentRequest", async (req, res, next) => {
     if (!req.user) throw new Error("user not found");
     try {
         if (req.user.level === "student" || req.user.level === "editor") {
-           res.send({ ok: true, message: "user already upgraded "});
+           res.send({ ok: true, message: "user already upgraded" });
            return;
         }
         sendUpgradeRequestToAdmin(req.user).catch(console.error);

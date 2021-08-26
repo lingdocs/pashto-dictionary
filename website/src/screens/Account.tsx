@@ -160,7 +160,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                             : ""}</li>
                         <li className="list-group-item">Signs in with: 
                             {(user.password && user.email) && <span>
-                                <i className="fas fa-key ml-2"></i> <span className="small mr-2">Password</span>
+                                <i className="fas fa-key ml-2"></i> <span className="small mr-1">Password</span>
                             </span>}
                             {providers.map((provider) => (
                                user[provider] && <span>
@@ -171,6 +171,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                     </ul>
                 </div>
             </div>
+            {user.level === "student" && <p><strong>Note:</strong> If you had a student account in the previous system <em>your wordlist will be moved over to this account in a couple of days</em>.</p>}
             <h4 className="mb-3">Account Admin</h4>
             <div className="row mb-4">
                 {user.level === "basic" && <div className="col-sm mb-3">
