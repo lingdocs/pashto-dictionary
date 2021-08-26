@@ -1,23 +1,24 @@
 import { hash, compare } from "bcryptjs";
 import { randomBytes } from "crypto";
 import base64url from "base64url";
+import * as T from "../../../website/src/lib/account-types";
 
 const tokenSize = 24;
 
-export async function getHash(p: string): Promise<Hash> {
-    return await hash(p, 10) as Hash;
+export async function getHash(p: string): Promise<T.Hash> {
+    return await hash(p, 10) as T.Hash;
 }
 
-export async function getEmailTokenAndHash(): Promise<{ token: URLToken, hash: Hash }> {
+export async function getEmailTokenAndHash(): Promise<{ token: T.URLToken, hash: T.Hash }> {
     const token = getURLToken();
     const h = await getHash(token);
     return { token, hash: h };
 }
 
-export function getURLToken(): URLToken {
-    return base64url(randomBytes(tokenSize)) as URLToken;
+export function getURLToken(): T.URLToken {
+    return base64url(randomBytes(tokenSize)) as T.URLToken;
 }
 
-export function compareToHash(s: string, hash: Hash): Promise<boolean> {
+export function compareToHash(s: string, hash: T.Hash): Promise<boolean> {
     return compare(s, hash);
 }

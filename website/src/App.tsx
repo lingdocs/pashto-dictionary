@@ -6,6 +6,9 @@
  *
  */
 
+// TODO: Put the DB sync on the localDb object, and then have it cancel()'ed and removed as part of the deinitialization
+// sync on initialization and cancel sync on de-initialization
+
 import { Component } from "react";
 import { defaultTextOptions } from "@lingdocs/pashto-inflector";
 import { withRouter, Route, RouteComponentProps, Link } from "react-router-dom";
@@ -21,32 +24,37 @@ import ReviewTasks from "./screens/ReviewTasks";
 import EntryEditor from "./screens/EntryEditor";
 import IsolatedEntry from "./screens/IsolatedEntry";
 import Wordlist from "./screens/Wordlist";
-import { saveOptions, readOptions } from "./lib/options-storage";
+import { wordlistEnabled } from "./lib/level-management";
+import { 
+    saveOptions,
+    readOptions,
+    saveUser,
+    readUser,
+} from "./lib/local-storage";
 import { dictionary, pageSize } from "./lib/dictionary";
-import optionsReducer from "./lib/options-reducer";
+import {
+    optionsReducer,
+    textOptionsReducer,
+    resolveTextOptions,
+    removePTextSize,
+} from "./lib/options-reducer";
 import hitBottom from "./lib/hitBottom";
 import getWordId from "./lib/get-word-id";
-import { auth } from "./lib/firebase";
 import { CronJob } from "cron";
 import Mousetrap from "mousetrap";
 import {
     sendSubmissions,
 } from "./lib/submissions";
 import { 
-    loadUserInfo,
+    getUser,
+    updateUserTextOptionsRecord,
 } from "./lib/backend-calls";
-import * as BT from "./lib/backend-types";
 import {
     getWordlist,
 } from "./lib/wordlist-database";
 import {
-    wordlistEnabled,
-} from "./lib/level-management";
-import {
-    deInitializeLocalDb,
-    initializeLocalDb,
-    startLocalDbSync,
-    getLocalDbName,
+    startLocalDbs,
+    stopLocalDbs,
     getAllDocsLocalDb,
 } from "./lib/pouch-dbs";
 import {
@@ -55,6 +63,7 @@ import {
 import {
     textBadge,
 } from "./lib/badges";
+import * as AT from "./lib/account-types";
 import ReactGA from "react-ga";
 // tslint:disable-next-line
 import "@fortawesome/fontawesome-free/css/all.css";
@@ -62,6 +71,7 @@ import "./custom-bootstrap.scss";
 // tslint:disable-next-line: ordered-imports
 import "./App.css";
 import classNames from "classnames";
+import { getTextOptions } from "./lib/get-text-options";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -89,13 +99,16 @@ class App extends Component<RouteComponentProps, State> {
         this.state = {
             dictionaryStatus: "loading",
             dictionaryInfo: undefined,
+            // TODO: Choose between the saved options and the options in the saved user
             options: savedOptions ? savedOptions : {
               language: "Pashto",
               searchType: "fuzzy",
               theme: /* istanbul ignore next */ (window.matchMedia &&
                 window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light",
-              textOptions: defaultTextOptions,
-              level: "basic",
+              textOptionsRecord: {
+                lastModified: Date.now() as AT.TimeStamp,
+                textOptions: defaultTextOptions,
+              },
               wordlistMode: "browse",
               wordlistReviewLanguage: "Pashto",
               wordlistReviewBadge: true,
@@ -107,13 +120,15 @@ class App extends Component<RouteComponentProps, State> {
             results: [],
             wordlist: [],
             reviewTasks: [],
+            user: readUser(),
         };
         this.handleOptionsUpdate = this.handleOptionsUpdate.bind(this);
+        this.handleTextOptionsUpdate = this.handleTextOptionsUpdate.bind(this);
         this.handleSearchValueChange = this.handleSearchValueChange.bind(this);
         this.handleIsolateEntry = this.handleIsolateEntry.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
         this.handleGoBack = this.handleGoBack.bind(this);
-        this.handleLoadUserInfo = this.handleLoadUserInfo.bind(this);
+        this.handleLoadUser = this.handleLoadUser.bind(this);
         this.handleRefreshWordlist = this.handleRefreshWordlist.bind(this);
         this.handleRefreshReviewTasks = this.handleRefreshReviewTasks.bind(this);
         this.handleDictionaryUpdate = this.handleDictionaryUpdate.bind(this);
@@ -124,20 +139,20 @@ class App extends Component<RouteComponentProps, State> {
         if (!possibleLandingPages.includes(this.props.location.pathname)) {
             this.props.history.replace("/");
         }
-        if (prod && (this.state.options.level !== "editor")) {
+        if (prod && (!(this.state.user?.level === "editor"))) {
             ReactGA.pageview(window.location.pathname + window.location.search);
         }
         dictionary.initialize().then((r) => {
+            this.checkUserCronJob.start();
+            this.networkCronJob.start();
             this.setState({
                 dictionaryStatus: "ready",
                 dictionaryInfo: r.dictionaryInfo,
             });
+            this.handleLoadUser();
             // incase it took forever and timed out - might need to reinitialize the wordlist here ??
-            if (wordlistEnabled(this.state)) {
-                initializeLocalDb("wordlist", this.handleRefreshWordlist, auth.currentUser ? auth.currentUser.uid : undefined);
-            }
-            if (this.state.options.level === "editor") {
-                initializeLocalDb("reviewTasks", this.handleRefreshReviewTasks);
+            if (this.state.user) {
+                startLocalDbs(this.state.user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
             }
             if (this.props.location.pathname === "/word") {
                 const wordId = getWordId(this.props.location.search);
@@ -182,32 +197,6 @@ class App extends Component<RouteComponentProps, State> {
             }
           });
         }
-        this.unregisterAuthObserver = auth.onAuthStateChanged((user) => {
-            if (user) {
-                if (wordlistEnabled(this.state)) {
-                    initializeLocalDb("wordlist", this.handleRefreshWordlist, user.uid);
-                }
-                sendSubmissions();
-                this.handleLoadUserInfo().catch(console.error);
-                this.networkCronJob.stop();
-                this.networkCronJob.start();
-            } else {
-                // signed out
-                this.networkCronJob.stop();
-                if (this.wordlistSync) {
-                    this.wordlistSync.cancel();
-                    this.wordlistSync = undefined;
-                }
-                if (this.reviewTastsSync) {
-                    this.reviewTastsSync.cancel();
-                    this.reviewTastsSync = undefined;
-                }
-                deInitializeLocalDb("wordlist");
-                deInitializeLocalDb("reviewTasks");
-                this.handleOptionsUpdate({ type: "changeUserLevel", payload: "basic" });
-            }
-            this.forceUpdate();
-        });
         Mousetrap.bind(["ctrl+down", "ctrl+up", "command+down", "command+up"], (e) => {
             if (e.repeat) return;
             this.handleOptionsUpdate({ type: "toggleLanguage" });
@@ -218,7 +207,7 @@ class App extends Component<RouteComponentProps, State> {
         });
         Mousetrap.bind(["ctrl+\\", "command+\\"], (e) => {
             if (e.repeat) return;
-            if (this.state.options.level === "basic") return;
+            if (this.state.user?.level === "basic") return;
             if (this.props.location.pathname !== "/wordlist") {
                 this.props.history.push("/wordlist");
             } else {
@@ -229,14 +218,9 @@ class App extends Component<RouteComponentProps, State> {
 
     public componentWillUnmount() {
         window.removeEventListener("scroll", this.handleScroll);
-        this.unregisterAuthObserver();
+        this.checkUserCronJob.stop();
         this.networkCronJob.stop();
-        if (this.wordlistSync) {
-            this.wordlistSync.cancel();
-        }
-        if (this.reviewTastsSync) {
-            this.reviewTastsSync.cancel();
-        }
+        stopLocalDbs();
         Mousetrap.unbind(["ctrl+down", "ctrl+up", "command+down", "command+up"]);
         Mousetrap.unbind(["ctrl+b", "command+b"]);
         Mousetrap.unbind(["ctrl+\\", "command+\\"]);
@@ -244,7 +228,7 @@ class App extends Component<RouteComponentProps, State> {
 
     public componentDidUpdate(prevProps: RouteComponentProps) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
-            if (prod && (this.state.options.level !== "editor")) {
+            if (prod && (!(this.state.user?.level === "editor"))) {
                 ReactGA.pageview(window.location.pathname + window.location.search);
             }
             if (this.props.location.pathname === "/") {
@@ -256,12 +240,12 @@ class App extends Component<RouteComponentProps, State> {
                     page: 1,
                 });
             }
-            if (editorOnlyPages.includes(this.props.location.pathname) && this.state.options.level !== "editor") {
+            if (editorOnlyPages.includes(this.props.location.pathname) && !(this.state.user?.level === "editor")) {
                 this.props.history.replace("/");
             }
         }
         if (getWordId(this.props.location.search) !== getWordId(prevProps.location.search)) {
-            if (prod && (this.state.options.level !== "editor")) {
+            if (prod && ((this.state.user?.level !== "editor"))) {
                 ReactGA.pageview(window.location.pathname + window.location.search);
             }
             const wordId = getWordId(this.props.location.search);
@@ -277,54 +261,42 @@ class App extends Component<RouteComponentProps, State> {
         // }
     }
 
-    private unregisterAuthObserver() {
-        // will be filled in on mount
-    }
-
-    private wordlistSync: PouchDB.Replication.Sync<any> | undefined = undefined;
-    private reviewTastsSync: PouchDB.Replication.Sync<any> | undefined = undefined;
-
-    private async handleLoadUserInfo(): Promise<BT.CouchDbUser | undefined> {
+    private async handleLoadUser(): Promise<void> {
         try {
-            const userInfo = await loadUserInfo();
-            const differentUserInfoLevel = userInfo && (userInfo.level !== this.state.options.level);
-            const needToDowngrade = (!userInfo && wordlistEnabled(this.state));
-            if (differentUserInfoLevel || needToDowngrade) {
-                this.handleOptionsUpdate({
-                    type: "changeUserLevel",
-                    payload: userInfo ? userInfo.level : "basic",
-                });
+            const prevUser = this.state.user;
+            const userOnServer = await getUser();
+            if (userOnServer === "offline") return;
+            if (userOnServer) sendSubmissions();
+            if (!userOnServer) {
+                this.setState({ user: undefined });
+                saveUser(undefined);
+                return;
             }
-            if (!userInfo) return undefined;
-            // only sync wordlist for upgraded accounts
-            if (userInfo && wordlistEnabled(userInfo.level)) {
-                // TODO: GO OVER THIS HORRENDOUS BLOCK
-                if (userInfo.level === "editor") {
-                    initializeLocalDb("reviewTasks", this.handleRefreshReviewTasks);
-                    if (!this.reviewTastsSync) {
-                        this.reviewTastsSync = startLocalDbSync("reviewTasks", { name: userInfo.name, password: userInfo.userdbPassword });
-                    }
-                }
-                const wordlistName = getLocalDbName("wordlist") ?? "";
-                const usersWordlistInitialized = wordlistName.includes(userInfo.name);
-                if (this.wordlistSync && usersWordlistInitialized) {
-                    // sync already started for the correct db, don't start it again
-                    return userInfo;
-                }
-                if (this.wordlistSync) {
-                    this.wordlistSync.cancel();
-                    this.wordlistSync = undefined;
-                }
-                if (!usersWordlistInitialized) {
-                    initializeLocalDb("wordlist", this.handleRefreshWordlist, userInfo.name);
-                }
-                this.wordlistSync = startLocalDbSync("wordlist", { name: userInfo.name, password: userInfo.userdbPassword });
+            const { userTextOptionsRecord, serverOptionsAreNewer } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord);
+            const user: AT.LingdocsUser = {
+                ...userOnServer,
+                userTextOptionsRecord,
+            };
+            this.setState({ user });
+            saveUser(user);
+            const textOptionsRecord: TextOptionsRecord = {
+                lastModified: userTextOptionsRecord.lastModified,
+                textOptions: {
+                    ...userTextOptionsRecord.userTextOptions,
+                    pTextSize: getTextOptions(this.state).pTextSize,
+                },
+            };
+            this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
+            if (!serverOptionsAreNewer) {
+                updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
             }
-            return userInfo;
+            if (user) {
+                startLocalDbs(user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
+            } else {
+                stopLocalDbs();
+            }
         } catch (err) {
             console.error("error checking user level", err);
-            // don't downgrade the level if it's editor/studend and offline (can't check user info)
-            return undefined;
         }
     }
 
@@ -345,6 +317,7 @@ class App extends Component<RouteComponentProps, State> {
         if (action.type === "changeTheme") {
             document.documentElement.setAttribute("data-theme", action.payload);
         }
+        // TODO: use a seperate reducer for changing text options (otherwise you could just be updating the saved text options instead of the user text options that the program is going off of)
         const options = optionsReducer(this.state.options, action);
         saveOptions(options);
         if (action.type === "toggleLanguage" || action.type === "toggleSearchType") {
@@ -360,6 +333,25 @@ class App extends Component<RouteComponentProps, State> {
             }
         } else {
             this.setState({ options });
+        }
+    }
+
+    private handleTextOptionsUpdate(action: TextOptionsAction) {
+        const textOptions = textOptionsReducer(this.state.options.textOptionsRecord.textOptions, action);
+        const lastModified = Date.now() as AT.TimeStamp;
+        const textOptionsRecord: TextOptionsRecord = {
+            lastModified,
+            textOptions,
+        };
+        this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
+        // try to save the new text options to the user 
+        if (this.state.user) {
+            const userTextOptions = removePTextSize(textOptions);
+            const userTextOptionsRecord = {
+                userTextOptions,
+                lastModified,
+            };
+            updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
         }
     }
 
@@ -401,10 +393,11 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
+    private checkUserCronJob = new CronJob("1/20 * * * * *", () => {
+        this.handleLoadUser();
+    })
+
     private networkCronJob = new CronJob("1/5 * * * *", () => {
-        // TODO: check for new dictionary (in a seperate cron job - not dependant on the user being signed in)
-        this.handleLoadUserInfo();
-        sendSubmissions();
         this.handleDictionaryUpdate();
     });
 
@@ -445,7 +438,7 @@ class App extends Component<RouteComponentProps, State> {
             paddingBottom: "60px",    
         }}>
             <Helmet>
-                <title>LingDocs Pashto Dictionary</title>
+                <title>LingDocs Dictionary - Dev Branch</title>
             </Helmet>
                 {this.state.options.searchBarPosition === "top" && <SearchBar
                     state={this.state}
@@ -459,11 +452,11 @@ class App extends Component<RouteComponentProps, State> {
                     <>
                         <Route path="/" exact>
                             <div className="text-center mt-4">
-                                <h4 className="font-weight-light p-3 mb-4">LingDocs Pashto Dictionary</h4>
+                                <h4 className="font-weight-light p-3 mb-4">LingDocs Pashto Dictionary - DEV</h4>
                                 {this.state.options.searchType === "alphabetical" && <div className="mt-4 font-weight-light">
                                     <div className="mb-3"><span className="fa fa-book mr-2" ></span> Alphabetical browsing mode</div>
                                 </div>}
-                                {this.state.options.level === "editor" && <div className="mt-4 font-weight-light">
+                                {this.state.user?.level === "editor" && <div className="mt-4 font-weight-light">
                                     <div className="mb-3">Editor priveleges active</div>
                                     <Link to="/edit">
                                         <button className="btn btn-secondary">New Entry</button>
@@ -478,7 +471,12 @@ class App extends Component<RouteComponentProps, State> {
                             <About state={this.state} />
                         </Route>
                         <Route path="/settings">
-                            <Options options={this.state.options} optionsDispatch={this.handleOptionsUpdate} />
+                            <Options
+                                state={this.state}
+                                options={this.state.options}
+                                optionsDispatch={this.handleOptionsUpdate}
+                                textOptionsDispatch={this.handleTextOptionsUpdate}
+                            />
                         </Route>
                         <Route path="/search">
                             <Results state={this.state} isolateEntry={this.handleIsolateEntry} />
@@ -492,10 +490,7 @@ class App extends Component<RouteComponentProps, State> {
                             }
                         </Route>
                         <Route path="/account">
-                            <Account level={this.state.options.level} loadUserInfo={this.handleLoadUserInfo} handleSignOut={(() => {
-                                this.props.history.replace("/");
-                                auth.signOut();
-                            })} />
+                            <Account user={this.state.user} loadUser={this.handleLoadUser} />
                         </Route>
                         <Route path="/word">
                             <IsolatedEntry
@@ -504,21 +499,21 @@ class App extends Component<RouteComponentProps, State> {
                                 isolateEntry={this.handleIsolateEntry}
                             />
                         </Route>
-                        {wordlistEnabled(this.state) && <Route path="/wordlist">
+                        {wordlistEnabled(this.state.user) && <Route path="/wordlist">
                             <Wordlist
                                 state={this.state}
                                 isolateEntry={this.handleIsolateEntry}
                                 optionsDispatch={this.handleOptionsUpdate}
                             />
                         </Route>}
-                        {this.state.options.level === "editor" && <Route path="/edit">
+                        {this.state.user?.level === "editor" && <Route path="/edit">
                             <EntryEditor
                                 state={this.state}
                                 dictionary={dictionary}
                                 searchParams={new URLSearchParams(this.props.history.location.search)}
                             />
                         </Route>}
-                        {this.state.options.level === "editor" && <Route path="/review-tasks">
+                        {this.state.user?.level === "editor" && <Route path="/review-tasks">
                             <ReviewTasks state={this.state} />
                         </Route>}
                     </>
@@ -534,15 +529,15 @@ class App extends Component<RouteComponentProps, State> {
                     <div className="buttons-footer">
                         <BottomNavItem label="About" icon="info-circle" page="/about" />
                         <BottomNavItem label="Settings" icon="cog" page="/settings" />
-                        <BottomNavItem label={auth.currentUser ? "Account" : "Sign In"} icon="user" page="/account" />
-                        {wordlistEnabled(this.state) &&
+                        <BottomNavItem label={this.state.user ? "Account" : "Sign In"} icon="user" page="/account" />
+                        {wordlistEnabled(this.state.user) &&
                             <BottomNavItem
                                 label={`Wordlist ${this.state.options.wordlistReviewBadge ? textBadge(forReview(this.state.wordlist).length) : ""}`}
                                 icon="list"
                                 page="/wordlist"
                             />
                         }
-                        {this.state.options.level === "editor" &&
+                        {this.state.user?.level === "editor" &&
                             <BottomNavItem
                                 label={`Tasks ${textBadge(this.state.reviewTasks.length)}`}
                                 icon="edit"

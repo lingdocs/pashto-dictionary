@@ -20,8 +20,7 @@ function setupSession(app: Express) {
                 maxAge: 1000 * 60 * 60 * 24 * 7 * 30 * 6,
                 secure: inProd,
                 domain: inProd ? "lingdocs.com" : undefined,
-                // TODO: TRY TO SET TO TRUE
-                httpOnly: false,
+                httpOnly: true,
             },
             store: inProd
                 ? new RedisStore({ client: redis.createClient() })

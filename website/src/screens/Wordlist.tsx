@@ -44,6 +44,8 @@ import AudioPlayButton from "../components/AudioPlayButton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import hitBottom from "../lib/hitBottom";
+import { getTextOptions } from "../lib/get-text-options";
+
 const cleanupIcon = "broom";
 
 dayjs.extend(relativeTime);
@@ -94,6 +96,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
         // eslint-disable-next-line
     }, []);
     const toReview = forReview(state.wordlist);
+    const textOptions = getTextOptions(state);
     function handleScroll() {
         // TODO: DON'T HAVE ENDLESS PAGE INCREASING
         if (hitBottom() && state.options.wordlistMode === "browse") {
@@ -116,7 +119,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
     }
     function handleSearchValueChange(value: string) {
         setWordlistSearchValue(value);
-        const results = value ? searchWordlist(value, state.wordlist, state.options.textOptions) : [];
+        const results = value ? searchWordlist(value, state.wordlist, textOptions) : [];
         setFilteredWords(results);
     }
     async function handleGetWordlistCSV() {
@@ -152,7 +155,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
         return <div className="mb-4">
             <Entry
                 entry={word.entry}
-                textOptions={state.options.textOptions}
+                textOptions={textOptions}
                 isolateEntry={() => handleWordClickBrowse(word._id)}
             />
             {hasAttachment(word, "audio") && <AudioPlayButton word={word} />}
@@ -217,14 +220,14 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                 <div className="card-body">
                     <h6 className="card-title text-center">
                         {state.options.wordlistReviewLanguage === "Pashto"
-                            ? <InlinePs opts={state.options.textOptions}>{{ p: word.entry.p, f: word.entry.f }}</InlinePs>
+                            ? <InlinePs opts={textOptions}>{{ p: word.entry.p, f: word.entry.f }}</InlinePs>
                             : word.entry.e
                         }
                     </h6>
                     {beingQuizzed && <div className="card-text text-center">
                         {state.options.wordlistReviewLanguage === "Pashto"
                             ? <div>{word.entry.e}</div>
-                            : <InlinePs opts={state.options.textOptions}>
+                            : <InlinePs opts={textOptions}>
                                 {{ p: word.entry.p, f: word.entry.f }}
                             </InlinePs>
                         }
@@ -311,7 +314,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                                             const { e, ...ps } = nextUp.entry;
                                             return <div>
                                                 <div className="lead my-3">None to review</div>
-                                                <p>Next word up for review <strong>{dayjs().to(nextUp.dueDate)}</strong>: <InlinePs opts={state.options.textOptions}>
+                                                <p>Next word up for review <strong>{dayjs().to(nextUp.dueDate)}</strong>: <InlinePs opts={textOptions}>
                                                     {removeFVariants(ps)}
                                                 </InlinePs></p>
                                             </div>;

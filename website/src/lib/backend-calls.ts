@@ -1,56 +1,73 @@
-import { auth } from "./firebase";
-import * as BT from "./backend-types";
+import * as FT from "./functions-types";
+import * as AT from "./account-types";
 
-const functionsBaseUrl = // process.env.NODE_ENV === "development"
-    // "http://127.0.0.1:5001/lingdocs/europe-west1/"
-    "https://europe-west1-lingdocs.cloudfunctions.net/";
+type Service = "account" | "functions";
 
+const baseUrl: Record<Service, string> = {
+    account: "https://account.lingdocs.com/api/",
+    functions: "https://functions.lingdocs.com/",
+};
 
-export async function publishDictionary(): Promise<BT.PublishDictionaryResponse> {
-    const res = await tokenFetch("publishDictionary");
-    if (!res) {
-        throw new Error("Connection error/offline");
-    }
-    return res;
+// FUNCTIONS CALLS - MUST BE RE-ROUTED THROUGH FIREBASE HOSTING IN ../../../firebase.json
+export async function publishDictionary(): Promise<FT.PublishDictionaryResponse | FT.FunctionError> {
+    return await myFetch("functions", "publishDictionary") as FT.PublishDictionaryResponse | FT.FunctionError;
 }
 
-export async function upgradeAccount(password: string): Promise<BT.UpgradeUserResponse> {
-    const res = await tokenFetch("upgradeUser", "POST", { password });
-    if (!res) {
-        throw new Error("Connection error/offline");
-    }
-    return res;
+export async function postSubmissions(submissions: FT.SubmissionsRequest): Promise<FT.SubmissionsResponse> {
+    return await myFetch("functions", "submissions", "POST", submissions) as FT.SubmissionsResponse;
 }
 
-export async function postSubmissions(submissions: BT.SubmissionsRequest): Promise<BT.SubmissionsResponse> {
-    return await tokenFetch("submissions", "POST", submissions) as BT.SubmissionsResponse;
+// ACCOUNT CALLS
+export async function upgradeAccount(password: string): Promise<AT.UpgradeUserResponse> {
+    const response = await myFetch("account", "user/upgrade", "PUT", { password });
+    return response as AT.UpgradeUserResponse;
 }
 
-export async function loadUserInfo(): Promise<undefined | BT.CouchDbUser> {
-    const res = await tokenFetch("getUserInfo", "GET") as BT.GetUserInfoResponse;
-    return "user" in res ? res.user : undefined;
+export async function upgradeToStudentRequest(): Promise<AT.APIResponse> {
+    return await myFetch("account", "user/upgradeToStudentRequest", "POST") as AT.APIResponse;
 }
 
-// TODO: HARD TYPING OF THIS WITH THE subUrl and return values etc?
-async function tokenFetch(subUrl: string, method?: "GET" | "POST", body?: any): Promise<any> {
-    if (!auth.currentUser) {
-        throw new Error("not signed in");
-    }
+export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.UserTextOptionsRecord): Promise<AT.UpdateUserTextOptionsRecordResponse> {
+    const response = await myFetch("account", "user/userTextOptionsRecord", "PUT", { userTextOptionsRecord }) as AT.UpdateUserTextOptionsRecordResponse;
+    return response;
+}
+
+export async function signOut() {
     try {
-        const token = await auth.currentUser.getIdToken();
-        const response = await fetch(`${functionsBaseUrl}${subUrl}`, {
-            method,
+        await myFetch("account", "sign-out", "POST");
+    } catch (e) {
+        return;
+    }
+}
+
+export async function getUser(): Promise<undefined | AT.LingdocsUser | "offline"> {
+    try {
+        const response = await myFetch("account", "user"); 
+        if ("user" in response) {
+            return response.user;
+        }
+        return undefined;
+    } catch (e) {
+        console.error(e);
+        return "offline";
+    }
+}
+
+async function myFetch(
+    service: Service,
+    url: string,
+    method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+    body?: FT.SubmissionsRequest | { password: string } | AT.UpdateUserTextOptionsRecordBody,
+): Promise<AT.APIResponse> {
+    const response = await fetch(baseUrl[service] + url, {
+        method,
+        credentials: "include",
+        ...body ? {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
             },
-            ...body ? {
-                body: JSON.stringify(body),
-            } : {},
-        });
-        return await response.json();
-    } catch (err) {
-        console.error(err);
-        throw err;
-    }
+            body: JSON.stringify(body),
+        } : {},
+    });
+    return await response.json() as AT.APIResponse;
 }

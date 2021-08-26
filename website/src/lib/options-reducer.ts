@@ -1,4 +1,7 @@
-function optionsReducer(options: Options, action: OptionsAction): Options {
+import { Types as IT } from "@lingdocs/pashto-inflector";
+import * as AT from "./account-types";
+
+export function optionsReducer(options: Options, action: OptionsAction): Options {
     if (action.type === "toggleLanguage") {
       return {
         ...options,
@@ -23,12 +26,6 @@ function optionsReducer(options: Options, action: OptionsAction): Options {
         searchBarPosition: action.payload,
       };
     }
-    if (action.type === "changeUserLevel") {
-      return {
-        ...options,
-        level: action.payload,
-      };
-    }
     if (action.type === "changeWordlistMode") {
       return {
         ...options,
@@ -47,52 +44,81 @@ function optionsReducer(options: Options, action: OptionsAction): Options {
         wordlistReviewLanguage: action.payload,
       };
     }
-    if (action.type === "changePTextSize") {
+    if (action.type === "updateTextOptionsRecord") {
       return {
         ...options,
-        textOptions: {
-          ...options.textOptions,
-          pTextSize: action.payload,
-        },
+        textOptionsRecord: action.payload,
       };
     }
-    if (action.type === "changeSpelling") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          spelling: action.payload,
-        }
-      };
-    }
-    if (action.type === "changePhonetics") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          phonetics: action.payload,
-        }
-      };
-    }
-    if (action.type === "changeDialect") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          dialect: action.payload,
-        }
-      };
-    }
-    if (action.type === "changeDiacritics") {
-      return {
-        ...options,
-        textOptions: {
-          ...options.textOptions,
-          diacritics: action.payload,
-        }
-      };
-    }
-    throw new Error("action type not recognized in reducer");
-  }
+    throw new Error("action type not recognized in options reducer");
+}
 
-export default optionsReducer;
+export function textOptionsReducer(textOptions: IT.TextOptions, action: TextOptionsAction): IT.TextOptions {
+  if (action.type === "changePTextSize") {
+    return {
+      ...textOptions,
+      pTextSize: action.payload,
+    };
+  }
+  if (action.type === "changeSpelling") {
+    return {
+      ...textOptions,
+      spelling: action.payload,
+    };
+  }
+  if (action.type === "changePhonetics") {
+    return {
+      ...textOptions,
+      phonetics: action.payload,
+    };
+  }
+  if (action.type === "changeDialect") {
+    return {
+      ...textOptions,
+      dialect: action.payload,
+    };
+  }
+  if (action.type === "changeDiacritics") {
+    return {
+      ...textOptions,
+      diacritics: action.payload,
+    };
+  }
+  throw new Error("action type not recognized in text options reducer");
+}
+
+export function removePTextSize(textOptions: IT.TextOptions): AT.UserTextOptions {
+  const { pTextSize, ...userTextOptions } = textOptions;
+  return userTextOptions;
+}
+
+export function resolveTextOptions(userOnServer: AT.LingdocsUser, prevUser: AT.LingdocsUser | undefined, localTextOptionsRecord: TextOptionsRecord): { userTextOptionsRecord: AT.UserTextOptionsRecord, serverOptionsAreNewer: boolean } {
+  const isANewUser = !prevUser || (userOnServer.userId !== prevUser.userId);
+  if (isANewUser) {
+    // take the new user's text options, if the have any
+    // if not just take the equivalent of the user text options from the saved record 
+    return userOnServer.userTextOptionsRecord
+      ? {
+        serverOptionsAreNewer: true,
+        userTextOptionsRecord: userOnServer.userTextOptionsRecord,
+      }
+      : {
+          serverOptionsAreNewer: false,
+          userTextOptionsRecord: {
+            lastModified: localTextOptionsRecord.lastModified,
+            userTextOptions: removePTextSize(localTextOptionsRecord.textOptions),
+          }
+      };
+  }
+  // if the new user is the same as the existing user that we had
+  const serverOptionsAreNewer = !!(userOnServer.userTextOptionsRecord && (userOnServer.userTextOptionsRecord.lastModified > localTextOptionsRecord.lastModified));
+  return {
+    serverOptionsAreNewer,
+    userTextOptionsRecord: (serverOptionsAreNewer && userOnServer.userTextOptionsRecord)
+      ? userOnServer.userTextOptionsRecord
+      : {
+        lastModified: localTextOptionsRecord.lastModified,
+        userTextOptions: removePTextSize(localTextOptionsRecord.textOptions),
+      },
+  };
+}

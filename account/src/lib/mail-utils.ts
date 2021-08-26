@@ -1,15 +1,16 @@
 import nodemailer from "nodemailer";
 import inProd from "./inProd";
 import env from "./env-vars";
+import * as T from "../../../website/src/lib/account-types";
 
 type Address = string | { name: string, address: string };
 
-const from: Address = {
+const adminAddress: Address = {
     name: "LingDocs Admin",
     address: "admin@lingdocs.com",
 };
 
-function getAddress(user: LingdocsUser): Address {
+function getAddress(user: T.LingdocsUser): Address {
     // TODO: Guard against ""
     if (!user.name) return user.email || "";
     return {
@@ -30,31 +31,52 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to: Address, subject: string, text: string) {
     await transporter.sendMail({
-        from,
+        from: adminAddress,
         to,
         subject,
         text,
     });
 }
 
-// TODO: MAKE THIS 
+// TODO: MAKE THIS A URL ACROSS PROJECT
 const baseURL = inProd ? "https://account.lingdocs.com" : "http://localhost:4000";
 
-export async function sendVerificationEmail(user: LingdocsUser, token: URLToken) {
+export async function sendVerificationEmail(user: T.LingdocsUser, token: T.URLToken) {
+    const subject = "Please Verify Your E-mail";
     const content = `Hello ${user.name},
 
 Please verify your email by visiting this link: ${baseURL}/email-verification/${user.userId}/${token}
 
 LingDocs Admin`;
-    await sendEmail(getAddress(user), "Please Verify Your E-mail", content);
+    await sendEmail(getAddress(user), subject, content);
 }
 
-export async function sendPasswordResetEmail(user: LingdocsUser, token: URLToken) {
+export async function sendPasswordResetEmail(user: T.LingdocsUser, token: T.URLToken) {
+    const subject = "Reset Your Password";
     const content = `Hello ${user.name},
 
 Please visit this link to reset your password: ${baseURL}/password-reset/${user.userId}/${token}
 
 LingDocs Admin`;
 
-    await sendEmail(getAddress(user), "Reset Your Password", content);
+    await sendEmail(getAddress(user), subject, content);
+}
+
+export async function sendAccountUpgradeMessage(user: T.LingdocsUser) {
+    const subject = "You're Upgraded to Student";
+    const content = `Hello ${user.name},
+    
+Congratulations on your upgrade to a LingDocs Student account! 👨‍🎓
+
+Now you can start using your wordlist in the dictionary. It will automatically sync across any devices you're signed in to.
+
+LingDocs Admin`;
+
+    await sendEmail(getAddress(user), subject, content);
+}
+
+export async function sendUpgradeRequestToAdmin(userWantingToUpgrade: T.LingdocsUser) {
+    const subject = "Account Upgrade Request";
+    const content = `${userWantingToUpgrade.name} - ${userWantingToUpgrade.email} - ${userWantingToUpgrade.userId} is requesting to upgrade to student.`;
+    await sendEmail(adminAddress, subject, content);
 }

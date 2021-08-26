@@ -1,19 +1,28 @@
 import express, { Response } from "express";
 import {
     deleteLingdocsUser,
+    getLingdocsUser,
     updateLingdocsUser,
+    deleteCouchDbAuthUser,
 } from "../lib/couch-db";
 import {
     getHash,
-    getURLToken,
     compareToHash,
     getEmailTokenAndHash,
 } from "../lib/password-utils";
 import {
+    sendUpgradeRequestToAdmin,
     sendVerificationEmail,
 } from "../lib/mail-utils";
+import {
+    upgradeUser,
+} from "../lib/user-utils";
+import * as T from "../../../website/src/lib/account-types";
+import env from "../lib/env-vars";
 
-function sendResponse(res: Response, payload: APIResponse) {
+// TODO: ADD PROPER ERROR HANDLING THAT WILL RETURN JSON ALWAYS
+
+function sendResponse(res: Response, payload: T.APIResponse) {
     return res.send(payload);
 }
 
@@ -24,7 +33,7 @@ apiRouter.use((req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
-    const r: APIResponse = { ok: false, error: "401 Unauthorized" };
+    const r: T.APIResponse = { ok: false, error: "401 Unauthorized" };
     return res.status(401).send(r);
 });
 
@@ -87,6 +96,65 @@ apiRouter.put("/email-verification", async (req, res, next) => {
     }
 });
 
+apiRouter.put("/user/userTextOptionsRecord", async (req, res, next) => {
+    if (!req.user) throw new Error("user not found");
+    try {
+        const { userTextOptionsRecord } = req.body as T.UpdateUserTextOptionsRecordBody;
+        const user = await updateLingdocsUser(req.user.userId, { userTextOptionsRecord });
+        const toSend: T.UpdateUserTextOptionsRecordResponse = { ok: true, message: "updated userTextOptionsRecord", user };
+        res.send(toSend);
+    } catch (e) {
+        next(e);
+    }
+});
+
+apiRouter.put("/user/upgrade", async (req, res, next) => {
+    if (!req.user) throw new Error("user not found");
+    try {
+        const givenPassword = (req.body.password || "") as string;
+        const studentPassword = env.upgradePassword;
+        if (givenPassword.toLowerCase().trim() !== studentPassword.toLowerCase()) {
+            const wrongPass: T.UpgradeUserResponse = {
+                ok: false,
+                error: "incorrect password",
+            };
+            res.send(wrongPass);
+            return;
+        }
+        const { userId } = req.user;
+        const user = await getLingdocsUser("userId", userId);
+        if (!user) throw new Error("user lost");
+        if (user.level !== "basic") {
+            const alreadyUpgraded: T.UpgradeUserResponse = {
+                ok: true,
+                message: "user already upgraded",
+                user,
+            };
+            res.send(alreadyUpgraded);
+            return;
+        }
+        const upgraded: T.UpgradeUserResponse = await upgradeUser(userId);
+        res.send(upgraded);
+    } catch (e) {
+        next(e);
+    }
+});
+
+apiRouter.post("/user/upgradeToStudentRequest", async (req, res, next) => {
+    if (!req.user) throw new Error("user not found");
+    try {
+        if (req.user.level === "student" || req.user.level === "editor") {
+           res.send({ ok: true, message: "user already upgraded" });
+           return;
+        }
+        sendUpgradeRequestToAdmin(req.user).catch(console.error);
+        await updateLingdocsUser(req.user.userId, { upgradeToStudentRequest: "waiting" });
+        res.send({ ok: true, message: "request for upgrade sent" });
+    } catch (e) {
+        next(e);
+    }
+});
+
 /**
  * deletes a users own account
  */
@@ -94,7 +162,7 @@ apiRouter.delete("/user", async (req, res, next) => {
     try {
         if (!req.user) throw new Error("user not found");
         await deleteLingdocsUser(req.user.userId);
-        sendResponse(res, { ok: true, message: "user delted" });
+        sendResponse(res, { ok: true, message: "user deleted" });
     } catch (e) {
         next(e);
     }
@@ -103,7 +171,7 @@ apiRouter.delete("/user", async (req, res, next) => {
 /**
  * signs out the user signed in
  */
-apiRouter.post("/sign-out" , (req, res) => {
+apiRouter.post("/sign-out", (req, res) => {
     req.logOut();
     sendResponse(res, { ok: true, message: "signed out" });
 });

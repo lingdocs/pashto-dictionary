@@ -8,6 +8,7 @@ const names = [
     "LINGDOCS_ACCOUNT_TWITTER_CLIENT_SECRET",
     "LINGDOCS_ACCOUNT_GITHUB_CLIENT_SECRET",
     "LINGDOCS_ACCOUNT_RECAPTCHA_SECRET",
+    "LINGDOCS_ACCOUNT_UPGRADE_PASSWORD",
 ];
 
 const values = names.map((name) => ({
@@ -31,4 +32,5 @@ export default {
     twitterClientSecret: values[6].value,
     githubClientSecret: values[7].value,
     recaptchaSecret: values[8].value,
+    upgradePassword: values[9].value,
 };

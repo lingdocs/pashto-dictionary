@@ -1,73 +1,113 @@
 import PouchDB from "pouchdb";
-import * as BT from "./backend-types";
+import * as AT from "./account-types";
+import * as FT from "./functions-types";
 
 type LocalDbType = "submissions" | "wordlist" | "reviewTasks";
-type LocalDb = null | { refresh: () => void, db: PouchDB.Database };
+
+const localDbTypes: LocalDbType[] = ["submissions", "wordlist", "reviewTasks"];
+
+type UnsyncedLocalDb = {
+    refresh: () => void,
+    db: PouchDB.Database,
+};
+
+type SyncedLocalDb = UnsyncedLocalDb & {
+    sync: PouchDB.Replication.Sync<any>,
+};
+
+type DBS = {
+    submissions: undefined | UnsyncedLocalDb,
+    wordlist: undefined | SyncedLocalDb,
+    reviewTasks: undefined | SyncedLocalDb,
+};
+
 type DbInput = {
     type: "wordlist",
     doc: WordlistWord,
 } | {
     type: "submissions",
-    doc: BT.Submission,
+    doc: FT.Submission,
 } | {
     type: "reviewTasks",
-    doc: BT.ReviewTask,
+    doc: FT.ReviewTask,
 };
 
-const dbs: Record<LocalDbType, LocalDb> = {
+const dbs: DBS = {
     /* for anyone logged in - for edits/suggestions submissions */
-    submissions: null,
+    submissions: undefined,
     /* for students and above - personal wordlist database */
-    wordlist: null,
+    wordlist: undefined,
     /* for editors only - edits/suggestions (submissions) for review */
-    reviewTasks: null,
+    reviewTasks: undefined,
 };
 
-export function initializeLocalDb(type: LocalDbType, refresh: () => void, uid?: string | undefined) {
-    const name = type === "wordlist"
-        ? `userdb-${uid? stringToHex(uid) : "guest"}`
+export function startLocalDbs(user: AT.LingdocsUser, refreshFns: { wordlist: () => void, reviewTasks: () => void }) {
+    if (user.level === "basic") {
+        initializeLocalDb("submissions", () => null, user);
+    }
+    if (user.level === "student") {
+        initializeLocalDb("submissions", () => null, user);
+        initializeLocalDb("wordlist", refreshFns.wordlist, user);
+    }
+    if (user.level === "editor") {
+        deInitializeLocalDb("submissions");
+        initializeLocalDb("reviewTasks", refreshFns.reviewTasks, user);
+        initializeLocalDb("wordlist", refreshFns.wordlist, user);
+    }
+}
+
+function deInitializeLocalDb(type: LocalDbType) {
+    const db = dbs[type];
+    if (db && "sync" in db) {
+        db.sync.cancel();
+    }
+    dbs[type] = undefined;
+}
+
+export function stopLocalDbs() {
+    localDbTypes.forEach((type) => {
+        deInitializeLocalDb(type);
+    });
+}
+
+function initializeLocalDb(type: LocalDbType, refresh: () => void, user: AT.LingdocsUser) {
+    if (type !== "submissions" && "wordlistDb" in user) return 
+    const name = type === "reviewTasks"
+        ? "review-tasks"
         : type === "submissions"
         ? "submissions"
-        : "review-tasks";
+        : (type === "wordlist" && "wordlistDbName" in user)
+        ? user.wordlistDbName
+        : "";
+    const password = "couchDbPassword" in user ? user.couchDbPassword : "";
     const db = dbs[type];
     // only initialize the db if it doesn't exist or if it has a different name
     if ((!db) || (db.db?.name !== name)) {
-        dbs[type] = {
-            db: new PouchDB(name),
-            refresh,
-        };
+        if (type === "submissions") {
+            dbs[type] = {
+                refresh,
+                db: new PouchDB(name),
+            };
+        } else {
+            dbs[type]?.sync.cancel();
+            const db = new PouchDB(name);
+            dbs[type] = {
+                db,
+                refresh,
+                sync: db.sync(
+                    `https://${user.userId}:${password}@couch.lingdocs.com/${name}`, 
+                    { live: true, retry: true },
+                ).on("change", (info) => {
+                    if (info.direction === "pull") {
+                        refresh();
+                    }
+                }).on("error", (error) => {
+                    console.error(error);
+                }),
+            };
+        }
         refresh();
     }
-}
-
-export function getLocalDbName(type: LocalDbType) {
-    return dbs[type]?.db.name;
-}
-
-export function deInitializeLocalDb(type: LocalDbType) {
-    dbs[type] = null;
-}
-
-export function startLocalDbSync(
-    type: "wordlist" | "reviewTasks",
-    auth: { name: string, password: string },
-) {
-    const localDb = dbs[type];
-    if (!localDb) {
-        console.error(`unable to start sync because ${type} database is not initialized`);
-        return;
-    }
-    const sync = localDb.db.sync(
-        `https://${auth.name}:${auth.password}@couchdb.lingdocs.com/${localDb.db.name}`, 
-        { live: true, retry: true },
-    ).on("change", (info) => {
-        if (info.direction === "pull") {
-            localDb.refresh();
-        }
-    }).on("error", (error) => {
-        console.error(error);
-    });
-    return sync;
 }
 
 export async function addToLocalDb({ type, doc }: DbInput) {
@@ -99,13 +139,13 @@ export async function updateLocalDbDoc({ type, doc }: DbInput, id: string) {
     return updated;
 }
 
-export async function getAllDocsLocalDb(type: "submissions", limit?: number): Promise<BT.Submission[]>;
+export async function getAllDocsLocalDb(type: "submissions", limit?: number): Promise<FT.Submission[]>;
 export async function getAllDocsLocalDb(type: "wordlist", limit?: number): Promise<WordlistWordDoc[]>;
-export async function getAllDocsLocalDb(type: "reviewTasks", limit?: number): Promise<BT.ReviewTask[]>
-export async function getAllDocsLocalDb(type: LocalDbType, limit?: number): Promise<BT.Submission[] | WordlistWordDoc[] | BT.ReviewTask[]> {
+export async function getAllDocsLocalDb(type: "reviewTasks", limit?: number): Promise<FT.ReviewTask[]>
+export async function getAllDocsLocalDb(type: LocalDbType, limit?: number): Promise<FT.Submission[] | WordlistWordDoc[] | FT.ReviewTask[]> {
     const localDb = dbs[type];
     if (!localDb) {
-        throw new Error(`unable to get all docs from ${type} database - not initialized`);
+        return [];
     }
     const descending = type !== "reviewTasks";
     const result = await localDb.db.allDocs({
@@ -116,11 +156,11 @@ export async function getAllDocsLocalDb(type: LocalDbType, limit?: number): Prom
     const docs = result.rows.map((row) => row.doc) as unknown;
     switch (type) {
         case "submissions":
-            return docs as BT.Submission[];
+            return docs as FT.Submission[];
         case "wordlist":
             return docs as WordlistWordDoc[];
         case "reviewTasks":
-            return docs as BT.ReviewTask[];
+            return docs as FT.ReviewTask[];
     }
 }
 
@@ -158,13 +198,4 @@ export async function deleteFromLocalDb(type: LocalDbType, id: string | string[]
         await localDb.db.remove(doc);
     }
     localDb.refresh();
-}
-
-function stringToHex(str: string) {
-	const arr1 = [];
-	for (let n = 0, l = str.length; n < l; n ++) {
-		const hex = Number(str.charCodeAt(n)).toString(16);
-		arr1.push(hex);
-	}
-	return arr1.join('');
 }

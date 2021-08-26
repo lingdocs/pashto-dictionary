@@ -138,12 +138,72 @@ pm2 start ecosystem.config.js
 pm2 save
 ```
 
+Put behind a NGINX reverse proxy with this config (encryption by LetsEncrypt)
+
+```
+server {
+    server_name account.lingdocs.com;
+
+    location / {
+        proxy_pass http://localhost:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Access-Control-Allow-Origin *;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    error_page 500 /500.json;
+    location /500.json {
+        return 500 '{"ok":false,"error":"500 Internal Server Error"}';
+    }
+
+    error_page 502 /502.json;
+    location /502.json {
+        return 502 '{"ok":false,"error":"502 Bad Gateway"}';
+    }
+
+    error_page 503 /503.json;
+    location /503.json {
+        return 503 '{"ok":false,"error":"503 Service Temporarily Unavailable"}';
+    }
+
+    error_page 504 /504.json;
+    location /504.json {
+        return 504 '{"ok":false,"error":"504 Gateway Timeout"}';
+    }
+
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/account.lingdocs.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/account.lingdocs.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+server {
+    if ($host = account.lingdocs.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        server_name account.lingdocs.com;
+
+        listen 80;
+        listen [::]:80;
+    return 404; # managed by Certbot
+
+}
+```
+
 #### CouchDB
 
 When a user upgrades their account level to `student` or `editor`:
 
 1. A doc in the `_users` db is created with their Firebase Authentication info, account level, and a password they can use for syncing their personal wordlistdb
-2. A user database is created (by the firebase functions - *not* by the couchdb_peruser) which they use to sync their personal wordlist.  
+2. A user database is created (automatically by `couchdb_peruser`) which they use to sync their personal wordlist.  
 
 There is also a `review-tasks` database which is used to store all the review tasks for editors and syncs with the review tasks in the app for the editor(s). 
 

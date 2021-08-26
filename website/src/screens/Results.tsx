@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import * as BT from "../lib/backend-types";
+import * as FT from "../lib/functions-types";
 import { 
     submissionBase,
     addSubmission,
@@ -15,7 +15,6 @@ import {
 import { isPashtoScript } from "../lib/is-pashto";
 import Entry from "../components/Entry";
 import { Helmet } from "react-helmet";
-import { auth } from "../lib/firebase";
 import { allEntries } from "../lib/dictionary";
 import {
     standardizePashto,
@@ -24,6 +23,7 @@ import {
 } from "@lingdocs/pashto-inflector";
 import InflectionSearchResult from "../components/InflectionSearchResult";
 import { searchAllInflections } from "../lib/search-all-inflections";
+import { getTextOptions } from "../lib/get-text-options";
 
 const inflectionSearchIcon = "fas fa-search-plus";
 
@@ -42,6 +42,7 @@ function Results({ state, isolateEntry }: {
     const [pashto, setPashto] = useState<string>("");
     const [phonetics, setPhonetics] = useState<string>("");
     const [english, setEnglish] = useState<string>("");
+    const textOptions = getTextOptions(state);
     useEffect(() => {
         setPowerResults(undefined);
     }, [state.searchValue])
@@ -63,16 +64,17 @@ function Results({ state, isolateEntry }: {
     }
     function submitSuggestion(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         event.preventDefault();
+        if (!state.user) return;
         const p = pashto;
         const f = phonetics;
         const e = english; 
-        const newEntry: BT.EntrySuggestion = {
-            ...submissionBase(),
+        const newEntry: FT.EntrySuggestion = {
+            ...submissionBase(state.user),
             type: "entry suggestion",
             entry: { ts: 0, i: 0, p, f, g: "", e },
             comment,
         };
-        addSubmission(newEntry, state.options.level);
+        addSubmission(newEntry, state.user);
         setSuggestionState("received");
     }
     function handlePowerSearch() {
@@ -82,7 +84,7 @@ function Results({ state, isolateEntry }: {
             const allDocs = allEntries();
             const results = searchAllInflections(
                 allDocs,
-                prepValueForSearch(state.searchValue, state.options.textOptions),
+                prepValueForSearch(state.searchValue, textOptions),
             );
             setPowerResults(results);
         }, 20);
@@ -91,7 +93,7 @@ function Results({ state, isolateEntry }: {
         <Helmet>
             <title>LingDocs Pashto Dictionary</title>
         </Helmet>
-        {(auth.currentUser && (window.location.pathname !== "/word") && suggestionState === "none" && powerResults === undefined) && <button
+        {(state.user && (window.location.pathname !== "/word") && suggestionState === "none" && powerResults === undefined) && <button
             type="button"
             className={`btn btn-outline-secondary bg-white entry-suggestion-button${state.options.searchBarPosition === "bottom" ? " entry-suggestion-button-with-bottom-searchbar" : ""}`}
             onClick={startSuggestion}
@@ -118,14 +120,14 @@ function Results({ state, isolateEntry }: {
                     <Entry
                         key={p.entry.i}
                         entry={p.entry}
-                        textOptions={state.options.textOptions}
+                        textOptions={textOptions}
                         isolateEntry={isolateEntry}
                     />
                     <div className="mb-3 ml-2">
                         {p.results.map((result: InflectionSearchResult, i) => (
                             <InflectionSearchResult
                                 key={"inf-result" + i}
-                                textOptions={state.options.textOptions}
+                                textOptions={textOptions}
                                 result={result}
                                 entry={p.entry}
                             />
@@ -138,11 +140,11 @@ function Results({ state, isolateEntry }: {
             <Entry
                 key={entry.i}
                 entry={entry}
-                textOptions={state.options.textOptions}
+                textOptions={textOptions}
                 isolateEntry={isolateEntry}
             />
         ))}
-        {(auth.currentUser && (suggestionState === "editing")) && <div className="my-3">
+        {(state.user && (suggestionState === "editing")) && <div className="my-3">
             <h5 className="mb-3">Suggest an entry for the dictionary:</h5>
             <div className="form-group mt-4" style={{ maxWidth: "500px" }}>
                 <div className="row mb-2">

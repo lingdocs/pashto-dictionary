@@ -22,12 +22,14 @@
     "firebase-functions": "^3.11.0",
     "google-spreadsheet": "^3.1.15",
     "nano": "^9.0.3",
+    "node-fetch": "^2.6.1",
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.1",
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
+    "@types/node-fetch": "^2.5.12",
     "firebase-functions-test": "^0.2.0",
     "typescript": "^3.8.0"
   },

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { PassportStatic } from "passport";
 import {
+  deleteLingdocsUser,
+  getAllLingdocsUsers,
   getLingdocsUser,
   updateLingdocsUser,
 } from "../lib/couch-db";
@@ -11,6 +13,10 @@ import {
   compareToHash,
   getEmailTokenAndHash,
 } from "../lib/password-utils";
+import {
+  upgradeUser,
+  denyUserUpgradeRequest,
+} from "../lib/user-utils";
 import { validateReCaptcha } from "../lib/recaptcha";
 import {
   getTimestamp,
@@ -21,6 +27,7 @@ import {
 } from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
 import inProd from "../lib/inProd";
+import * as T from "../../../website/src/lib/account-types";
 
 const authRouter = (passport: PassportStatic) => {
   const router = Router();
@@ -71,7 +78,7 @@ const authRouter = (passport: PassportStatic) => {
         return res.render("login", { recaptcha: "fail", inProd });
       }
     }
-    passport.authenticate("local", (err, user: LingdocsUser | undefined, info) => {
+    passport.authenticate("local", (err, user: T.LingdocsUser | undefined, info) => {
       if (err) throw err;
       if (!user && info.message === "email not found") {
         return res.send({ ok: false, newSignup: true });
@@ -128,17 +135,64 @@ const authRouter = (passport: PassportStatic) => {
     try {
       const { email, password, name } = req.body;
       const existingUser = await getLingdocsUser("email", email);
-      if (existingUser) return res.send("Tser Already Exists");
+      if (existingUser) return res.send("User Already Exists");
       const user = await createNewUser({ strategy: "local", email, passwordPlainText: password, name });
       req.logIn(user, (err) => {
         if (err) return next(err);
         return res.send({ ok: true, user });
       });
     } catch(e) {
-      return next(e);
+      next(e);
     }
   });
   
+  router.get("/admin", async (req, res, next) => {
+    try {
+      if (!req.user || !req.user.admin) {
+        return res.redirect("/");
+      }
+      const users = await getAllLingdocsUsers();
+      res.render("admin", { users });
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  /**
+   * Grant request for upgrade to student
+   */
+  router.post("/admin/upgradeToStudent/:userId/:grantOrDeny", async (req, res, next) => {
+    try {
+      if (!req.user || !req.user.admin) {
+        return res.redirect("/");
+      }
+      const userId = req.params.userId as T.UUID;
+      const grantOrDeny = req.params.grantOrDeny as "grant" | "deny";
+      if (grantOrDeny === "grant") {
+        await upgradeUser(userId);
+      } else {
+        await denyUserUpgradeRequest(userId);
+      }
+      res.redirect("/admin");
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.delete("/admin/:userId", async (req, res, next) => {
+    try {
+      // TODO: MAKE PROPER MIDDLEWARE WITH TYPING
+      if (!req.user || !req.user.admin) {
+        return res.redirect("/");
+      }
+      const toDelete = req.params.userId as T.UUID;
+      await deleteLingdocsUser(toDelete);
+      res.send({ ok: true, message: "user deleted" });
+    } catch (e) {
+      next(e);
+    }
+  });
+
   router.get("/email-verification/:uuid/:token", async (req, res, next) => {
     const page = "email-verification";
     const { uuid, token } = req.params;

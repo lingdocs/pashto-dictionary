@@ -7,6 +7,11 @@
  */
 
 import { Types as T } from "@lingdocs/pashto-inflector";
+import * as AT from "./account-types";
+
+export type FunctionResponse = PublishDictionaryResponse | SubmissionsResponse | FunctionError;
+
+export type FunctionError = { ok: false, error: string };
 
 export type PublishDictionaryResponse = {
     ok: true,
@@ -16,20 +21,18 @@ export type PublishDictionaryResponse = {
     errors: T.DictionaryEntryError[],
 };
 
-export type UserInfo = {
-    uid: string,
-    email: string | null,
-    displayName: string | null,
-}
-
 export type Submission = Edit | ReviewTask;
 
 export type Edit = EntryEdit | NewEntry | EntryDeletion
 
 export type SubmissionBase = {
-    sTs: number,
-    user: UserInfo,
     _id: string,
+    sTs: number,
+    user: {
+        userId: AT.UUID,
+        name: string,
+        email: string,
+    },
 }
 
 export type ReviewTask = Issue | EditSuggestion | EntrySuggestion;
@@ -73,36 +76,3 @@ export type SubmissionsResponse = {
     message: string,
     submissions: Submission[],
 };
-
-export type UserLevel = "basic" | "student" | "editor";
-
-export type CouchDbUser = {
-    _id: string,
-    type: "user",
-    _rev?: string,
-    name: string,
-    email: string,
-    providerData: any,
-    displayName: string,
-    roles: [],
-    password?: string,
-    level: UserLevel,
-    userdbPassword: string,
-}
-
-export type GetUserInfoResponse = {
-    ok: true,
-    message: "no couchdb user found",
-} | {
-    ok: true,
-    user: CouchDbUser,
-}
-
-export type UpgradeUserResponse = {
-    ok: false,
-    error: "incorrect password",
-} | {
-    ok: true,
-    message: "user already upgraded" | "user upgraded to student",
-};
-

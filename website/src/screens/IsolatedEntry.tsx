@@ -7,7 +7,6 @@
  */
 
 import { useEffect, useState } from "react";
-import { auth } from "../lib/firebase";
 import {
     ConjugationViewer,
     InflectionsTable,
@@ -28,12 +27,11 @@ import {
     deleteWordFromWordlist,
     hasAttachment,
 } from "../lib/wordlist-database";
-import {
-    wordlistEnabled,
-} from "../lib/level-management";
+import { wordlistEnabled } from "../lib/level-management";
 import AudioPlayButton  from "../components/AudioPlayButton";
 import { Helmet } from "react-helmet";
 import { Modal } from "react-bootstrap";
+import { getTextOptions } from "../lib/get-text-options";
 
 function IsolatedEntry({ state, dictionary, isolateEntry }: {
     state: State,
@@ -50,14 +48,16 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         setEditSubmitted(false);
     }, [state]);
     const wordlistWord = state.wordlist.find((w) => w.entry.ts === state.isolatedEntry?.ts);
+    const textOptions = getTextOptions(state);
     function submitEdit() {
         if (!state.isolatedEntry) return;
+        if (!state.user) return;
         addSubmission({
-            ...submissionBase(),
+            ...submissionBase(state.user),
             type: "edit suggestion",
             entry: state.isolatedEntry,
             comment,
-        }, state.options.level);
+        }, state.user);
         setEditing(false);
         setComment("");
         setEditSubmitted(true);
@@ -104,14 +104,14 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 <Entry
                     nonClickable
                     entry={entry}
-                    textOptions={state.options.textOptions}
+                    textOptions={textOptions}
                     isolateEntry={isolateEntry}
                 />
             </div>
-            {auth.currentUser && 
+            {state.user && 
                 <div className="col-4">
                     <div className="d-flex flex-row justify-content-end">
-                        {state.options.level === "editor" && 
+                        {state.user.level === "editor" && 
                             <Link to={`/edit?id=${entry.ts}`} className="plain-link">
                                 <div
                                     className="clickable mr-3"
@@ -128,7 +128,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                         >
                             <i className="fa fa-pen"></i>
                         </div>
-                        {wordlistEnabled(state) && <div
+                        {wordlistEnabled(state.user) && <div
                             className="clickable"
                             data-testid={wordlistWord ? "fullStarButton" : "emptyStarButton"}
                             onClick={wordlistWord
@@ -180,12 +180,12 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             </div>
         }
         {editSubmitted && <p>Thank you for your help!</p>}
-        {inflections && <InflectionsTable inf={inflections} textOptions={state.options.textOptions} />}
+        {inflections && <InflectionsTable inf={inflections} textOptions={textOptions} />}
         {/* TODO: State options for tail type here */}
         <ConjugationViewer
             entry={entry}
             complement={complement}
-            textOptions={state.options.textOptions}
+            textOptions={textOptions}
         />
         {relatedEntries && <>
             {relatedEntries.length ? 
@@ -209,7 +209,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             <Modal.Title>Delete from wordlist?</Modal.Title>
             </Modal.Header>
             <Modal.Body>Delete <InlinePs
-                    opts={state.options.textOptions}
+                    opts={textOptions}
                 >{{ p: entry.p, f: entry.f }}</InlinePs> from your wordlist?
             </Modal.Body>
             <Modal.Footer>

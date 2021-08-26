@@ -19,6 +19,7 @@ import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
 // @ts-ignore
 import relevancy from "relevancy";
 import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
+import { getTextOptions } from "./get-text-options";
 
 // const dictionaryBaseUrl = "https://storage.googleapis.com/lingdocs/";
 const dictionaryUrl = `https://storage.googleapis.com/lingdocs/dictionary`;
@@ -353,7 +354,7 @@ export const dictionary: DictionaryAPI = {
     search: function(state: State): Types.DictionaryEntry[] {
         const searchString = convertSpelling(
             state.searchValue,
-            state.options.textOptions.spelling,
+            getTextOptions(state).spelling,
         );
         if (state.searchValue === "") {
             return [];
