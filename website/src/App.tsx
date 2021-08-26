@@ -172,9 +172,8 @@ class App extends Component<RouteComponentProps, State> {
                 if (this.state.options.language === "English") {
                     this.handleOptionsUpdate({ type: "toggleLanguage" });
                 }
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-                const searchString = urlParams.get("text") || "";
+                const parsedUrl = new URL(window.location as unknown as string);
+                const searchString = parsedUrl.searchParams.get("text") || "";
                 this.handleSearchValueChange(searchString);
             }
             if (this.props.location.pathname === "/new-entries") {
