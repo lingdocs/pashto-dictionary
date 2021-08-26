@@ -86,7 +86,7 @@ if (prod) {
 }
 
 const possibleLandingPages = [
-    "/", "/about", "/settings", "/word", "/account", "/new-entries",
+    "/", "/about", "/settings", "/word", "/account", "/new-entries", "/share-target",
 ];
 const editorOnlyPages = [
     "/edit", "/review-tasks",
@@ -167,6 +167,15 @@ class App extends Component<RouteComponentProps, State> {
                     console.error("somehow had a word path without a word id param");
                     this.props.history.replace("/");
                 }
+            }
+            if (this.props.location.pathname === "/share-target") {
+                if (this.state.options.language === "English") {
+                    this.handleOptionsUpdate({ type: "toggleLanguage" });
+                }
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const searchString = urlParams.get("text") || "";
+                this.handleSearchValueChange(searchString);
             }
             if (this.props.location.pathname === "/new-entries") {
                 this.setState({
