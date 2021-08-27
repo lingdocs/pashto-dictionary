@@ -1,8 +1,8 @@
 import cors from "cors";
 import fetch from "node-fetch";
 import type { https, Response } from "firebase-functions";
-import * as FT from "../../../website/src/lib/functions-types";
-import type { LingdocsUser } from "../../../website/src/lib/account-types";
+import * as FT from "../../../website/src/types/functions-types";
+import type { LingdocsUser } from "../../../website/src/types/account-types";
 
 const useCors = cors({ credentials: true, origin: /\.lingdocs\.com$/ });
 
@@ -15,11 +15,8 @@ interface ReqWUser extends https.Request {
  *
  */
 export default function makeHandler(toRun: (req: ReqWUser, res: Response<FT.FunctionResponse>) => any | Promise<any>) {
-    console.log("returning handler");
     return function(reqPlain: https.Request, resPlain: Response<any>) {
-        console.log("first level");
         useCors(reqPlain, resPlain, async () => {
-            console.log("got in here");
             const { req, res } = await authorize(reqPlain, resPlain);
             if (!req) {
                 res.status(401).send({ ok: false, error: "unauthorized" });

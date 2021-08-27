@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import * as FT from "../lib/functions-types";
+import * as FT from "../types/functions-types";
 import { 
     submissionBase,
     addSubmission,

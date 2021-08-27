@@ -6,7 +6,7 @@
  *
  */
 
-import * as AT from "./account-types";
+import * as AT from "../types/account-types";
 
 export const optionsLocalStorageName = "options3";
 export const userLocalStorageName = "user1";

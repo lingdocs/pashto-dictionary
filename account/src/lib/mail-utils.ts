@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import inProd from "./inProd";
 import env from "./env-vars";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 
 type Address = string | { name: string, address: string };
 

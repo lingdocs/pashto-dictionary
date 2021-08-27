@@ -27,7 +27,7 @@ import {
 } from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
 import inProd from "../lib/inProd";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 
 const authRouter = (passport: PassportStatic) => {
   const router = Router();

@@ -17,7 +17,7 @@ import {
 import {
     upgradeUser,
 } from "../lib/user-utils";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 import env from "../lib/env-vars";
 
 // TODO: ADD PROPER ERROR HANDLING THAT WILL RETURN JSON ALWAYS

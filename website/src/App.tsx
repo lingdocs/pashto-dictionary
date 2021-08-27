@@ -63,7 +63,7 @@ import {
 import {
     textBadge,
 } from "./lib/badges";
-import * as AT from "./lib/account-types";
+import * as AT from "./types/account-types";
 import ReactGA from "react-ga";
 // tslint:disable-next-line
 import "@fortawesome/fontawesome-free/css/all.css";

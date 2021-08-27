@@ -14,7 +14,7 @@ import {
     sendAccountUpgradeMessage,
 } from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 
 function getUUID(): T.UUID {
     return uuidv4() as T.UUID;

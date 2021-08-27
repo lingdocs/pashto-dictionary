@@ -18,7 +18,7 @@ type SearchBarPosition = "top" | "bottom";
 type WordlistMode = "browse" | "review";
 
 type TextOptionsRecord = {
-    lastModified: import("./lib/account-types").TimeStamp,
+    lastModified: import("./types/account-types").TimeStamp,
     textOptions: import("@lingdocs/pashto-inflector").Types.TextOptions,
 };
 
@@ -43,9 +43,9 @@ type State = {
     isolatedEntry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry | undefined,
     results: import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
     wordlist: WordlistWord[],
-    reviewTasks: import("./lib/functions-types").ReviewTask[],
+    reviewTasks: import("./types/functions-types").ReviewTask[],
     dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo | undefined,
-    user: undefined | import("./lib/account-types").LingdocsUser,
+    user: undefined | import("./types/account-types").LingdocsUser,
 }
 
 type OptionsAction = {

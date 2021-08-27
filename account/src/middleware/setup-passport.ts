@@ -7,7 +7,6 @@ import { Strategy as TwitterStrategy } from "passport-twitter";
 import {
   getLingdocsUser,
   insertLingdocsUser,
-  updateLastActive,
   updateLastLogin,
   updateLingdocsUser,
 } from "../lib/couch-db";
@@ -16,7 +15,7 @@ import {
   getVerifiedEmail,
 } from "../lib/user-utils";
 import env from "../lib/env-vars";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 import { getTimestamp } from "../lib/time-utils";
 
 export const outsideProviders: ("github" | "google" | "twitter")[] = ["github", "google", "twitter"];

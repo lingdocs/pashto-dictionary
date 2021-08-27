@@ -1,6 +1,6 @@
 import Entry from "../components/Entry";
 import { Link } from "react-router-dom";
-import * as FT from "../lib/functions-types";
+import * as FT from "../types/functions-types";
 import {
     deleteFromLocalDb,
 } from "../lib/pouch-dbs";

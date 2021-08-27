@@ -11,7 +11,7 @@ import {
 } from "../lib/backend-calls";
 import LoadingElipses from "../components/LoadingElipses";
 import { Helmet } from "react-helmet";
-import * as AT from "../lib/account-types";
+import * as AT from "../types/account-types";
 
 const providers: ("google" | "twitter" | "github")[] = ["google", "twitter", "github"];
 

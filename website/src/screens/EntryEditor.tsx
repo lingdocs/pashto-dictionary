@@ -18,7 +18,7 @@ import {
     validateEntry,
 } from "@lingdocs/pashto-inflector";
 import Entry from "../components/Entry";
-import * as FT from "../lib/functions-types";
+import * as FT from "../types/functions-types";
 import {
     submissionBase,
     addSubmission,

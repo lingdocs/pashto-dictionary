@@ -1,7 +1,7 @@
 import { hash, compare } from "bcryptjs";
 import { randomBytes } from "crypto";
 import base64url from "base64url";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 
 const tokenSize = 24;
 

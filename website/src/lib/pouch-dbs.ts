@@ -1,6 +1,6 @@
 import PouchDB from "pouchdb";
-import * as AT from "./account-types";
-import * as FT from "./functions-types";
+import * as AT from "../types/account-types";
+import * as FT from "../types/functions-types";
 
 type LocalDbType = "submissions" | "wordlist" | "reviewTasks";
 

@@ -2,7 +2,7 @@ import Nano from "nano";
 import { DocumentInsertResponse } from "nano";
 import { getTimestamp } from "./time-utils";
 import env from "./env-vars";
-import * as T from "../../../website/src/lib/account-types";
+import * as T from "../../../website/src/types/account-types";
 
 const nano = Nano(env.couchDbURL);
 const usersDb = nano.db.use("lingdocs-users");

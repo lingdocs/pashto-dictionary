@@ -1,5 +1,5 @@
-import * as FT from "./functions-types";
-import * as AT from "./account-types";
+import * as FT from "../types/functions-types";
+import * as AT from "../types/account-types";
 
 type Service = "account" | "functions";
 

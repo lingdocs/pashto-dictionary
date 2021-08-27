@@ -1,5 +1,5 @@
 import { Types as IT } from "@lingdocs/pashto-inflector";
-import * as AT from "./account-types";
+import * as AT from "../types/account-types";
 
 export function optionsReducer(options: Options, action: OptionsAction): Options {
     if (action.type === "toggleLanguage") {

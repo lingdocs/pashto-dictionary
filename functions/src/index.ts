@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import * as FT from "../../website/src/lib/functions-types";
+import * as FT from "../../website/src/types/functions-types";
 import { receiveSubmissions } from "./submissions";
 import lingdocsAuth from "./middleware/lingdocs-auth";
 import publish from "./publish";
