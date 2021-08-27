@@ -72,6 +72,7 @@ import "./custom-bootstrap.scss";
 import "./App.css";
 import classNames from "classnames";
 import { getTextOptions } from "./lib/get-text-options";
+import { getTextFromShareTarget } from "./lib/share-target";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -170,14 +171,15 @@ class App extends Component<RouteComponentProps, State> {
                 }
             }
             if (this.props.location.pathname === "/share-target") {
+                const searchString = getTextFromShareTarget(window.location);
+                this.props.history.replace("/");
                 if (this.state.options.language === "English") {
                     this.handleOptionsUpdate({ type: "toggleLanguage" });
                 }
-                const queryString = this.props.history.location.search;
-                const urlParams = new URLSearchParams(queryString);
-                const text = urlParams.get("text") || "";
-                const inQuotes = text.match(/^"(.+)"/) || ["", ""];
-                this.handleSearchValueChange(inQuotes[1]);
+                if (this.state.options.searchType === "alphabetical") {
+                    this.handleOptionsUpdate({ type: "toggleSearchType" });
+                }
+                this.handleSearchValueChange(searchString);
             }
             if (this.props.location.pathname === "/new-entries") {
                 this.setState({
