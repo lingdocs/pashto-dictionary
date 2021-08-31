@@ -44,7 +44,6 @@ import AudioPlayButton from "../components/AudioPlayButton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import hitBottom from "../lib/hitBottom";
-import { getTextOptions } from "../lib/get-text-options";
 
 const cleanupIcon = "broom";
 
@@ -72,8 +71,9 @@ function amountOfWords(number: number): string {
     return `${number} word${number !== 1 ? "s" : ""}`;
 }
 
-function Wordlist({ state, isolateEntry, optionsDispatch }: {
-    state: State,
+function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
+    options: Options,
+    wordlist: WordlistWord[],
     isolateEntry: (ts: number) => void,
     optionsDispatch: (action: OptionsAction) => void,
 }) {
@@ -89,17 +89,17 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
     const [showingCleanup, setShowingCleanup] = useState<boolean>(false);
     const [monthsBackToKeep, setMonthsBackToKeep] = useState<number>(6);
     const [wordsToDelete, setWordsToDelete] = useState<string[]>([]);
-    const [startedWithWordsToReview] = useState<boolean>(forReview(state.wordlist).length !== 0);
+    const [startedWithWordsToReview] = useState<boolean>(forReview(wordlist).length !== 0);
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
         // eslint-disable-next-line
     }, []);
-    const toReview = forReview(state.wordlist);
-    const textOptions = getTextOptions(state);
+    const toReview = forReview(wordlist);
+    const textOptions = options.textOptionsRecord.textOptions;
     function handleScroll() {
         // TODO: DON'T HAVE ENDLESS PAGE INCREASING
-        if (hitBottom() && state.options.wordlistMode === "browse") {
+        if (hitBottom() && options.wordlistMode === "browse") {
             setPage(page => page + 1);
         }
     }
@@ -119,7 +119,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
     }
     function handleSearchValueChange(value: string) {
         setWordlistSearchValue(value);
-        const results = value ? searchWordlist(value, state.wordlist, textOptions) : [];
+        const results = value ? searchWordlist(value, wordlist, textOptions) : [];
         setFilteredWords(results);
     }
     async function handleGetWordlistCSV() {
@@ -137,7 +137,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
     }
     function handleShowCleanup() {
         setWordsToDelete(
-            calculateWordsToDelete(state.wordlist, monthsBackToKeep)
+            calculateWordsToDelete(wordlist, monthsBackToKeep)
         );
         setShowingCleanup(true);
     }
@@ -146,7 +146,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
         setWordsToDelete([]);
     }
     function handleCleanup() {
-        const toDelete = calculateWordsToDelete(state.wordlist, monthsBackToKeep);
+        const toDelete = calculateWordsToDelete(wordlist, monthsBackToKeep);
         deleteWordFromWordlist(toDelete);
         setShowingCleanup(false);
     }
@@ -219,13 +219,13 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
             <div className="card mb-3 clickable" onClick={() => handleWordClickReview(word._id)}>
                 <div className="card-body">
                     <h6 className="card-title text-center">
-                        {state.options.wordlistReviewLanguage === "Pashto"
+                        {options.wordlistReviewLanguage === "Pashto"
                             ? <InlinePs opts={textOptions}>{{ p: word.entry.p, f: word.entry.f }}</InlinePs>
                             : word.entry.e
                         }
                     </h6>
                     {beingQuizzed && <div className="card-text text-center">
-                        {state.options.wordlistReviewLanguage === "Pashto"
+                        {options.wordlistReviewLanguage === "Pashto"
                             ? <div>{word.entry.e}</div>
                             : <InlinePs opts={textOptions}>
                                 {{ p: word.entry.p, f: word.entry.f }}
@@ -249,7 +249,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
             </Helmet>
             <div className="d-flex flex-row justify-content-between mb-2">
                 <h4 className="mb-3">Wordlist</h4>
-                {state.wordlist.length > 0 && 
+                {wordlist.length > 0 && 
                     <div className="d-flex flex-row justify-content-between mb-2">
                         <div>
                             <button className="btn btn-sm btn-outline-secondary mr-3" onClick={handleShowCleanup}>
@@ -264,7 +264,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                     </div>
                 }
             </div>
-            {!state.wordlist.length ?
+            {!wordlist.length ?
                 <EmptyWordlistNotice />
             :
                 <> 
@@ -280,16 +280,16 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                                     value: "review",
                                 },
                             ]}
-                            value={state.options.wordlistMode || "browse"}
+                            value={options.wordlistMode || "browse"}
                             handleChange={(p) => {
                                 optionsDispatch({ type: "changeWordlistMode", payload: p as WordlistMode });
                             }}
                         />
                     </div>  
-                    {state.options.wordlistMode === "browse"
+                    {options.wordlistMode === "browse"
                         ? <div className="mt-4">
                             <WordlistSearchBar value={wordlistSearchValue} handleChange={handleSearchValueChange} />
-                            {paginate(wordlistSearchValue ? filteredWords : state.wordlist, page).map((word) => (
+                            {paginate(wordlistSearchValue ? filteredWords : wordlist, page).map((word) => (
                                 <WordlistBrowsingWord word={word} key={word._id} />
                             ))}
                         </div>
@@ -298,7 +298,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                             <div className="mb-4 text-center" style={{ width: "100%" }}>
                                 <ButtonSelect
                                     options={reviewLanguageOptions}
-                                    value={state.options.wordlistReviewLanguage || "Pashto"}
+                                    value={options.wordlistReviewLanguage || "Pashto"}
                                     handleChange={(p) => {
                                         optionsDispatch({ type: "changeWordlistReviewLanguage", payload: p as Language });
                                     }}
@@ -310,7 +310,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                                     ? (startedWithWordsToReview
                                         ? <p className="lead my-3">All done review 🎉</p>
                                         : (() => {
-                                            const nextUp = nextUpForReview(state.wordlist);
+                                            const nextUp = nextUpForReview(wordlist);
                                             const { e, ...ps } = nextUp.entry;
                                             return <div>
                                                 <div className="lead my-3">None to review</div>
@@ -370,7 +370,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                     <Modal.Title><i className={`fas fa-${cleanupIcon} mr-1`} /> Wordlist Cleanup</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>You have {amountOfWords(state.wordlist.length)} in your wordlist.</p>
+                    <p>You have {amountOfWords(wordlist.length)} in your wordlist.</p>
                     <p>Delete words older than:</p>
                     <ButtonSelect
                         options={[
@@ -391,7 +391,7 @@ function Wordlist({ state, isolateEntry, optionsDispatch }: {
                         handleChange={(p: string) => {
                             const months = parseInt(p);
                             setWordsToDelete(
-                                calculateWordsToDelete(state.wordlist, months),
+                                calculateWordsToDelete(wordlist, months),
                             );
                             setMonthsBackToKeep(months);
                         }}

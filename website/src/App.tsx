@@ -73,6 +73,7 @@ import "./App.css";
 import classNames from "classnames";
 import { getTextOptions } from "./lib/get-text-options";
 import { getTextFromShareTarget } from "./lib/share-target";
+import { objIsEqual } from "./lib/misc-helpers";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -290,8 +291,10 @@ class App extends Component<RouteComponentProps, State> {
                 ...userOnServer,
                 userTextOptionsRecord,
             };
-            this.setState({ user });
-            saveUser(user);
+            if (!objIsEqual(prevUser, user)) {
+                this.setState({ user });
+                saveUser(user);
+            }
             const textOptionsRecord: TextOptionsRecord = {
                 lastModified: userTextOptionsRecord.lastModified,
                 textOptions: {
@@ -345,7 +348,7 @@ class App extends Component<RouteComponentProps, State> {
                 this.setState({ options });
             }
         } else {
-            this.setState({ options });
+            !objIsEqual(this.state.options, options) && this.setState({ options });
         }
     }
 
@@ -514,7 +517,8 @@ class App extends Component<RouteComponentProps, State> {
                         </Route>
                         {wordlistEnabled(this.state.user) && <Route path="/wordlist">
                             <Wordlist
-                                state={this.state}
+                                options={this.state.options}
+                                wordlist={this.state.wordlist}
                                 isolateEntry={this.handleIsolateEntry}
                                 optionsDispatch={this.handleOptionsUpdate}
                             />
