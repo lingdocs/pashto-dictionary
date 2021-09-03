@@ -73,7 +73,7 @@ import "./App.css";
 import classNames from "classnames";
 import { getTextOptions } from "./lib/get-text-options";
 import { getTextFromShareTarget } from "./lib/share-target";
-import { objIsEqual } from "./lib/misc-helpers";
+import { objIsEqual, userObjIsEqual } from "./lib/misc-helpers";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -145,7 +145,6 @@ class App extends Component<RouteComponentProps, State> {
             ReactGA.pageview(window.location.pathname + window.location.search);
         }
         dictionary.initialize().then((r) => {
-            console.log(this.props.location.pathname);
             this.checkUserCronJob.start();
             this.networkCronJob.start();
             this.setState({
@@ -282,7 +281,10 @@ class App extends Component<RouteComponentProps, State> {
             if (userOnServer === "offline") return;
             if (userOnServer) sendSubmissions();
             if (!userOnServer) {
-                this.setState({ user: undefined });
+                if (this.state.user) {
+                    console.log("setting state user because user is newly undefined");
+                    this.setState({ user: undefined });
+                }
                 saveUser(undefined);
                 return;
             }
@@ -291,7 +293,8 @@ class App extends Component<RouteComponentProps, State> {
                 ...userOnServer,
                 userTextOptionsRecord,
             };
-            if (!objIsEqual(prevUser, user)) {
+            if (!userObjIsEqual(prevUser, user)) {
+                console.log("setting state user because something is different about the user")
                 this.setState({ user });
                 saveUser(user);
             }
@@ -409,7 +412,7 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private checkUserCronJob = new CronJob("1/3 * * * * *", () => {
+    private checkUserCronJob = new CronJob("1/20 * * * * *", () => {
         this.handleLoadUser();
     })
 
