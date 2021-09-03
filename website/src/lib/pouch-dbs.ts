@@ -42,25 +42,14 @@ const dbs: DBS = {
 };
 
 export function startLocalDbs(user: AT.LingdocsUser, refreshFns: { wordlist: () => void, reviewTasks: () => void }) {
-    if (user.level === "basic") {
-        initializeLocalDb("submissions", () => null, user);
-    }
-    if (user.level === "student") {
-        initializeLocalDb("submissions", () => null, user);
-        initializeLocalDb("wordlist", refreshFns.wordlist, user);
-    }
-    if (user.level === "editor") {
-        deInitializeLocalDb("submissions");
-        initializeLocalDb("reviewTasks", refreshFns.reviewTasks, user);
-        initializeLocalDb("wordlist", refreshFns.wordlist, user);
-    }
+    initializeLocalDb("submissions", () => null, user);
+    (user.level !== "basic") && initializeLocalDb("wordlist", refreshFns.wordlist, user);
+    (user.level === "editor") && initializeLocalDb("reviewTasks", refreshFns.reviewTasks, user);
 }
 
 function deInitializeLocalDb(type: LocalDbType) {
     const db = dbs[type];
-    if (db && "sync" in db) {
-        db.sync.cancel();
-    }
+    (db && "sync" in db) && db.sync.cancel();
     dbs[type] = undefined;
 }
 

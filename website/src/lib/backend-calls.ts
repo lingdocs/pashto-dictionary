@@ -75,5 +75,13 @@ async function myFetch(
             body: JSON.stringify(body),
         } : {},
     });
-    return await response.json() as AT.APIResponse;
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        return {
+            ok: false,
+            error: `error parsing json for: ${text}`,
+        };
+    }
 }
