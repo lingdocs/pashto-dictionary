@@ -353,7 +353,7 @@ class App extends Component<RouteComponentProps, State> {
     }
 
     private handleTextOptionsUpdate(action: TextOptionsAction) {
-        const textOptions = textOptionsReducer(this.state.options.textOptionsRecord.textOptions, action);
+        const textOptions = textOptionsReducer(getTextOptions(this.state), action);
         const lastModified = Date.now() as AT.TimeStamp;
         const textOptionsRecord: TextOptionsRecord = {
             lastModified,
@@ -409,7 +409,7 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private checkUserCronJob = new CronJob("1/20 * * * * *", () => {
+    private checkUserCronJob = new CronJob("1/3 * * * * *", () => {
         this.handleLoadUser();
     })
 
@@ -525,7 +525,9 @@ class App extends Component<RouteComponentProps, State> {
                         </Route>}
                         {this.state.user?.level === "editor" && <Route path="/edit">
                             <EntryEditor
-                                state={this.state}
+                                isolatedEntry={this.state.isolatedEntry}
+                                user={this.state.user}
+                                textOptions={getTextOptions(this.state)}
                                 dictionary={dictionary}
                                 searchParams={new URLSearchParams(this.props.history.location.search)}
                             />

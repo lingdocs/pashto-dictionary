@@ -23,8 +23,9 @@ import {
     submissionBase,
     addSubmission,
 } from "../lib/submissions";
-import { getTextOptions } from "../lib/get-text-options";
 import { Helmet } from "react-helmet";
+import { TextOptions } from "@lingdocs/pashto-inflector/dist/types";
+import * as AT from "../types/account-types";
 
 const textFields: {field: T.DictionaryEntryTextField, label: string}[] = [
     { field: "p", label: "Pashto" },
@@ -92,14 +93,16 @@ function OneField(props: {
     );
 }
 
-function EntryEditor({ state, dictionary, searchParams }: {
-    state: State,
+function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, user }: {
+    isolatedEntry: T.DictionaryEntry | undefined,
+    textOptions: TextOptions,
     dictionary: DictionaryAPI,
     searchParams: URLSearchParams,
+    user: AT.LingdocsUser | undefined, 
     // removeFromSuggestions: (sTs: number) => void,
 }) {
-    const [entry, setEntry] = useState<T.DictionaryEntry>((state.isolatedEntry) ?? { ts: 0, i: 0, p: "", f: "", g: "", e: "" });
-    const [matchingEntries, setMatchingEntries] = useState<T.DictionaryEntry[]>(state.isolatedEntry ? searchForMatchingEntries(state.isolatedEntry.p) : []);
+    const [entry, setEntry] = useState<T.DictionaryEntry>((isolatedEntry) ?? { ts: 0, i: 0, p: "", f: "", g: "", e: "" });
+    const [matchingEntries, setMatchingEntries] = useState<T.DictionaryEntry[]>(isolatedEntry ? searchForMatchingEntries(isolatedEntry.p) : []);
     const [erroneusFields, setErroneousFields] = useState<T.DictionaryEntryField[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
     const [submitted, setSubmitted] = useState<boolean>(false);
@@ -113,14 +116,13 @@ function EntryEditor({ state, dictionary, searchParams }: {
         f: searchParams.get("f") || "",
     } : undefined;
     useEffect(() => {
-        setEntry((state.isolatedEntry) ?? { ts: 1, i: 0, p: "", f: "", g: "", e: "" });
-        setMatchingEntries(state.isolatedEntry ? searchForMatchingEntries(state.isolatedEntry.p) : []);
+        setEntry((isolatedEntry) ?? { ts: 1, i: 0, p: "", f: "", g: "", e: "" });
+        setMatchingEntries(isolatedEntry ? searchForMatchingEntries(isolatedEntry.p) : []);
         // eslint-disable-next-line
-    }, [state]);
-    const textOptions = getTextOptions(state);
+    }, [isolatedEntry]);
     function searchForMatchingEntries(s: string): T.DictionaryEntry[] {
         return dictionary.exactPashtoSearch(s)
-            .filter((w) => w.ts !== state.isolatedEntry?.ts);
+            .filter((w) => w.ts !== isolatedEntry?.ts);
     }
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         const target = event.target;
@@ -138,20 +140,20 @@ function EntryEditor({ state, dictionary, searchParams }: {
         }
     }
     function handleDelete() {
-        if (!state.user) return;
+        if (!user) return;
         const submission: FT.EntryDeletion = {
-            ...submissionBase(state.user),
+            ...submissionBase(user),
             type: "entry deletion",
             ts: entry.ts,
         };
-        addSubmission(submission, state.user);
+        addSubmission(submission, user);
         setDeleted(true);
     }
     function handleSubmit(e: any) {
         setErroneousFields([]);
         setErrors([]);
         e.preventDefault();
-        if (!state.user) return;
+        if (!user) return;
         const result = validateEntry(entry);
         if ("errors" in result) {
             setErroneousFields(result.erroneousFields);
@@ -160,11 +162,11 @@ function EntryEditor({ state, dictionary, searchParams }: {
         }
         // TODO: Check complement if checkComplement
         const submission: FT.NewEntry | FT.EntryEdit = {
-            ...submissionBase(state.user),
+            ...submissionBase(user),
             type: entry.ts === 1 ? "new entry" : "entry edit",
             entry: { ...entry, ts: entry.ts === 1 ? Date.now() : entry.ts },
         };
-        addSubmission(submission, state.user);
+        addSubmission(submission, user);
         setSubmitted(true);
         // TODO: Remove from suggestions
         // if (willDeleteSuggestion && sTs) {
@@ -190,7 +192,7 @@ function EntryEditor({ state, dictionary, searchParams }: {
             <link rel="canonical" href="https://dictionary.lingdocs.com/edit" />
             <title>Edit - LingDocs Pashto Dictionary</title>
         </Helmet>
-        {state.isolatedEntry && <Entry nonClickable entry={state.isolatedEntry} textOptions={textOptions} isolateEntry={() => null} />}
+        {isolatedEntry && <Entry nonClickable entry={isolatedEntry} textOptions={textOptions} isolateEntry={() => null} />}
         {suggestedWord && <InlinePs opts={textOptions}>{suggestedWord}</InlinePs>}
         {comment && <p>Comment: "{comment}"</p>}
         {submitted ? "Edit submitted/saved" : deleted ? "Entry Deleted" :
