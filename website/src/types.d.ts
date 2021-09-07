@@ -45,7 +45,7 @@ type State = {
     wordlist: WordlistWord[],
     reviewTasks: import("./types/functions-types").ReviewTask[],
     dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo | undefined,
-    user: undefined | import("./types/account-types").LingdocsUser,
+    user: undefined | AT.LingdocsUser,
 }
 
 type OptionsAction = {

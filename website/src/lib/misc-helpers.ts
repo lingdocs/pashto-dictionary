@@ -8,6 +8,7 @@ export function objIsEqual(obj1: any, obj2: any): boolean {
 export function userObjIsEqual(u1: AT.LingdocsUser | undefined, u2: AT.LingdocsUser | undefined): boolean {
     if (!u1 || !u2) return false;
     function removeFrills(u: AT.LingdocsUser) {
+        if (!("_rev" in u)) return u;
         const { lastActive, _rev, ...rest } = u;
         return rest;
     }
