@@ -111,15 +111,22 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             {state.user && 
                 <div className="col-4">
                     <div className="d-flex flex-row justify-content-end">
-                        {state.user.level === "editor" && 
-                            <Link to={`/edit?id=${entry.ts}`} className="plain-link">
-                                <div
-                                    className="clickable mr-3"
-                                    data-testid="finalEditEntryButton"
-                                >
-                                    <i className="fa fa-gavel"></i>
+                        {state.user.level === "editor" && <>
+                                <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(entry.ts.toString())}>
+                                    <i className="fas fa-tag"></i>
                                 </div>
-                            </Link>
+                                <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(JSON.stringify(entry))}>
+                                    <i className="fas fa-code"></i>
+                                </div>
+                                <Link to={`/edit?id=${entry.ts}`} className="plain-link">
+                                    <div
+                                        className="clickable mr-3"
+                                        data-testid="finalEditEntryButton"
+                                    >
+                                        <i className="fa fa-gavel"></i>
+                                    </div>
+                                </Link>
+                            </>
                         }
                         <div
                             className="clickable mr-3"
