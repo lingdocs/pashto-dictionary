@@ -158,6 +158,8 @@ type WordlistWordDoc = WordlistWord & { _rev: string, _id: string };
 
 type InflectionName = "plain" | "1st" | "2nd";
 
+type PluralInflectionName = "plural" | "2nd";
+
 type InflectionSearchResult = {
     form: string[],
     matches: {

@@ -87,7 +87,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         ? dictionary.findOneByTs(entry.l)
         : undefined;
     const relatedEntries = dictionary.findRelatedEntries(entry);
-    const inflections = ((): T.Inflections | false => {
+    const inf = ((): T.InflectorOutput | false => {
         try {
             return inflectWord(entry);
         } catch (e) {
@@ -95,6 +95,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             return false;
         }
     })();
+    console.log(inf);
     return <div className="width-limiter">
         <Helmet>
             <title>{entry.p} - LingDocs Pashto Dictionary</title>
@@ -187,7 +188,17 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             </div>
         }
         {editSubmitted && <p>Thank you for your help!</p>}
-        {inflections && <InflectionsTable inf={inflections} textOptions={textOptions} />}
+        {inf && <>
+            {inf.inflections && <InflectionsTable inf={inf.inflections} textOptions={textOptions} />}
+            {"plural" in inf && <div>
+                <h5>Plural</h5>
+                <InflectionsTable inf={inf.plural as T.PluralInflections} textOptions={textOptions} />
+            </div>}
+            {"arabicPlural" in inf && <div>
+                <h5>Arabic Plural</h5>
+                <InflectionsTable inf={inf.arabicPlural as T.PluralInflections} textOptions={textOptions} />
+            </div>}
+        </>}
         {/* TODO: State options for tail type here */}
         <ConjugationViewer
             entry={entry}

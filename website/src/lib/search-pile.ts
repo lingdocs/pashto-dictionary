@@ -11,17 +11,21 @@ import {
     isVerbBlock,
     isImperativeBlock,
     isInflectionSet,
+    isPluralInflectionSet,
 } from "@lingdocs/pashto-inflector";
 import { personFromVerbBlockPos } from "@lingdocs/pashto-inflector";
 
-const inflectionNames: InflectionName[] = ["plain", "1st", "2nd"];
+const inflectionNames: { inflections: InflectionName[], plural: PluralInflectionName[] } = {
+    inflections: ["plain", "1st", "2nd"],
+    plural: ["plural", "2nd"],
+};
 
 type ObPile = { [key: string]: ObRec; }
 type ObRec = T.VerbBlock | T.ImperativeBlock | T.InflectionSet | T.PsString | boolean | null | string | ObPile;
 
 type SinglePsResult = T.PsString | null;
 type BlockResult = { ps: T.PsString, pos: T.Person[] | InflectionName[] }[];
-type InflectionSetResult = { ps: T.PsString, pos: InflectionName[] }[];
+type InflectionSetResult = { ps: T.PsString, pos: (InflectionName | PluralInflectionName)[] }[];
 type BlockResultRaw = { ps: T.PsString, pos: [number, number][] }[];
 type RowResult = { ps: T.PsString, pos: (0 | 1)[] }[];
 
@@ -46,6 +50,7 @@ export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, 
     function searchObRecord(record: ObRec): null | BlockResult | SinglePsResult | InflectionSearchResult[] {
         // hit a bottom part a tree, see if what we're looking for is there
         if (Array.isArray(record)) {
+            // @ts-ignore
             return searchBlock(record, searchFun);
         }
         if (typeof record !== "object") return null;
@@ -65,7 +70,7 @@ export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, 
         }
         const result = searchObRecord(value);
         // Result: Hit the bottom and nothing found
-        if (result === null) {
+        if (result === null || result === undefined) {
             return res;
         }
         // Result: Hit a PsString with what we want at the bottom
@@ -115,6 +120,20 @@ function searchBlock(block: T.VerbBlock | T.ImperativeBlock | T.InflectionSet, s
         }
         return null;
     }
+    if (isInflectionSet(block)) {
+        const results = searchInflectionSet(block, searchFun, "inflections");
+        if (results.length) {
+            return results;
+        }
+        return null;
+    }
+    if (isPluralInflectionSet(block)) {
+        const results = searchInflectionSet(block, searchFun, "plural");
+        if (results.length) {
+            return results;
+        }
+        return null;
+    }
     if (isImperativeBlock(block)) {
         const results = searchVerbBlock(block, searchFun);
         if (results.length) {
@@ -122,13 +141,6 @@ function searchBlock(block: T.VerbBlock | T.ImperativeBlock | T.InflectionSet, s
                 ...result,
                 pos: result.pos.map(x => personFromVerbBlockPos([x[0] + 2, x[1]])),
             }));
-        }
-        return null;
-    }
-    if (isInflectionSet(block)) {
-        const results = searchInflectionSet(block, searchFun);
-        if (results.length) {
-            return results;
         }
         return null;
     }
@@ -173,18 +185,18 @@ export function searchVerbBlock(vb: T.VerbBlock | T.ImperativeBlock, searchFun: 
     }, []);
 }
 
-function searchInflectionSet(inf: T.InflectionSet, searchFun: (ps: T.PsString) => boolean): InflectionSetResult {
+function searchInflectionSet(inf: T.InflectionSet | T.PluralInflectionSet, searchFun: (ps: T.PsString) => boolean, type: "inflections" | "plural"): InflectionSetResult {
     return inf.reduce((all: InflectionSetResult, item, i): InflectionSetResult => {
         const matching = item.filter(searchFun);
         if (i === 0) {
-            return matching.map(ps => ({ ps, pos: [inflectionNames[i]] }))
+            return matching.map(ps => ({ ps, pos: [inflectionNames[type][i]] }))
         }
         matching.forEach(it => {
             const index = all.findIndex(x => x.ps.f === it.f);
             if (index !== -1) {
-                all[index].pos.push(inflectionNames[i])
+                all[index].pos.push(inflectionNames[type][i])
             } else {
-                all.push({ ps: it, pos: [inflectionNames[i]] });
+                all.push({ ps: it, pos: [inflectionNames[type][i]] });
             }
         })
         return all;

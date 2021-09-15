@@ -21,7 +21,7 @@ import {
 import {
     ButtonSelect,
     InlinePs,
-    removeFVariants,
+    removeFVarients,
 } from "@lingdocs/pashto-inflector";
 import { 
     Modal,
@@ -315,7 +315,7 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
                                             return <div>
                                                 <div className="lead my-3">None to review</div>
                                                 <p>Next word up for review <strong>{dayjs().to(nextUp.dueDate)}</strong>: <InlinePs opts={textOptions}>
-                                                    {removeFVariants(ps)}
+                                                    {removeFVarients(ps)}
                                                 </InlinePs></p>
                                             </div>;
                                         })()

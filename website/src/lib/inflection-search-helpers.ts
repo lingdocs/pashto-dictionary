@@ -51,23 +51,16 @@ function conflateUnisexPeople(arr: (string | T.Person)[]): (string | T.Person)[]
     return newArr;
 }
 
-export function displayPositionResult(res: (T.Person | "plain" | "1st" | "2nd")[] | null): string {
+export function displayPositionResult(res: (T.Person | "plain" | "1st" | "2nd" | "plural")[] | null): string {
     const conflated = res
         ? conflateUnisexPeople(res)
         : ["Doesn't change"];
     return conflated.map((x) => {
-        if (x === "plain") {
-            return "Plain";
-        }
-        if (x === "1st") {
-            return "1st Inflection";
-        }
-        if (x === "2nd") {
-            return "2nd Inflection";
-        }
-        if (typeof x === "string") {
-            return x;
-        }
+        if (x === "plural") return "";
+        if (x === "plain") return "Plain";
+        if (x === "1st") return "1st Inflection";
+        if (x === "2nd") return "2nd Inflection";
+        if (typeof x === "string") return x;
         return x === null ? "Same for all" : getEnglishPersonInfo(x);
     }).join(" / ");
 }
@@ -109,6 +102,7 @@ export function displayFormResult(res: string[]): string {
         .replace("MascPlur", "(with a masc. plur. object)")
         .replace("FemSing", "(with a fem. sing. object)")
         .replace("FemPlur", "(with a fem. plur. object)")
+        .replace("ArabicPlural", "Arabic Plural")
         .replace("Fem", "Fem.")
         .replace("Masc", "Masc.")
 }

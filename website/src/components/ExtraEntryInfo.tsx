@@ -13,7 +13,7 @@ const InflectionsInfo = ({ entry, textOptions }: {
     entry: Types.DictionaryEntry,
     textOptions: Types.TextOptions,
 }) => {
-    const inf = ((): Types.Inflections | false => {
+    const inf = ((): Types.InflectorOutput | false => {
         try {
             return inflectWord(entry);
         } catch (e) {
@@ -25,20 +25,20 @@ const InflectionsInfo = ({ entry, textOptions }: {
         return null;
     }
     // unisex noun / adjective
-    if ("masc" in inf && "fem" in inf) {
+    if (inf.inflections && "masc" in inf.inflections && "fem" in inf.inflections) {
         return (
             <div className="entry-extra-info" data-testid="inflections-info">
-                <InlinePs opts={textOptions}>{inf.masc[1][0]}</InlinePs>
+                <InlinePs opts={textOptions}>{inf.inflections.masc[1][0]}</InlinePs>
                 {` `}
-                <InlinePs opts={textOptions}>{inf.fem[0][0]}</InlinePs>
+                <InlinePs opts={textOptions}>{inf.inflections.fem[0][0]}</InlinePs>
             </div>
         );
     }
     // masculine noun
-    if ("masc" in inf) {
+    if (inf.inflections && "masc" in inf.inflections) {
         return (
             <div className="entry-extra-info" data-testid="inflections-info">
-                <InlinePs opts={textOptions}>{inf.masc[1][0]}</InlinePs>
+                <InlinePs opts={textOptions}>{inf.inflections.masc[1][0]}</InlinePs>
             </div>
         );
     }

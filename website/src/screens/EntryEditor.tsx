@@ -175,7 +175,7 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
     }
 
     const complement = entry.l ? dictionary.findOneByTs(entry.l) : undefined;
-    const inflections = ((): T.Inflections | false => {
+    const inf = ((): T.InflectorOutput | false => {
         try {
             return inflectWord(entry);
         } catch (e) {
@@ -334,7 +334,9 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
                         </ul>
                     </div>}
                 </form>
-            {inflections && <InflectionsTable inf={inflections} textOptions={textOptions} />}
+            {inf && inf.inflections && <InflectionsTable inf={inf.inflections} textOptions={textOptions} />}
+            {inf && "plural" in inf && <InflectionsTable inf={inf.plural as T.PluralInflections} textOptions={textOptions} />}
+            {inf && "arabicPlural" in inf && <InflectionsTable inf={inf.arabicPlural as T.PluralInflections} textOptions={textOptions} />}
             {/* TODO: aay tail from state options */}
             <ConjugationViewer
                 entry={entry}
