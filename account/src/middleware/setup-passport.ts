@@ -62,6 +62,13 @@ function setupPassport(passport: PassportStatic) {
         if (otherAccountWSameGoogle) {
           return done(null, otherAccountWSameGoogle);
         }
+        // if the person used their google email for a plain signup, add the google provider to it and sign in
+        const googleMail = profile.emails && profile.emails[0].value;
+        if (googleMail) {
+          const otherAccountWSameEmail = await getLingdocsUser("email", googleMail);
+          otherAccountWSameEmail && await updateLingdocsUser(otherAccountWSameEmail?.userId, { google: gProfile });
+          return done(null, otherAccountWSameEmail);
+        }
         const u = await updateLingdocsUser(req.user.userId, { google: gProfile });
         if (!u.email) {
           // if the user is adding a google account and doesn't have a previous email, add the google email
