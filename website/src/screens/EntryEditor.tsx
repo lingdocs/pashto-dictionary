@@ -335,8 +335,8 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
                     </div>}
                 </form>
             {inf && inf.inflections && <InflectionsTable inf={inf.inflections} textOptions={textOptions} />}
-            {inf && "plural" in inf && <InflectionsTable inf={inf.plural as T.PluralInflections} textOptions={textOptions} />}
-            {inf && "arabicPlural" in inf && <InflectionsTable inf={inf.arabicPlural as T.PluralInflections} textOptions={textOptions} />}
+            {inf && "plural" in inf && inf.plural !== undefined && <InflectionsTable inf={inf.plural} textOptions={textOptions} />}
+            {inf && "arabicPlural" in inf && inf.arabicPlural !== undefined && <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />}
             {/* TODO: aay tail from state options */}
             <ConjugationViewer
                 entry={entry}
