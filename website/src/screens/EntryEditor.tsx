@@ -16,7 +16,6 @@ import {
     Types as T,
     InlinePs,
     validateEntry,
-    standardizeEntry,
 } from "@lingdocs/pashto-inflector";
 import Entry from "../components/Entry";
 import * as FT from "../types/functions-types";

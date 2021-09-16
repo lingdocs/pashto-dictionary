@@ -190,13 +190,13 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         {editSubmitted && <p>Thank you for your help!</p>}
         {inf && <>
             {inf.inflections && <InflectionsTable inf={inf.inflections} textOptions={textOptions} />}
-            {"plural" in inf && <div>
+            {"plural" in inf && inf.plural !== undefined && <div>
                 <h5>Plural</h5>
-                <InflectionsTable inf={inf.plural as T.PluralInflections} textOptions={textOptions} />
+                <InflectionsTable inf={inf.plural} textOptions={textOptions} />
             </div>}
-            {"arabicPlural" in inf && <div>
+            {"arabicPlural" in inf && inf.arabicPlural !== undefined && <div>
                 <h5>Arabic Plural</h5>
-                <InflectionsTable inf={inf.arabicPlural as T.PluralInflections} textOptions={textOptions} />
+                <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />
             </div>}
         </>}
         {/* TODO: State options for tail type here */}
