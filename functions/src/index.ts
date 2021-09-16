@@ -16,7 +16,8 @@ export const publishDictionary = functions.runWith({
         try {
             const response = await publish();
             res.send(response);
-        } catch (e: any) {
+        } catch (e) {
+            // @ts-ignore
             res.status(500).send({ ok: false, error: e.message });
         }
     }
@@ -39,7 +40,8 @@ export const submissions = functions.runWith({
             const response = await receiveSubmissions(suggestions, req.user.level === "editor");
             // TODO: WARN IF ANY OF THE EDITS DIDN'T HAPPEN
             res.send(response);
-        } catch (e: any) {
+        } catch (e) {
+            // @ts-ignore
             res.status(500).send({ ok: false, error: e.message });
         };
     }
