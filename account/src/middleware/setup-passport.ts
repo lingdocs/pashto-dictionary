@@ -66,8 +66,11 @@ function setupPassport(passport: PassportStatic) {
         const googleMail = profile.emails && profile.emails[0].value;
         if (googleMail) {
           const otherAccountWSameEmail = await getLingdocsUser("email", googleMail);
-          otherAccountWSameEmail && await updateLingdocsUser(otherAccountWSameEmail?.userId, { google: gProfile });
-          return done(null, otherAccountWSameEmail);
+          console.log("found user with same gmail email");
+          if (otherAccountWSameEmail) {
+            await updateLingdocsUser(otherAccountWSameEmail.userId, { google: gProfile });
+            return done(null, otherAccountWSameEmail);
+          }
         }
         const u = await updateLingdocsUser(req.user.userId, { google: gProfile });
         if (!u.email) {
