@@ -5,11 +5,11 @@ import {
     dictionaryEntryBooleanFields,
     dictionaryEntryNumberFields,
     dictionaryEntryTextFields,
-    standardizePashto,
     validateEntry,
     writeDictionary,
     writeDictionaryInfo,
     simplifyPhonetics,
+    standardizeEntry,
 } from "@lingdocs/pashto-inflector";
 // import {
 //     getWordList,
@@ -33,14 +33,10 @@ const dictionaryInfoFilename = "dictionary-info";
 const url = `${baseUrl}${dictionaryFilename}`;
 const infoUrl = `${baseUrl}${dictionaryInfoFilename}`;
 
-function standardizePhonetics(f: string): string {
-    return f.replace(/’/g, "'");
-}
-
 // TODO: Create a seperate function for publishing the Hunspell that can run after the publish function?
 // to keep the publish function time down
 
-export default async function(): Promise<PublishDictionaryResponse> {
+export default async function publish(): Promise<PublishDictionaryResponse> {
     const entries = await getRawEntries();
     const errors = checkForErrors(entries);
     if (errors.length) {
@@ -106,7 +102,7 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
 }
 
 function makeEntries(rows: any[]): T.DictionaryEntry[] {
-    const entries: T.DictionaryEntry[] = rows.map((row, i): T.DictionaryEntry => {
+    const entries: T.DictionaryEntry[] = rows.map((row): T.DictionaryEntry => {
         const e: T.DictionaryEntry = {
             i: 1,
             ts: parseInt(row.ts),
@@ -116,28 +112,20 @@ function makeEntries(rows: any[]): T.DictionaryEntry[] {
             e: row.e,
         };
         dictionaryEntryNumberFields.forEach((field: T.DictionaryEntryNumberField) => {
-            if (row[field]) {
-                e[field] = parseInt(row[field]);
-            }
+            if (row[field]) e[field] = parseInt(row[field]);
         });
         dictionaryEntryTextFields.forEach((field: T.DictionaryEntryTextField) => {
-            if (row[field]) {
-                const content = field.slice(-1) === "p" ? standardizePashto(row[field]).trim()
-                    : field.slice(-1) === "f" ? standardizePhonetics(row[field]).trim()
-                    : row[field].trim();
-                e[field] = content;
-            }
+            if (row[field]) e[field] = row[field].trim();
         });
         dictionaryEntryBooleanFields.forEach((field: T.DictionaryEntryBooleanField) => {
-            if (row[field]) {
-                e[field] = true;
-            }
+            if (row[field]) e[field] = true;
         });
-        return e;
+        return standardizeEntry(e);
     });
     // add alphabetical index
     entries.sort((a, b) => a.p.localeCompare(b.p, "ps"));
     const entriesLength = entries.length;
+    // add index
     for (let i = 0; i < entriesLength; i++) {
         entries[i].i = i;
     }

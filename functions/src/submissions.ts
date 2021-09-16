@@ -4,6 +4,7 @@ import {
     dictionaryEntryTextFields,
     dictionaryEntryBooleanFields,
     dictionaryEntryNumberFields,
+    standardizeEntry,
 } from "@lingdocs/pashto-inflector";
 import * as FT from "../../website/src/types/functions-types";
 import * as functions from "firebase-functions";
@@ -94,7 +95,7 @@ export async function receiveSubmissions(e: FT.SubmissionsRequest, editor: boole
     
         if (newEntries.length) {
             newEntries.forEach((n) => {
-                const entry = { ...n.entry };
+                const entry = { ...standardizeEntry(n.entry) };
                 // @ts-ignore
                 delete entry.i; // i not used in dictionary spreadsheet; added while building it
                 // @ts-ignore
