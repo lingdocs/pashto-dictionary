@@ -13,6 +13,7 @@ import {
 import {
   createNewUser,
   getVerifiedEmail,
+  getEmailFromGoogleProfile,
 } from "../lib/user-utils";
 import env from "../lib/env-vars";
 import * as T from "../../../website/src/types/account-types";
@@ -62,16 +63,6 @@ function setupPassport(passport: PassportStatic) {
         if (otherAccountWSameGoogle) {
           return done(null, otherAccountWSameGoogle);
         }
-        // if the person used their google email for a plain signup, add the google provider to it and sign in
-        const googleMail = profile.emails && profile.emails[0].value;
-        if (googleMail) {
-          const otherAccountWSameEmail = await getLingdocsUser("email", googleMail);
-          console.log("found user with same gmail email");
-          if (otherAccountWSameEmail) {
-            await updateLingdocsUser(otherAccountWSameEmail.userId, { google: gProfile });
-            return done(null, otherAccountWSameEmail);
-          }
-        }
         const u = await updateLingdocsUser(req.user.userId, { google: gProfile });
         if (!u.email) {
           // if the user is adding a google account and doesn't have a previous email, add the google email
@@ -83,8 +74,21 @@ function setupPassport(passport: PassportStatic) {
         }
         return done(null, u);
       }
+      // if there's a google account matching, log them in
       const user = await getLingdocsUser("googleId", profile.id);
       if (user) return done (null, user);
+      // if the person used their google email for a plain signup, add the google provider to it and sign in
+      const googleMail = getEmailFromGoogleProfile(gProfile);
+      console.log("google mail is", googleMail.email)
+      if (googleMail.email) {
+        const otherAccountWSameEmail = await getLingdocsUser("email", googleMail.email);
+        console.log("user with same gmail email:", otherAccountWSameEmail?.name);
+        if (otherAccountWSameEmail) {
+          await updateLingdocsUser(otherAccountWSameEmail.userId, { google: gProfile });
+          return done(null, otherAccountWSameEmail);
+        }
+      }
+      // otherwise create a brand new user
       const u = await createNewUser({ strategy: "google", profile: gProfile });
       return done(null, u);
     } catch (e) {

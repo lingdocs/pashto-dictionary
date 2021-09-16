@@ -37,7 +37,7 @@ export function getVerifiedEmail({ emails }: T.ProviderProfile): string | false 
     ) ? emails[0].value : false;
 }
 
-function getEmailFromGoogleProfile(profile: T.GoogleProfile): { email: string | undefined, verified: boolean } {
+export function getEmailFromGoogleProfile(profile: T.GoogleProfile): { email: string | undefined, verified: boolean } {
     if (!profile.emails || profile.emails.length === 0) {
         return { email: undefined, verified: false };
     }
