@@ -25,5 +25,6 @@ jobs:
       - name: Publish when version changed
         if: steps.check.outputs.changed == 'true'
         run: |
+          npm install
           npm run build
           npm publish
