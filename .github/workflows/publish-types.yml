@@ -1,0 +1,29 @@
+name: Publish Types
+
+on:
+  push:
+    branches: [ 'master' ]
+
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      LINGDOCS_NPM_TOKEN: ${{ secrets.LINGDOCS_NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v1
+        with:
+          diff-search: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish when version changed
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          npm run build
+          npm publish

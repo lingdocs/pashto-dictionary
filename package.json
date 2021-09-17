@@ -1,0 +1,33 @@
+{
+  "name": "@lingdocs/lingdocs-main",
+  "version": "0.0.4",
+  "description": "type definitions for lingdocs stuff",
+  "main": "dist/types.js",
+  "module": "dist/types.js",
+  "types": "dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-lingdocs:lingdocs/lingdocs-main.git"
+  },
+  "peerDependencies": {
+    "@lingdocs/pashto-inflector": "^1.0.6"
+  },
+  "author": "lingdocs.com",
+  "license": "MIT",
+  "dependencies": {
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth": "^2.0.0",
+    "passport-twitter": "^1.0.4"
+  },
+  "devDependencies": {
+    "rollup": "^2.56.3",
+    "typescript": "^4.4.3"
+  }
+}
