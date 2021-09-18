@@ -1,6 +1,6 @@
 {
   "name": "@lingdocs/lingdocs-main",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "types and functions for lingdocs stuff",
   "main": "dist/types.js",
   "module": "dist/types.js",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "rimraf dist && tsc"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "@types/passport-github2": "^1.2.5",
     "@types/passport-google-oauth": "^1.0.42",
     "@types/passport-twitter": "^1.0.37",
+    "rimraf": "^3.0.2",
     "rollup": "^2.56.3",
     "typescript": "^4.4.3"
   }

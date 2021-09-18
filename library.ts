@@ -11,6 +11,7 @@ import {
 
 export {
     // FUNCTIONS
+    // fetching
     myFetch,
     signOut,
     upgradeAccount,
