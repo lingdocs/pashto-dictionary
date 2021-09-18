@@ -59,7 +59,7 @@ export async function getUser(): Promise<undefined | AT.LingdocsUser | "offline"
     }
 }
 
-async function myFetch(
+export async function myFetch(
     service: Service,
     url: string,
     method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
