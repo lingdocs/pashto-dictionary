@@ -1,10 +1,10 @@
 {
   "name": "@lingdocs/lingdocs-main",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "types and functions for lingdocs stuff",
-  "main": "dist/types.js",
-  "module": "dist/types.js",
-  "types": "dist/types.d.ts",
+  "main": "dist/library.js",
+  "module": "dist/library.js",
+  "types": "dist/library.d.ts",
   "files": [
     "dist"
   ],
