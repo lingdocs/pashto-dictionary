@@ -1,6 +1,9 @@
 import * as AT from "./website/src/types/account-types";
 import * as FT from "./website/src/types/functions-types";
 import {
+    getTimestamp,
+} from "./account/src/lib/time-utils";
+import {
     myFetch,
     signOut,
     upgradeAccount,
@@ -11,6 +14,7 @@ import {
 
 export {
     // FUNCTIONS
+    getTimestamp,
     // fetching
     myFetch,
     signOut,
