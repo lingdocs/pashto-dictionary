@@ -163,9 +163,9 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                                 <i className="fas fa-key ml-2"></i> <span className="small mr-1">Password</span>
                             </span>}
                             {providers.map((provider) => (
-                               user[provider] && <span>
-                                <i className={`fab fa-${provider} mx-1`}></i>
-                                </span> 
+                                <span key={provider}>
+                                    {user[provider] && <i className={`fab fa-${provider} mx-1`}></i>}
+                                </span>
                             ))}
                         </li>
                     </ul>

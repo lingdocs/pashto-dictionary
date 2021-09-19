@@ -167,6 +167,11 @@
       } catch (e) {
         console.error(e);
       }
+      try {
+        w.postMessage("signed in", "https://grammar.lingdocs.com");
+      } catch (e) {
+        console.error(e);
+      }
     }
     function handleRequestUpgrade() {
       console.log("got here");

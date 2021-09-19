@@ -412,7 +412,7 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private checkUserCronJob = new CronJob("1/20 * * * * *", () => {
+    private checkUserCronJob = new CronJob("1/45 * * * * *", () => {
         this.handleLoadUser();
     })
 
