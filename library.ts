@@ -4,6 +4,10 @@ import {
     getTimestamp,
 } from "./account/src/lib/time-utils";
 import {
+    userObjIsEqual,
+    objIsEqual,
+} from "./website/src/lib/misc-helpers";
+import {
     myFetch,
     signOut,
     upgradeAccount,
@@ -16,6 +20,8 @@ import {
 export {
     // FUNCTIONS
     getTimestamp,
+    objIsEqual,
+    userObjIsEqual,
     // fetching
     myFetch,
     signOut,
