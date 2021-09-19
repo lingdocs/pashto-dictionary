@@ -78,8 +78,6 @@ export async function deleteCouchDbAuthUser(uuid: T.UUID): Promise<void> {
   await authUsers.destroy(u._id, u._rev);
 }
 
-// TODO: TO MAKE THIS SAFER, PASS IN JUST THE UPDATING FIELDS!!
-// TODO: take out the updated object - do just an ID, and then use the toUpdate safe thing
 export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   // TODO: OR USE REDUCER??
   { name: string } |
@@ -106,10 +104,17 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   { userTextOptionsRecord: T.UserTextOptionsRecord } |
   { upgradeToStudentRequest: "waiting" } | 
   { upgradeToStudentRequest: "denied" } | 
-  { lastActive: T.TimeStamp }
+  { lastActive: T.TimeStamp } |
+  { tests: T.TestResult[] }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
+  if ("tests" in toUpdate) {
+    return await insertLingdocsUser({
+      ...user,
+      tests: [...user.tests, ...toUpdate.tests],
+    });
+  }
   if ("password" in toUpdate) {
     const { passwordReset, ...u } = user;
     return await insertLingdocsUser({

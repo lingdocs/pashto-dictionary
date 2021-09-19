@@ -75,6 +75,13 @@ export type UpgradeUserResponse = {
     user: LingdocsUser,
 };
 
+export type PostTestResultsBody = { tests: TestResult[] };
+export type PostTestResultsResponse = {
+    ok: true,
+    message: "posted test results",
+    tests: TestResult[],
+};
+
 export type UpdateUserTextOptionsRecordBody = { userTextOptionsRecord: UserTextOptionsRecord };
 
 export type UpdateUserTextOptionsRecordResponse = {

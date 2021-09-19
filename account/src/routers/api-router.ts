@@ -46,6 +46,24 @@ apiRouter.get("/user", (req, res, next) => {
 });
 
 /**
+ * adds (passed) test results to the record of the user signed in
+ */
+apiRouter.put("/user/tests", async (req, res, next) => {
+    if (!req.user) return next("user not found");
+    try {
+        const { tests } = req.body as T.PostTestResultsBody;
+        await updateLingdocsUser(req.user.userId, { tests });
+        return {
+            ok: true,
+            message: "posted test results",
+            tests,
+        };
+    } catch(e) {
+        next(e);
+    }
+});
+
+/**
  * receives a request to change or add a user's own password
  */
 apiRouter.post("/password", async (req, res, next) => {

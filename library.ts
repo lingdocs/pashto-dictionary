@@ -10,6 +10,7 @@ import {
     upgradeToStudentRequest,
     updateUserTextOptionsRecord,
     getUser,
+    postTestResults,
 } from "./website/src/lib/backend-calls";
 
 export {
@@ -22,6 +23,7 @@ export {
     upgradeToStudentRequest,
     updateUserTextOptionsRecord,
     getUser,
+    postTestResults,
     // TYPES
     AT,
     FT,

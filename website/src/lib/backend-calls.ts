@@ -35,6 +35,10 @@ export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.User
     return response;
 }
 
+export async function postTestResults(tests: AT.TestResult[]): Promise<AT.PostTestResultsResponse> {
+    return await myFetch("account", "user/tests", "PUT", { tests }) as AT.PostTestResultsResponse;
+}
+
 export async function signOut() {
     try {
         await myFetch("account", "sign-out", "POST");
@@ -63,7 +67,8 @@ export async function myFetch(
     service: Service,
     url: string,
     method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-    body?: FT.SubmissionsRequest | { password: string } | AT.UpdateUserTextOptionsRecordBody,
+    // better typing and safety of all this
+    body?: FT.SubmissionsRequest | { password: string } | AT.UpdateUserTextOptionsRecordBody | AT.PostTestResultsBody,
 ): Promise<AT.APIResponse> {
     const response = await fetch(baseUrl[service] + url, {
         method,
