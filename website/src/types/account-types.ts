@@ -24,6 +24,12 @@ export type UserTextOptionsRecord = {
     userTextOptions: UserTextOptions,
 };
 
+export type TestResult = {
+    done: true,
+    time: TimeStamp,
+    id: string,
+}
+
 // TODO: TYPE GUARDING SO WE NEVER HAVE A USER WITH NO Id or Password
 export type LingdocsUser = {
     userId: UUID,
@@ -40,7 +46,7 @@ export type LingdocsUser = {
         requestedOn: TimeStamp,
     },
     upgradeToStudentRequest?: "waiting" | "denied",
-    tests: [],
+    tests: TestResult[],
     lastLogin: TimeStamp,
     lastActive: TimeStamp,
     userTextOptionsRecord: undefined | UserTextOptionsRecord,
