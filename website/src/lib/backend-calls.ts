@@ -36,9 +36,7 @@ export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.User
 }
 
 export async function postTestResults(tests: AT.TestResult[]): Promise<AT.PostTestResultsResponse> {
-    console.log("inside post test results, gonna call myfetch");
     const response = await myFetch("account", "user/tests", "PUT", { tests }) as AT.PostTestResultsResponse;
-    console.log("response from posting test results", response);
     return response;
 }
 
@@ -73,7 +71,6 @@ export async function myFetch(
     // better typing and safety of all this
     body?: FT.SubmissionsRequest | { password: string } | AT.UpdateUserTextOptionsRecordBody | AT.PostTestResultsBody,
 ): Promise<AT.APIResponse> {
-    console.log("inside my fetch")
     const response = await fetch(baseUrl[service] + url, {
         method,
         credentials: "include",
@@ -84,9 +81,7 @@ export async function myFetch(
             body: JSON.stringify(body),
         } : {},
     });
-    console.log("response from my fetch", response);
     const text = await response.text();
-    console.log("as text", text);
     try {
         return JSON.parse(text);
     } catch (e) {
