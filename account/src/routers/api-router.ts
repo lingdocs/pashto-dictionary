@@ -52,9 +52,7 @@ apiRouter.put("/user/tests", async (req, res, next) => {
     if (!req.user) return next("user not found");
     try {
         const { tests } = req.body as T.PostTestResultsBody;
-        console.log("will add tests to user");
         await updateLingdocsUser(req.user.userId, { tests });
-        console.log("successful update of tests", JSON.stringify(tests));
         return {
             ok: true,
             message: "posted test results",

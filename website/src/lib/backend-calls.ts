@@ -36,7 +36,9 @@ export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.User
 }
 
 export async function postTestResults(tests: AT.TestResult[]): Promise<AT.PostTestResultsResponse> {
-    return await myFetch("account", "user/tests", "PUT", { tests }) as AT.PostTestResultsResponse;
+    const response = await myFetch("account", "user/tests", "PUT", { tests }) as AT.PostTestResultsResponse;
+    console.log("response from posting test results", response);
+    return response;
 }
 
 export async function signOut() {
