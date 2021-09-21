@@ -110,9 +110,10 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
   if ("tests" in toUpdate) {
+    const newTests = toUpdate.tests.filter((t) => !user.tests.some(x => x.time === t.time));
     return await insertLingdocsUser({
       ...user,
-      tests: [...user.tests, ...toUpdate.tests],
+      tests: [...user.tests, ...newTests],
     });
   }
   if ("password" in toUpdate) {
