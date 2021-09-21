@@ -53,11 +53,11 @@ apiRouter.put("/user/tests", async (req, res, next) => {
     try {
         const { tests } = req.body as T.PostTestResultsBody;
         await updateLingdocsUser(req.user.userId, { tests });
-        return {
+        sendResponse({
             ok: true,
             message: "posted test results",
             tests,
-        };
+        });
     } catch(e) {
         next(e);
     }
