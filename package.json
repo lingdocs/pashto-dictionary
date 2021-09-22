@@ -17,7 +17,7 @@
     "url": "git@github.com-lingdocs:lingdocs/lingdocs-main.git"
   },
   "peerDependencies": {
-    "@lingdocs/pashto-inflector": "^1.0.6"
+    "@lingdocs/pashto-inflector": "^1.0.7"
   },
   "author": "lingdocs.com",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "passport-twitter": "^1.0.4"
   },
   "devDependencies": {
-    "@lingdocs/pashto-inflector": "^1.0.6",
+    "@lingdocs/pashto-inflector": "^1.0.7",
     "@types/passport-github2": "^1.2.5",
     "@types/passport-google-oauth": "^1.0.42",
     "@types/passport-twitter": "^1.0.37",
