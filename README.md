@@ -214,7 +214,7 @@ Contains:
 - `dict` - the dictionary content in protobuf format
 - `dict-info` - information about the version of the currently available dictionary in protobuf format
 
-The website fetches `dict-info` and `dict` as needed to check for the latest dictionary version and download it into memory/`lokijs`
+The website fetches `dict-info` and `dict` as needed to check for the latest dictionary version and download it into memory/`lokijs`.
 
 ### Frontend Layer
 
