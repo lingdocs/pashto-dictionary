@@ -33,7 +33,6 @@
             <th scope="col">Email</th>
             <th scope="col">Providers</th>
             <th scope="col">Level</th>
-            <th scope="col">Last Active</th>
             <th shope="col"></th>
           </tr>
         </thead>
@@ -79,9 +78,6 @@
                 <% } else { %>
                   <%= users[i].level %>
                 <% } %>
-              </td>
-              <td>
-                <%= new Date(users[i].lastActive).toUTCString() %>
               </td>
               <td>
                 <button class="btn btn-sm btn-danger" onClick="handleDeleteUser('<%= users[i].userId %>', '<%= users[i].name %>')"><i class="fa fa-trash"></i></button>
