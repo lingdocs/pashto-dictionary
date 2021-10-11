@@ -26,5 +26,6 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         run: |
           npm install
+          npm install @lingdocs/pashto-inflector
           npm run build
           npm publish
