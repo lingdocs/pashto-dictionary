@@ -16,6 +16,11 @@ import {
     getUser,
     postTestResults,
 } from "./website/src/lib/backend-calls";
+import {
+    lingdocsUserExpressMiddleware,
+    withLingdocsUserApiRoute,
+    withLingdocsUserSsr,
+} from "./account/src/lib/with-user";
 
 export {
     // FUNCTIONS
@@ -30,6 +35,10 @@ export {
     updateUserTextOptionsRecord,
     getUser,
     postTestResults,
+    // withLingdocsUser functions
+    lingdocsUserExpressMiddleware,
+    withLingdocsUserApiRoute,
+    withLingdocsUserSsr,
     // TYPES
     AT,
     FT,
