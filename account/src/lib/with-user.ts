@@ -5,7 +5,7 @@ import type {
     GetServerSidePropsContext,
     GetServerSidePropsResult,
 } from "next";
-
+import sampleUsers from "./sample-users";
 
 declare module "http" {
     interface IncomingMessage {
@@ -38,14 +38,18 @@ async function fetchUser(cookies: any): Promise<AT.LingdocsUser | undefined> {
  * 
  * @returns 
  */
-export async function lingdocsUserExpressMiddleware(req: Request, res: Response, next: NextFunction) {
-    const user = await fetchUser(req.headers.cookie);
-    Object.defineProperty(
-        req,
-        "user",
-        { value: user, writable: false, enumerable: true },
-    );
-    next();
+export function lingdocsUserExpressMiddleware(devSampleUser?: "basic" | "student" | "admin" | "editor" | "none"): (req: Request, res: Response, next: NextFunction) => Promise<void>  {
+    return async function expressMiddleware(req, res, next) {
+        const user = devSampleUser
+            ? (devSampleUser === "none" ? undefined : sampleUsers[devSampleUser])
+            : await fetchUser(req.headers.cookie);
+        Object.defineProperty(
+            req,
+            "user",
+            { value: user, writable: false, enumerable: true },
+        );
+        next();
+    }
 }
 
 /**
@@ -62,9 +66,11 @@ export async function lingdocsUserExpressMiddleware(req: Request, res: Response,
  * @param handler 
  * @returns 
  */
-export function withLingdocsUserApiRoute(handler: NextApiHandler): NextApiHandler {
+export function withLingdocsUserApiRoute(handler: NextApiHandler, devSampleUser?: "basic" | "student" | "admin" | "editor" | "none"): NextApiHandler {
     return async function nextApiHandlerWrappedWithLingdocsUser(req, res) {
-        const user = await fetchUser(req.cookies);
+        const user = devSampleUser
+            ? (devSampleUser === "none" ? undefined : sampleUsers[devSampleUser])
+            : await fetchUser(req.headers.cookies);
         Object.defineProperty(
             req,
             "user",
@@ -91,11 +97,15 @@ export function withLingdocsUserSsr<
 >(
     handler: (
         context: GetServerSidePropsContext,
-    ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>) {
+    ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>,
+    devSampleUser?: "basic" | "student" | "admin" | "editor" | "none",
+) {
     return async function nextGetServerSidePropsHandlerWrappedWithLingdocsUser(
         context: GetServerSidePropsContext,
     ) {
-        const user = await fetchUser(context.req.cookies);
+        const user = devSampleUser
+            ? (devSampleUser === "none" ? undefined : sampleUsers[devSampleUser])
+            : await fetchUser(context.req.cookies);
         Object.defineProperty(
             context.req,
             "user",
