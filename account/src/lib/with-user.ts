@@ -13,6 +13,16 @@ declare module "http" {
     }
 }
 
+const devSampleUser = getSampleUser();
+function getSampleUser(): AT.LingdocsUser | "none" | undefined {
+    const e = process.env.DEV_SAMPLE;
+    if (e === "basic" || e === "student" || e === "admin") {
+        return sampleUsers[e];
+    }
+    if (e === "none") return e;
+    return undefined;
+}
+
 async function fetchUser(cookies: any): Promise<AT.LingdocsUser | undefined> {
     if (!cookies) {
         return undefined;
@@ -36,20 +46,20 @@ async function fetchUser(cookies: any): Promise<AT.LingdocsUser | undefined> {
 /**
  * express middleware to include the LingdocsUser in req.user if signed in
  * 
+ * to get sample users, set the DEV_SAMPLE env var to "basic", "student", "editor", or "admin"
+ * 
  * @returns 
  */
-export function lingdocsUserExpressMiddleware(devSampleUser?: "basic" | "student" | "admin" | "editor" | "none"): (req: Request, res: Response, next: NextFunction) => Promise<void>  {
-    return async function expressMiddleware(req, res, next) {
-        const user = devSampleUser
-            ? (devSampleUser === "none" ? undefined : sampleUsers[devSampleUser])
-            : await fetchUser(req.headers.cookie);
-        Object.defineProperty(
-            req,
-            "user",
-            { value: user, writable: false, enumerable: true },
-        );
-        next();
-    }
+export async function lingdocsUserExpressMiddleware(req: Request, res: Response, next: NextFunction) {
+    const user = devSampleUser
+        ? (devSampleUser === "none" ? undefined : devSampleUser)
+        : await fetchUser(req.headers.cookie);
+    Object.defineProperty(
+        req,
+        "user",
+        { value: user, writable: false, enumerable: true },
+    );
+    next();
 }
 
 /**
@@ -62,14 +72,16 @@ export function lingdocsUserExpressMiddleware(devSampleUser?: "basic" | "student
  * export default withLingdocsUserApiRoute(
  *   async function thingRoute(req, res) {
  *     ...
+ *
+ * to get sample users, set the DEV_SAMPLE env var to "basic", "student", "editor", or "admin"
  * 
  * @param handler 
  * @returns 
  */
-export function withLingdocsUserApiRoute(handler: NextApiHandler, devSampleUser?: "basic" | "student" | "admin" | "editor" | "none"): NextApiHandler {
+export function withLingdocsUserApiRoute(handler: NextApiHandler): NextApiHandler {
     return async function nextApiHandlerWrappedWithLingdocsUser(req, res) {
         const user = devSampleUser
-            ? (devSampleUser === "none" ? undefined : sampleUsers[devSampleUser])
+            ? (devSampleUser === "none" ? undefined : devSampleUser)
             : await fetchUser(req.headers.cookies);
         Object.defineProperty(
             req,
@@ -88,7 +100,8 @@ export function withLingdocsUserApiRoute(handler: NextApiHandler, devSampleUser?
  * export const getServerSideProps = withLingdocsUserSsr(
  *   async function getServerSideProps({ req }) {
  *      ...
- * 
+ * to get sample users, set the DEV_SAMPLE env var to "basic", "student", "editor", or "admin"
+ *
  * @param handler 
  * @returns 
  */
@@ -98,13 +111,12 @@ export function withLingdocsUserSsr<
     handler: (
         context: GetServerSidePropsContext,
     ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>,
-    devSampleUser?: "basic" | "student" | "admin" | "editor" | "none",
 ) {
     return async function nextGetServerSidePropsHandlerWrappedWithLingdocsUser(
         context: GetServerSidePropsContext,
     ) {
         const user = devSampleUser
-            ? (devSampleUser === "none" ? undefined : sampleUsers[devSampleUser])
+            ? (devSampleUser === "none" ? undefined : devSampleUser)
             : await fetchUser(context.req.cookies);
         Object.defineProperty(
             context.req,
