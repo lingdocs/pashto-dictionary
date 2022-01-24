@@ -209,7 +209,7 @@ export class DictionaryDb {
                 dictionaryInfo: dictionary.info,
             };
         } catch (e) {
-            throw new Error(e);
+            throw new Error(e as string);
         }
     }
 

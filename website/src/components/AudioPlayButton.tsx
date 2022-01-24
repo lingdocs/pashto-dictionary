@@ -17,6 +17,7 @@ export function AudioPlayButton({ word }: { word: WordlistWord }) {
     useEffect(() => {
         getAudioAttachment(word).then((audio) => {
             if (!audio) return;
+            // @ts-ignore // TODO: FIX THIS!
             const src = URL.createObjectURL(audio);
             setSrc(src);
             setType("type" in audio ? audio.type : undefined);
