@@ -11,9 +11,9 @@ import {
     simplifyPhonetics,
     standardizeEntry,
 } from "@lingdocs/pashto-inflector";
-// import {
-//     getWordList,
-// } from "./word-list-maker";
+import {
+    getWordList,
+} from "./word-list-maker";
 import {
     PublishDictionaryResponse,
 } from "../../website/src/types/functions-types";
@@ -28,8 +28,8 @@ const bucketName = "lingdocs";
 const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
 const dictionaryFilename = "dictionary";
 const dictionaryInfoFilename = "dictionary-info";
-// const hunspellAffFileFilename = "ps_AFF.aff";
-// const hunspellDicFileFilename = "ps_AFF.dic";
+const hunspellAffFileFilename = "ps_AFF.aff";
+const hunspellDicFileFilename = "ps_AFF.dic";
 const url = `${baseUrl}${dictionaryFilename}`;
 const infoUrl = `${baseUrl}${dictionaryInfoFilename}`;
 
@@ -69,22 +69,21 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
     }
     await uploadDictionaryToStorage(dictionary);
     // TODO: make this async and run after publish response
-    // doHunspell(entries).catch(console.error);
+    await doHunspell(entries);
     return {
         ok: true,
         info: dictionary.info
     };
-
 }
 
-// async function doHunspell(entries: T.DictionaryEntry[]) {
-//     const wordlistResponse = getWordList(entries);
-//     if (!wordlistResponse.ok) {
-//         throw new Error(JSON.stringify(wordlistResponse.errors));
-//     }
-//     const hunspell = makeHunspell(wordlistResponse.wordlist);
-//     await uploadHunspellToStorage(hunspell);
-// }
+async function doHunspell(entries: T.DictionaryEntry[]) {
+    const wordlistResponse = getWordList(entries);
+    if (!wordlistResponse.ok) {
+        throw new Error(JSON.stringify(wordlistResponse.errors));
+    }
+    const hunspell = makeHunspell(wordlistResponse.wordlist);
+    await uploadHunspellToStorage(hunspell);
+}
 
 async function getRawEntries(): Promise<T.DictionaryEntry[]> {
     const doc = new GoogleSpreadsheet(
@@ -197,15 +196,15 @@ async function upload(content: Buffer | string, filename: string) {
     });
 }
 
-// async function uploadHunspellToStorage(wordlist: {
-//     affContent: string,
-//     dicContent: string,
-// }) {
-//     await Promise.all([
-//         upload(wordlist.affContent, hunspellAffFileFilename),
-//         upload(wordlist.dicContent, hunspellDicFileFilename),
-//     ]);
-// }
+async function uploadHunspellToStorage(wordlist: {
+    affContent: string,
+    dicContent: string,
+}) {
+    await Promise.all([
+        upload(wordlist.affContent, hunspellAffFileFilename),
+        upload(wordlist.dicContent, hunspellDicFileFilename),
+    ]);
+}
 
 async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
     const dictionaryBuffer = writeDictionary(dictionary);
@@ -218,9 +217,9 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
     ]);
 }
 
-// function makeHunspell(wordlist: string[]) {
-//     return {
-//         dicContent: wordlist.reduce((acc, word) => acc + word + "\n", wordlist.length + "\n"),
-//         affContent: "SET UTF-8\nCOMPLEXPREFIXES\nIGNORE ۱۲۳۴۵۶۷۸۹۰-=ًٌٍَُِّْ؛:؟.،,،؟\n",
-//     };
-// }
+function makeHunspell(wordlist: string[]) {
+    return {
+        dicContent: wordlist.reduce((acc, word) => acc + word + "\n", wordlist.length + "\n"),
+        affContent: "SET UTF-8\nCOMPLEXPREFIXES\nIGNORE ۱۲۳۴۵۶۷۸۹۰-=ًٌٍَُِّْ؛:؟.،,،؟\n",
+    };
+}
