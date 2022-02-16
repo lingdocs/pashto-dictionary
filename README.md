@@ -15,6 +15,12 @@ This monorepo contains:
 
 **Note:** On MacOs you will need to use Node 14 (Node 16 breaks the install on MacOs)
 
+To update the `@lingdocs/pashto-inflector` dependency accross the project you can use the shell script included:
+
+```sh
+./update-inflector.sh [version]
+```
+
 ### Dictionary Client
 
 SPA Dictionary Frontend
