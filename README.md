@@ -13,6 +13,8 @@ This monorepo contains:
  - `/account` a backend authentication server
  - `/functions` backend Firebase functions for use with the dictionary
 
+**Note:** On MacOs you will need to use Node 14 (Node 16 breaks the install on MacOs)
+
 ### Dictionary Client
 
 SPA Dictionary Frontend
