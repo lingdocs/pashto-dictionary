@@ -6,6 +6,13 @@
  *
  */
 
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+
  :root {
     --secondary: #00c1fc;
     --primary: #ffda54;
