@@ -3,7 +3,6 @@ import {
     deleteLingdocsUser,
     getLingdocsUser,
     updateLingdocsUser,
-    deleteCouchDbAuthUser,
 } from "../lib/couch-db";
 import {
     getHash,

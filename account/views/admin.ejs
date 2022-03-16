@@ -75,6 +75,13 @@
                   </div>
                 <% } else if (users[i].upgradeToStudentRequest === "waiting"){ %>
                   Upgrade Denied
+                <% } else if (users[i].level === "basic") { %>
+                  <div><%= users[i].level %></div>
+                  <div>
+                    <form action="/admin/upgradeToStudent/<%= users[i].userId %>/grant" method="POST">
+                      <button class="btn btn-sm btn-success mx-2" type="submit"><i class="fas fa-thumbs-up mr-2"></i> Upgrade </button>
+                    </form>
+                  </div>
                 <% } else { %>
                   <%= users[i].level %>
                 <% } %>
