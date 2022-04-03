@@ -5,7 +5,7 @@ export type UserDbPassword = string & { __brand: "password for an individual use
 export type WordlistDbName = string & { __brand: "name for an individual user couchdb" };
 export type URLToken = string & { __brand: "Base 64 URL Token" };
 export type EmailVerified = true | Hash | false;
-export type ActionComplete = { ok: true, message: string };
+export type ActionComplete = { ok: true, message: string, tests?: TestResult[] };
 export type ActionError = { ok: false, error: string };
 export type APIResponse = ActionComplete | ActionError | { ok: true, user: LingdocsUser };
 

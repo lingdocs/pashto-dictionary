@@ -1483,10 +1483,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@lingdocs/pashto-inflector@1.5.0":
-  version "1.5.0"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-1.5.0.tgz#5fed055341c41fe3f72e9afdbab96d96b30737fb"
-  integrity sha512-K0VZiCV5lOkY2/s3xS1iIfIiitNA9n4uzdJIeqO2mU1Ce3UwA8OLlnaQq3/MnurXK5V1/dOEut5Ey0eMlGsAJg==
+"@lingdocs/pashto-inflector@1.6.8":
+  version "1.6.8"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-1.6.8.tgz#adc94c84c49cc067e26fb3066fae2a13b9d25d03"
+  integrity sha512-BGzMP0URWm6fEGdUUX653oImSMEkn11S/3vxeQILrQDCUNjGpNPQlORF27OlzCs8+n9lDBMDQHVjfhBlAZFN4w==
   dependencies:
     classnames "^2.2.6"
     pbf "^3.2.1"
@@ -10481,7 +10481,7 @@ react-dev-utils@^11.0.3:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
-react-dom@^17.0.1:
+react-dom@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
@@ -10681,7 +10681,7 @@ react-transition-group@^4.4.1:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^17.0.1:
+react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
