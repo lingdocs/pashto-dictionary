@@ -49,6 +49,7 @@ Use [npm](https://www.npmjs.com/).
 ```sh
 cd account
 npm install
+npm run dev
 ```
 
 ### Functions

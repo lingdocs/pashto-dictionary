@@ -22,9 +22,9 @@ do
 done
 
 # install to update .lock files
-npm install &&
+npm install --legacy-peer-deps &&
 cd website &&
-yarn install &&
+yarn install --legacy-peer-deps &&
 cd ../functions &&
 npm install
 
