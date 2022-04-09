@@ -10,9 +10,10 @@ import { DictionaryDb } from "./dictionary-core";
 import sanitizePashto from "./sanitize-pashto";
 import fillerWords from "./filler-words";
 import {
-    Types,
+    Types as T,
     convertSpelling,
     simplifyPhonetics,
+    typePredicates as tp,
 } from "@lingdocs/pashto-inflector";
 import { isPashtoScript } from "./is-pashto";
 import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
@@ -98,7 +99,7 @@ function tsOneMonthBack(): number {
 function alphabeticalLookup({ searchString, page }: {
     searchString: string,
     page: number,
-}): Types.DictionaryEntry[] {
+}): T.DictionaryEntry[] {
     const r = new RegExp("^" + sanitizePashto(makeSearchStringSafe(searchString)));
     const regexResults = dictDb.collection.find({
         $or: [
@@ -123,21 +124,25 @@ function alphabeticalLookup({ searchString, page }: {
     return [];
 }
 
-function fuzzyLookup({ searchString, language, page } : {
+function fuzzyLookup<S extends T.DictionaryEntry>({ searchString, language, page, tpFilter }: {
     searchString: string,
     language: "Pashto" | "English" | "Both",
     page: number,
-}) {
+    tpFilter?: (e: T.DictionaryEntry) => e is S,
+}): S[] {
+    // TODO: Implement working with both
     return language === "Pashto"
-        ? pashtoFuzzyLookup({ searchString, page })
-        : englishLookup({ searchString, page });
+        ? pashtoFuzzyLookup({ searchString, page, tpFilter })
+        : englishLookup({ searchString, page, tpFilter })
+
 }
 
-function englishLookup({ searchString, page }: {
+function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilter }: {
     searchString: string,
     page: number,
-}) {
-    let resultsGiven: number[] = [];
+    tpFilter?: (e: T.DictionaryEntry) => e is S,
+}): S[] {
+    let resultsGiven: number[] = [];;
     // get exact results
     const exactQuery = { 
         e: {
@@ -188,6 +193,7 @@ function englishLookup({ searchString, page }: {
     };
     const partialMatchLimit = (pageSize * page) - resultsGiven.length;
     const partialMatchResults = dictDb.collection.chain()
+    .where(tpFilter ? tpFilter : () => true)
         .find(partialMatchQuery)
         .limit(partialMatchLimit)
         .simplesort("i")
@@ -198,10 +204,13 @@ function englishLookup({ searchString, page }: {
         ...fullWordResults,
         ...partialMatchResults,
     ];
+    if (tpFilter) {
+        return results.filter(tpFilter);
+    }
     return results;
 }
 
-function pashtoExactLookup(searchString: string): Types.DictionaryEntry[] {
+function pashtoExactLookup(searchString: string): T.DictionaryEntry[] {
     const index = isPashtoScript(searchString) ? "p" : "g";
     const search = index === "g" ? simplifyPhonetics(searchString) : searchString;
     return dictDb.collection.find({
@@ -209,10 +218,11 @@ function pashtoExactLookup(searchString: string): Types.DictionaryEntry[] {
     });
 }
 
-function pashtoFuzzyLookup({ searchString, page }: {
+function pashtoFuzzyLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilter }: {
     searchString: string,
     page: number,
-}): Types.DictionaryEntry[] {
+    tpFilter?: (e: T.DictionaryEntry) => e is S,
+}): S[] {
     let resultsGiven: number[] = [];
     // Check if it's in Pashto or Latin script
     const searchStringToUse = sanitizePashto(makeSearchStringSafe(searchString));
@@ -286,7 +296,9 @@ function pashtoFuzzyLookup({ searchString, page }: {
                     .find(fuzzyQuery)
                     .limit(fuzzyResultsLimit)
                     .data();
-    const results = [...exactResults, ...fuzzyResults];
+    const results = tpFilter
+        ? [...exactResults, ...fuzzyResults].filter(tpFilter)
+        : [...exactResults, ...fuzzyResults];
     const chunksToSort = chunkOutArray(results, pageSize);
     // sort out each chunk (based on limit used multiple times by infinite scroll)
     // so that when infinite scrolling, it doesn't resort the previous chunks given
@@ -304,16 +316,16 @@ function pashtoFuzzyLookup({ searchString, page }: {
 }
 
 function sortByRelevancy<T>(arr: T[], searchI: string, index: string): T[] {
-    return relevancySorter.sort(arr, searchI, (obj: any, calc: any) => calc(obj[index]))
+    return relevancySorter.sort(arr, searchI, (obj: any, calc: any) => calc(obj[index]));
 }
 
-function relatedWordsLookup(word: Types.DictionaryEntry): Types.DictionaryEntry[] {
+function relatedWordsLookup(word: T.DictionaryEntry): T.DictionaryEntry[] {
     const wordArray = word.e.trim()
         .replace(/\?/g, "")
         .replace(/( |,|\.|!|;|\(|\))/g, " ")
         .split(/ +/)
         .filter((w: string) => !fillerWords.includes(w));
-    let results: Types.DictionaryEntry[] = [];
+    let results: T.DictionaryEntry[] = [];
     wordArray.forEach((w: string) => {
         let r: RegExp;
         try {
@@ -345,13 +357,64 @@ export function allEntries() {
     return dictDb.collection.find();
 }
 
+export function getNounByTs(ts: number): undefined | T.NounEntry {
+    const res = dictDb.findOneByTs(ts);
+    if (!res) return undefined;
+    return tp.isNounEntry(res) ? res : undefined;
+}
+export function getVerbByTs(ts: number): undefined | T.VerbEntry {
+    const entry = dictDb.findOneByTs(ts);
+    if (!entry) return undefined;
+    if (!tp.isVerbDictionaryEntry(entry)) {
+        console.error("not valid verb entry");
+        return undefined;
+    }
+    const complement = (() => {
+        if (entry.c?.includes("comp") && entry.l) {
+            const comp = dictDb.findOneByTs(entry.l);
+            if (!comp) {
+                console.error("complement not found for", entry);
+            }
+            return comp;
+        } else {
+            return undefined;
+        }
+    })();
+    return { entry, complement };
+}
+
+export function searchNouns(s: string): T.NounEntry[] {
+    console.log("searching nouns");
+    return fuzzyLookup({
+        searchString: s,
+        language: "Pashto",
+        page: 1,
+        tpFilter: tp.isNounEntry,
+    });
+}
+
+export function searchVerbs(s: string): T.VerbEntry[] {
+    const vEntries = fuzzyLookup({
+        searchString: s,
+        language: "Pashto",
+        page: 1,
+        tpFilter: tp.isVerbDictionaryEntry,
+    });
+    return vEntries.map((entry): T.VerbEntry => ({
+        entry,
+        complement: (entry.c?.includes("comp.") && entry.l)
+            ? dictionary.findOneByTs(entry.l)
+            : undefined,
+    }));
+}
+
 export const dictionary: DictionaryAPI = {
     // NOTE: For some reason that I do not understand you have to pass the functions from the
     // dictionary core class in like this... ie. initialize: dictDb.initialize will mess up the this usage
     // in the dictionary core class
     initialize: async () => await dictDb.initialize(),
     update: async (notifyUpdateComing: () => void) => await dictDb.updateDictionary(notifyUpdateComing),
-    search: function(state: State): Types.DictionaryEntry[] {
+    search: function(state: State): T.DictionaryEntry[] {
         const searchString = convertSpelling(
             state.searchValue,
             getTextOptions(state).spelling,
@@ -371,7 +434,7 @@ export const dictionary: DictionaryAPI = {
             });
     },
     exactPashtoSearch: pashtoExactLookup,
-    getNewWordsThisMonth: function(): Types.DictionaryEntry[] {
+    getNewWordsThisMonth: function(): T.DictionaryEntry[] {
         return dictDb.collection.chain()
           .find({ ts: { $gt: tsOneMonthBack() }})
           .simplesort("ts")
@@ -379,7 +442,7 @@ export const dictionary: DictionaryAPI = {
           .reverse();
     },
     findOneByTs: (ts: number) => dictDb.findOneByTs(ts),
-    findRelatedEntries: function(entry: Types.DictionaryEntry): Types.DictionaryEntry[] {
+    findRelatedEntries: function(entry: T.DictionaryEntry): T.DictionaryEntry[] {
         return relatedWordsLookup(entry);
     },
 }

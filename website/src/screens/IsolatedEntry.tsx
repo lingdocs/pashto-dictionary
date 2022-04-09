@@ -8,11 +8,12 @@
 
 import { useEffect, useState } from "react";
 import {
-    ConjugationViewer,
+    VPExplorer,
     InflectionsTable,
     inflectWord,
     InlinePs,
     Types as T,
+    typePredicates as tp,
 } from "@lingdocs/pashto-inflector";
 import {
     submissionBase,
@@ -32,6 +33,12 @@ import AudioPlayButton  from "../components/AudioPlayButton";
 import { Helmet } from "react-helmet";
 import { Modal } from "react-bootstrap";
 import { getTextOptions } from "../lib/get-text-options";
+import {
+    searchNouns,
+    searchVerbs,
+    getNounByTs,
+    getVerbByTs,
+} from "../lib/dictionary";
 
 function IsolatedEntry({ state, dictionary, isolateEntry }: {
     state: State,
@@ -199,12 +206,31 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />
             </div>}
         </>}
-        {/* TODO: State options for tail type here */}
-        <ConjugationViewer
-            entry={entry}
-            complement={complement}
-            textOptions={textOptions}
-        />
+        {/*
+        // @ts-ignore */}
+        {tp.isVerbEntry({ entry, complement }) && <div className="pb-4">
+            <div>
+                <div className="h5">🆕 New Verb Explorer 👇</div>
+                <ul className="mb-2">
+                    <li>Now you can build phrases with nouns etc.</li>
+                    <li>🚧 It's kinda ugly now but will get better! 👷</li>
+                </ul>
+            </div>
+            <VPExplorer
+                verb={{
+                    // TODO: CLEAN THIS UP!
+                    // @ts-ignore
+                    entry,
+                    complement,
+                }}
+                opts={textOptions}
+                nouns={searchNouns}
+                verbs={searchVerbs}
+                getNounByTs={getNounByTs}
+                getVerbByTs={getVerbByTs}
+            />
+        </div>}
+
         {relatedEntries && <>
             {relatedEntries.length ? 
                 <>
