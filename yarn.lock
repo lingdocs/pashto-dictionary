@@ -168,14 +168,15 @@
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.1.tgz"
   "version" "9.2.1"
 
-"@lingdocs/pashto-inflector@1.9.0":
-  "integrity" "sha512-2MCPHiyaHxr9MCLh+vVF1gaaIrbWGhzp9GAVEbU1qrNn3FoOEBzhxiijQ1Lny0pQkYWRo5IXDeqJHVEP2jAnFg=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-1.9.0.tgz"
-  "version" "1.9.0"
+"@lingdocs/pashto-inflector@1.9.4":
+  "integrity" "sha512-LnPLxwmZY2u4sKlKJNhfFlVb655BgLr8R1882H8ZRxLA0jxvvHEckzFdX+rZsZqg3u08JK56x5TCzSlM2MuP6Q=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-1.9.4.tgz"
+  "version" "1.9.4"
   dependencies:
     "classnames" "^2.2.6"
     "pbf" "^3.2.1"
     "rambda" "^6.7.0"
+    "react-rewards" "^2.0.3"
     "react-select" "^5.2.2"
 
 "@napi-rs/triples@1.0.3":
@@ -1952,6 +1953,11 @@
   "integrity" "sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg=="
   "resolved" "https://registry.npmjs.org/react-refresh/-/react-refresh-0.8.3.tgz"
   "version" "0.8.3"
+
+"react-rewards@^2.0.3":
+  "integrity" "sha512-qww5Jtk2HmCjR9wc7+0c2iP8oCQzENZn8pnoJGi0S6o+6dAD25+ZoagLSWdoBLGVwxfP5kFBjv3VZ6L8fPk6lg=="
+  "resolved" "https://registry.npmjs.org/react-rewards/-/react-rewards-2.0.3.tgz"
+  "version" "2.0.3"
 
 "react-select@^5.2.2":
   "integrity" "sha512-miGS2rT1XbFNjduMZT+V73xbJEeMzVkJOz727F6MeAr2hKE0uUSA8Ff7vD44H32x2PD3SRB6OXTY/L+fTV3z9w=="
