@@ -274,10 +274,8 @@ class App extends Component<RouteComponentProps, State> {
 
     private async handleLoadUser(): Promise<void> {
         try {
-            console.log("getting user");
             const prevUser = this.state.user;
             const userOnServer = await getUser();
-            console.log({ userOnServer });
             if (userOnServer === "offline") return;
             if (userOnServer) sendSubmissions();
             if (!userOnServer) {
