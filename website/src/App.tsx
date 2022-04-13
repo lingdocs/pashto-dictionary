@@ -411,8 +411,10 @@ class App extends Component<RouteComponentProps, State> {
             this.props.history.push(`/word?id=${isolatedEntry.ts}`);
         }
     }
-
-    private checkUserCronJob = new CronJob("1/45 * * * * *", () => {
+    
+    // TODO: right now not checking user very often cause it messes with the state?
+    // causes the verb quizzer to reset?
+    private checkUserCronJob = new CronJob("1/20 * * * *", () => {
         this.handleLoadUser();
     })
 

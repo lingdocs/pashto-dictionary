@@ -209,8 +209,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         {/*
         // @ts-ignore */}
         {tp.isVerbEntry({ entry, complement }) && <div className="pb-4">
-            <div className="h6">🆕 New Verb Explorer</div>
-            <p className="text-muted">You can build phrases with nouns, quiz your verbs etc. It's still a bit rough - work in process 🚧</p>
+            <div className="h5 text-center">🆕 New Verb Playground/Quiz Feature! 🤓👇</div>
             <VPExplorer
                 verb={{
                     // TODO: CLEAN THIS UP!
