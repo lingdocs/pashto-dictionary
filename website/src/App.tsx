@@ -145,8 +145,7 @@ class App extends Component<RouteComponentProps, State> {
             ReactGA.pageview(window.location.pathname + window.location.search);
         }
         dictionary.initialize().then((r) => {
-            this.checkUserCronJob.start();
-            this.networkCronJob.start();
+            this.cronJob.start();
             this.setState({
                 dictionaryStatus: "ready",
                 dictionaryInfo: r.dictionaryInfo,
@@ -231,8 +230,7 @@ class App extends Component<RouteComponentProps, State> {
 
     public componentWillUnmount() {
         window.removeEventListener("scroll", this.handleScroll);
-        this.checkUserCronJob.stop();
-        this.networkCronJob.stop();
+        this.cronJob.stop();
         stopLocalDbs();
         Mousetrap.unbind(["ctrl+down", "ctrl+up", "command+down", "command+up"]);
         Mousetrap.unbind(["ctrl+b", "command+b"]);
@@ -276,8 +274,10 @@ class App extends Component<RouteComponentProps, State> {
 
     private async handleLoadUser(): Promise<void> {
         try {
+            console.log("getting user");
             const prevUser = this.state.user;
             const userOnServer = await getUser();
+            console.log({ userOnServer });
             if (userOnServer === "offline") return;
             if (userOnServer) sendSubmissions();
             if (!userOnServer) {
@@ -323,10 +323,13 @@ class App extends Component<RouteComponentProps, State> {
         dictionary.update(() => {
             this.setState({ dictionaryStatus: "updating" });
         }).then(({ dictionaryInfo }) => {
-            this.setState({
-                dictionaryStatus: "ready",
-                dictionaryInfo,
-            });
+            if (this.state.dictionaryInfo?.release !== dictionaryInfo?.release) {
+                // to avoid unnecessary re-rendering that breaks things
+                this.setState({
+                    dictionaryStatus: "ready",
+                    dictionaryInfo,
+                });
+            }
         }).catch(() => {
             this.setState({ dictionaryStatus: "error loading" });
         });
@@ -414,13 +417,10 @@ class App extends Component<RouteComponentProps, State> {
     
     // TODO: right now not checking user very often cause it messes with the state?
     // causes the verb quizzer to reset?
-    private checkUserCronJob = new CronJob("1/20 * * * *", () => {
+    private cronJob = new CronJob("* * * * *", () => {
+        this.handleDictionaryUpdate();
         this.handleLoadUser();
     })
-
-    private networkCronJob = new CronJob("1/5 * * * *", () => {
-        this.handleDictionaryUpdate();
-    });
 
     /* istanbul ignore next */
     private handleScroll() {

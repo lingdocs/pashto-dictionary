@@ -102,7 +102,6 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             return false;
         }
     })();
-    console.log(inf);
     return <div className="width-limiter">
         <Helmet>
             <title>{entry.p} - LingDocs Pashto Dictionary</title>
