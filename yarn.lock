@@ -168,10 +168,10 @@
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.1.tgz"
   "version" "9.2.1"
 
-"@lingdocs/pashto-inflector@2.0.2":
-  "integrity" "sha512-qdipDSe86FLjZyXeZadFxeQptPRUWGMGskVdRSTwm54QzW24pmBBYCwv8VSzEQPLQzhq53aSQl6opqXQDh8dGQ=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.0.2.tgz"
-  "version" "2.0.2"
+"@lingdocs/pashto-inflector@2.0.7":
+  "integrity" "sha512-gZzNdlEzt1UtXDk/p07fF3WFHJVrRRx57GHKCl+hm+4e6Db22/84Lx8pJOPje8k/Xxls+pDAs0gSKCOUOW9d8g=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.0.7.tgz"
+  "version" "2.0.7"
   dependencies:
     "classnames" "^2.2.6"
     "pbf" "^3.2.1"
@@ -340,9 +340,9 @@
     "@types/react" "*"
 
 "@types/react@*":
-  "integrity" "sha512-2poV9ReTwwV5ZNxkKyk7t6Vp/odeTfYI3vRjtDYWfUdEstx9mp26jzELfMBwV6gXg1irhHUnmZJH/dJW7xafcA=="
-  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.2.tgz"
-  "version" "18.0.2"
+  "integrity" "sha512-Zm4ryWh9xQbMX6ge7Ej/nS6VBoT+9wzvwd/hZ+9EONGjBkejyyvEKndZt/DZHHj1lSU/YeTPyJAn22S3GnYchQ=="
+  "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.4.tgz"
+  "version" "18.0.4"
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
