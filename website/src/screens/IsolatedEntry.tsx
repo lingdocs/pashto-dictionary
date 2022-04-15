@@ -221,6 +221,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 verbs={searchVerbs}
                 getNounByTs={getNounByTs}
                 getVerbByTs={getVerbByTs}
+                handleLinkClick={isolateEntry}
             />
         </div>}
 
