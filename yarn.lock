@@ -168,10 +168,10 @@
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.1.tgz"
   "version" "9.2.1"
 
-"@lingdocs/pashto-inflector@2.1.1":
-  "integrity" "sha512-+cgdMJYA4jIOI0OoL2MP/b8zc9W+WTpPIs+6CMeMouQAE3OsxNm99seOBnDNaVKUabssC5WFyBfEIw+bzCBKrQ=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.1.1.tgz"
-  "version" "2.1.1"
+"@lingdocs/pashto-inflector@2.1.2":
+  "integrity" "sha512-LS6CeHyRJpBmREbaV8RUaqxt5rX/rbFDjfCgiM/hzWSQeNtXdU4eJbevK97bT0Qm4ehw9EcUWBfalkUMmgJaFA=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.1.2.tgz"
+  "version" "2.1.2"
   dependencies:
     "classnames" "^2.2.6"
     "pbf" "^3.2.1"
