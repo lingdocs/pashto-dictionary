@@ -1585,10 +1585,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@lingdocs/pashto-inflector@2.1.2":
-  version "2.1.2"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.1.2.tgz#d2998cab83fa71547328334f9e956a9259f792b8"
-  integrity sha512-LS6CeHyRJpBmREbaV8RUaqxt5rX/rbFDjfCgiM/hzWSQeNtXdU4eJbevK97bT0Qm4ehw9EcUWBfalkUMmgJaFA==
+"@lingdocs/pashto-inflector@2.1.3":
+  version "2.1.3"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.1.3.tgz#05db4541cd1a5b0c43d7e6d961446353936e8c57"
+  integrity sha512-BbOuLFhNEazb80OYda+AesmwZnyk/mHS4yH1dOF3UeHrbX6IjgNHTCRT2p8jxxF8chmwmjaUQOo8arJPPd55+A==
   dependencies:
     classnames "^2.2.6"
     pbf "^3.2.1"
