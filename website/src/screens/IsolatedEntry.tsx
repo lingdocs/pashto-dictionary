@@ -205,10 +205,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />
             </div>}
         </>}
-        {/*
-        // @ts-ignore */}
         {tp.isVerbEntry({ entry, complement }) && <div className="pb-4">
-            <div className="h5 text-center">🆕 New Verb Playground/Quiz Feature! 🤓👇</div>
             <VPExplorer
                 verb={{
                     // TODO: CLEAN THIS UP!
