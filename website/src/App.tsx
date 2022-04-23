@@ -476,7 +476,7 @@ class App extends Component<RouteComponentProps, State> {
                                     <div className="mb-3"><span className="fa fa-book mr-2" ></span> Alphabetical browsing mode</div>
                                 </div>}
                                 {this.state.user?.level === "editor" && <div className="mt-4 font-weight-light">
-                                    <div className="mb-3">Editor priveleges active</div>
+                                    <div className="mb-3">Editor privileges active</div>
                                     <Link to="/edit">
                                         <button className="btn btn-secondary">New Entry</button>
                                     </Link>
