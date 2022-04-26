@@ -33,12 +33,7 @@ import AudioPlayButton  from "../components/AudioPlayButton";
 import { Helmet } from "react-helmet";
 import { Modal } from "react-bootstrap";
 import { getTextOptions } from "../lib/get-text-options";
-import {
-    searchNouns,
-    searchVerbs,
-    getNounByTs,
-    getVerbByTs,
-} from "../lib/dictionary";
+import { entryFeeder } from "../lib/dictionary";
 
 function IsolatedEntry({ state, dictionary, isolateEntry }: {
     state: State,
@@ -214,10 +209,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                     complement,
                 }}
                 opts={textOptions}
-                nouns={searchNouns}
-                verbs={searchVerbs}
-                getNounByTs={getNounByTs}
-                getVerbByTs={getVerbByTs}
+                entryFeeder={entryFeeder}
                 handleLinkClick={isolateEntry}
             />
         </div>}

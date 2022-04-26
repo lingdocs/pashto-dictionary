@@ -357,55 +357,66 @@ export function allEntries() {
     return dictDb.collection.find();
 }
 
-export function getNounByTs(ts: number): undefined | T.NounEntry {
-    const res = dictDb.findOneByTs(ts);
-    if (!res) return undefined;
-    return tp.isNounEntry(res) ? res : undefined;
-}
-export function getVerbByTs(ts: number): undefined | T.VerbEntry {
-    const entry = dictDb.findOneByTs(ts);
-    if (!entry) return undefined;
-    if (!tp.isVerbDictionaryEntry(entry)) {
-        console.error("not valid verb entry");
-        return undefined;
+function makeLookupPortal<X extends T.DictionaryEntry>(tpFilter: (x: T.DictionaryEntry) => x is X): T.EntryLookupPortal<X> {
+    return {
+        search: (s: string) => fuzzyLookup({
+            searchString: s,
+            language: "Pashto",
+            page: 1,
+            tpFilter,
+        }),
+        getByTs: (ts: number) => {
+            const res = dictDb.findOneByTs(ts);
+            if (!res) return undefined;
+            return tpFilter(res) ? res : undefined;
+        },
     }
-    const complement = (() => {
-        if (entry.c?.includes("comp") && entry.l) {
-            const comp = dictDb.findOneByTs(entry.l);
-            if (!comp) {
-                console.error("complement not found for", entry);
+}
+
+function makeVerbLookupPortal(): T.EntryLookupPortal<T.VerbEntry> {
+    return {
+        search: (s: string) => {
+            const vEntries = fuzzyLookup({
+                searchString: s,
+                language: "Pashto",
+                page: 1,
+                tpFilter: tp.isVerbDictionaryEntry,
+            });
+            return vEntries.map((entry): T.VerbEntry => ({
+                entry,
+                complement: (entry.c?.includes("comp.") && entry.l)
+                    ? dictionary.findOneByTs(entry.l)
+                    : undefined,
+            }));
+        },
+        getByTs: (ts: number): T.VerbEntry | undefined => {
+            const entry = dictDb.findOneByTs(ts);
+            if (!entry) return undefined;
+            if (!tp.isVerbDictionaryEntry(entry)) {
+                console.error("not valid verb entry");
+                return undefined;
             }
-            return comp;
-        } else {
-            return undefined;
-        }
-    })();
-    return { entry, complement };
+            const complement = (() => {
+                if (entry.c?.includes("comp") && entry.l) {
+                    const comp = dictDb.findOneByTs(entry.l);
+                    if (!comp) {
+                        console.error("complement not found for", entry);
+                    }
+                    return comp;
+                } else {
+                    return undefined;
+                }
+            })();
+            return { entry, complement };
+        },
+    }
 }
 
-export function searchNouns(s: string): T.NounEntry[] {
-    console.log("searching nouns");
-    return fuzzyLookup({
-        searchString: s,
-        language: "Pashto",
-        page: 1,
-        tpFilter: tp.isNounEntry,
-    });
-}
-
-export function searchVerbs(s: string): T.VerbEntry[] {
-    const vEntries = fuzzyLookup({
-        searchString: s,
-        language: "Pashto",
-        page: 1,
-        tpFilter: tp.isVerbDictionaryEntry,
-    });
-    return vEntries.map((entry): T.VerbEntry => ({
-        entry,
-        complement: (entry.c?.includes("comp.") && entry.l)
-            ? dictionary.findOneByTs(entry.l)
-            : undefined,
-    }));
+export const entryFeeder: T.EntryFeeder = {
+    nouns: makeLookupPortal(tp.isNounEntry),
+    verbs: makeVerbLookupPortal(),
+    adjectives: makeLookupPortal(tp.isAdjectiveEntry),
+    locativeAdverbs: makeLookupPortal(tp.isLocativeAdverbEntry),
 }
 
 export const dictionary: DictionaryAPI = {

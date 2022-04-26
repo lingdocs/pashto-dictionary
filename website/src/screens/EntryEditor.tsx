@@ -9,6 +9,8 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
+import { VPExplorer } from "@lingdocs/pashto-inflector";
+import { entryFeeder } from "../lib/dictionary";
 import {
     ConjugationViewer,
     InflectionsTable,
@@ -16,6 +18,7 @@ import {
     Types as T,
     InlinePs,
     validateEntry,
+    typePredicates,
 } from "@lingdocs/pashto-inflector";
 import Entry from "../components/Entry";
 import * as FT from "../types/functions-types";
@@ -338,6 +341,19 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
             {inf && "plural" in inf && inf.plural !== undefined && <InflectionsTable inf={inf.plural} textOptions={textOptions} />}
             {inf && "arabicPlural" in inf && inf.arabicPlural !== undefined && <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />}
             {/* TODO: aay tail from state options */}
+            {typePredicates.isVerbEntry({ entry, complement }) && <div className="pb-4">
+                <VPExplorer
+                    verb={{
+                        // TODO: CLEAN THIS UP!
+                        // @ts-ignore
+                        entry,
+                        complement,
+                    }}
+                    opts={textOptions}
+                    entryFeeder={entryFeeder}
+                    handleLinkClick="none"
+                />
+            </div>}
             <ConjugationViewer
                 entry={entry}
                 complement={complement}
