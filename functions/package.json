@@ -14,7 +14,7 @@
   "main": "lib/functions/src/index.js",
   "dependencies": {
     "@google-cloud/storage": "^5.8.1",
-    "@lingdocs/pashto-inflector": "2.4.2",
+    "@lingdocs/pashto-inflector": "2.4.3",
     "@types/cors": "^2.8.10",
     "@types/google-spreadsheet": "^3.0.2",
     "cors": "^2.8.5",
@@ -35,6 +35,6 @@
   },
   "private": true,
   "peerDependencies": {
-    "@lingdocs/pashto-inflector": "2.4.2"
+    "@lingdocs/pashto-inflector": "2.4.3"
   }
 }
