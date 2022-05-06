@@ -270,7 +270,7 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
                     </div>
                     <div className="row">
                         <div className="col">
-                            {textFields.slice(4, 12).map((field) => (
+                            {textFields.slice(4, 13).map((field) => (
                                 <OneField
                                     key={field.field}
                                     field={field}
@@ -290,7 +290,7 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
                             ))}
                         </div>
                         <div className="col">
-                            {textFields.slice(12, 22).map((field) => (
+                            {textFields.slice(12, 23).map((field) => (
                                 <OneField
                                     key={field.field}
                                     field={field}
