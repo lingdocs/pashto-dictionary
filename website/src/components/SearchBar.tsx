@@ -6,12 +6,15 @@
  *
  */
 
+import { useRef } from "react";
+
 const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }: {
   state: State
   optionsDispatch: (action: OptionsAction) => void,
   handleSearchValueChange: (searchValue: string) => void,
   onBottom?: boolean,
 }) => {
+  const inputRef = useRef(null);
   const LanguageToggle = ({ language }: { language: Language }) => {
     const arrowDirection = language === "Pashto" ? "right" : "left";
     return (
@@ -51,7 +54,9 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
             style={{ borderRight: "0px", zIndex: 200 }}
             placeholder={placeholder}
             value={state.searchValue}
-            onChange={(e) => handleSearchValueChange(e.target.value)}
+            onChange={(e) => {
+              handleSearchValueChange(e.target.value);
+            }}
             name="search"
             className="form-control py-2 border-right-0 border"
             autoFocus={true}
@@ -62,12 +67,17 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
             dir="auto"
             data-testid="searchInput"
             data-lpignore="true"
+            ref={inputRef}
           />
           <span className="input-group-append">
             <span
               className={`btn btn-outline-secondary${!state.searchValue ? " unclickable" : ""} clear-search-button border-left-0 border`}
               style={{ borderRadius: 0 }}
-              onClick={state.searchValue ? () => handleSearchValueChange("") : () => null}
+              onClick={state.searchValue ? () => {
+                handleSearchValueChange("");
+                // @ts-ignore
+                inputRef.current && inputRef.current.focus()
+              }: () => null}
               data-testid="clearButton"
             >
               <i className="fa fa-times" style={!state.searchValue ? { visibility: "hidden" } : {}}></i>
