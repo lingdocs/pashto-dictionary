@@ -14,7 +14,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
   handleSearchValueChange: (searchValue: string) => void,
   onBottom?: boolean,
 }) => {
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const LanguageToggle = ({ language }: { language: Language }) => {
     const arrowDirection = language === "Pashto" ? "right" : "left";
     return (
@@ -75,8 +75,8 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
               style={{ borderRadius: 0 }}
               onClick={state.searchValue ? () => {
                 handleSearchValueChange("");
-                // @ts-ignore
-                inputRef.current && inputRef.current.focus()
+                // keep the focus on the input after pressing the X
+                inputRef.current && inputRef.current.focus();
               }: () => null}
               data-testid="clearButton"
             >
