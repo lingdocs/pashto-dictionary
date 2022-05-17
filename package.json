@@ -1,6 +1,6 @@
 {
   "name": "@lingdocs/lingdocs-main",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "types and functions for lingdocs stuff",
   "main": "dist/library.js",
   "module": "dist/library.js",
@@ -28,6 +28,7 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth": "^2.0.0",
     "passport-twitter": "^1.0.4",
+    "relevancy": "^0.2.0",
     "supermemo": "^2.0.17"
   },
   "devDependencies": {
