@@ -92,7 +92,7 @@ export class DictionaryDb {
                 unique: ["ts"],
             });
             this.collection.insert(dictionary.entries);
-            this.lokidb.saveDatabase((err) => {
+            this.lokidb.saveDatabase((err: any) => {
                 /* istanbul ignore next */
                 if (err) {
                     console.error("error saving database: " + err);

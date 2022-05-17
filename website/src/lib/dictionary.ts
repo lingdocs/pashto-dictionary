@@ -31,6 +31,22 @@ const dictionaryCollectionName = "dictionary3";
 // const dictionaryDatabaseName = "dictdb.db";
 export const pageSize = 35;
 
+export type DictionaryAPI = {
+    initialize: () => Promise<{
+        response: "loaded first time" | "loaded from saved",
+        dictionaryInfo: T.DictionaryInfo,
+    }>,
+    update: (updateComing: () => void) => Promise<{
+        response: "no need for update" | "updated" | "unable to check",
+        dictionaryInfo: T.DictionaryInfo,
+    }>,
+    search: (state: State) => T.DictionaryEntry[],
+    exactPashtoSearch: (search: string) => T.DictionaryEntry[],
+    getNewWordsThisMonth: () => T.DictionaryEntry[],
+    findOneByTs: (ts: number) => T.DictionaryEntry | undefined,
+    findRelatedEntries: (entry: T.DictionaryEntry) => T.DictionaryEntry[],
+}
+
 const relevancySorter = new relevancy.Sorter();
 
 const db = indexedDB.open('inPrivate');
@@ -101,7 +117,7 @@ function alphabeticalLookup({ searchString, page }: {
     page: number,
 }): T.DictionaryEntry[] {
     const r = new RegExp("^" + sanitizePashto(makeSearchStringSafe(searchString)));
-    const regexResults = dictDb.collection.find({
+    const regexResults: T.DictionaryEntry[] = dictDb.collection.find({
         $or: [
             {p: { $regex: r }},
             {g: { $regex: r }},
@@ -155,7 +171,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(exactResultsLimit)
                           .simplesort("i")
                           .data();
-    resultsGiven = exactResults.map((mpd) => mpd.$loki);
+    resultsGiven = exactResults.map((mpd: any) => mpd.$loki);
     // get results with full word match at beginning of string
     const startingQuery = { 
         e: {
@@ -169,7 +185,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(startingResultsLimit)
                           .simplesort("i")
                           .data();
-    resultsGiven = [...resultsGiven, ...startingResults.map((mpd) => mpd.$loki)];
+    resultsGiven = [...resultsGiven, ...startingResults.map((mpd: any) => mpd.$loki)];
     // get results with full word match anywhere
     const fullWordQuery = {
         e: {
@@ -183,7 +199,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(fullWordResultsLimit)
                           .simplesort("i")
                           .data();
-    resultsGiven = [...resultsGiven, ...fullWordResults.map((mpd) => mpd.$loki)]
+    resultsGiven = [...resultsGiven, ...fullWordResults.map((mpd: any) => mpd.$loki)]
     // get results with partial match anywhere
     const partialMatchQuery = {
         e: {

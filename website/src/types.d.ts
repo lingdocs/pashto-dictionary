@@ -92,22 +92,6 @@ type TextOptionsAction = {
     payload: boolean,
 };
 
-type DictionaryAPI = {
-    initialize: () => Promise<{
-        response: "loaded first time" | "loaded from saved",
-        dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo,
-    }>,
-    update: (updateComing: () => void) => Promise<{
-        response: "no need for update" | "updated" | "unable to check",
-        dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo,
-    }>,
-    search: (state: State) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-    exactPashtoSearch: (search: string) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-    getNewWordsThisMonth: () => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-    findOneByTs: (ts: number) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry | undefined,
-    findRelatedEntries: (entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-}
-
 type AttachmentToPut = {
     content_type: string,
     data: string | blob,
