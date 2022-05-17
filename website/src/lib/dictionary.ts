@@ -111,7 +111,7 @@ function alphabeticalLookup({ searchString, page }: {
             {g: { $regex: r }},
         ],
     });
-    const indexNumbers = regexResults.map((mpd) => mpd.i);
+    const indexNumbers = regexResults.map((mpd: any) => mpd.i);
     // Find the first matching word occuring first in the Pashto Index
     let firstIndexNumber = null;
     if (indexNumbers.length) {
@@ -270,7 +270,7 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({ searchString, page, tp
                           .limit(exactResultsLimit)
                           .simplesort("i")
                           .data();
-    resultsGiven = exactResults.map((mpd) => mpd.$loki);
+    resultsGiven = exactResults.map((mpd: any) => mpd.$loki);
   
     // Get fuzzy matches
     const pashtoRegExLogic = fuzzifyPashto(search, {

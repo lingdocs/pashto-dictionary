@@ -1,4 +1,4 @@
-import loki from "lokijs";
+import loki, { Collection } from "lokijs";
 import {
     Types as T,
     readDictionary,
