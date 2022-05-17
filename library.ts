@@ -8,6 +8,14 @@ import {
     objIsEqual,
 } from "./website/src/lib/misc-helpers";
 import {
+    DictionaryDb,
+} from "./website/src/lib/dictionary-core";
+import {
+    allEntries,
+    entryFeeder,
+    dictionary,
+} from "./website/src/lib/dictionary";
+import {
     myFetch,
     signOut,
     upgradeAccount,
@@ -27,6 +35,10 @@ export {
     getTimestamp,
     objIsEqual,
     userObjIsEqual,
+    DictionaryDb,
+    allEntries,
+    entryFeeder,
+    dictionary,
     // fetching
     myFetch,
     signOut,
