@@ -11,6 +11,7 @@ import classNames from "classnames";
 import { Link } from "react-router-dom";
 import { VPExplorer } from "@lingdocs/pashto-inflector";
 import { entryFeeder } from "../lib/dictionary";
+import { DictionaryAPI } from "../lib/dictionary";
 import {
     ConjugationViewer,
     InflectionsTable,

@@ -33,7 +33,10 @@ import AudioPlayButton  from "../components/AudioPlayButton";
 import { Helmet } from "react-helmet";
 import { Modal } from "react-bootstrap";
 import { getTextOptions } from "../lib/get-text-options";
-import { entryFeeder } from "../lib/dictionary";
+import {
+    entryFeeder,
+    DictionaryAPI,
+} from "../lib/dictionary";
 
 function IsolatedEntry({ state, dictionary, isolateEntry }: {
     state: State,
