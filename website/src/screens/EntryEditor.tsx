@@ -11,7 +11,6 @@ import classNames from "classnames";
 import { Link } from "react-router-dom";
 import { VPExplorer } from "@lingdocs/pashto-inflector";
 import { entryFeeder } from "../lib/dictionary";
-import { DictionaryAPI } from "../lib/dictionary";
 import {
     ConjugationViewer,
     InflectionsTable,
@@ -30,6 +29,7 @@ import {
 import { Helmet } from "react-helmet";
 import { TextOptions } from "@lingdocs/pashto-inflector/dist/types";
 import * as AT from "../types/account-types";
+import { DictionaryAPI } from "../types/dictionary-types";
 
 const textFields: {field: T.DictionaryEntryTextField, label: string}[] = [
     { field: "p", label: "Pashto" },

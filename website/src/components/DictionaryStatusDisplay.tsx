@@ -6,6 +6,8 @@
  *
  */
 
+import { DictionaryStatus } from "../types/dictionary-types";
+
 function DictionaryStatusDisplay({ status }: { status: DictionaryStatus }) {
     if (status === "loading" || status === "updating") {
         return (

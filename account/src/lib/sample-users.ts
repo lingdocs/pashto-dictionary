@@ -79,9 +79,12 @@ const editor: AT.LingdocsUser = {
     },
 };
 
-export default {
+// @ts-ignore
+const users: any = {
     basic,
     student,
     editor,
     admin,
 };
+
+export default users;

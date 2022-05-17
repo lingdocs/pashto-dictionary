@@ -14,6 +14,7 @@ import {
     updateWordlistWord,
     hasAttachment,
 } from "../lib/wordlist-database";
+import { WordlistWord } from "../types/dictionary-types";
 
 const droppingStyle = {
     boxShadow: "0 0 5px rgba(81, 203, 238, 1)",

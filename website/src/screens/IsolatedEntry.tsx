@@ -35,8 +35,11 @@ import { Modal } from "react-bootstrap";
 import { getTextOptions } from "../lib/get-text-options";
 import {
     entryFeeder,
-    DictionaryAPI,
 } from "../lib/dictionary";
+import {
+    State,
+    DictionaryAPI,
+} from "../types/dictionary-types";
 
 function IsolatedEntry({ state, dictionary, isolateEntry }: {
     state: State,

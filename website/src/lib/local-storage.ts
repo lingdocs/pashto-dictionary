@@ -7,6 +7,7 @@
  */
 
 import * as AT from "../types/account-types";
+import { Options } from "../types/dictionary-types";
 
 export const optionsLocalStorageName = "options3";
 export const userLocalStorageName = "user1";

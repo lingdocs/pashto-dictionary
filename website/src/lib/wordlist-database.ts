@@ -26,6 +26,12 @@ import {
     prepBase64,
 } from "./image-tools";
 import { getMillisecondsPeriod } from "./time-utils";
+import {
+    WordlistWord,
+    AttachmentType,
+    Attachments,
+    AttachmentToPut,
+} from "../types/dictionary-types";
 
 export async function addToWordlist({ entry, notes }: {
     entry: T.DictionaryEntry,
@@ -79,6 +85,7 @@ export async function getWordlistCsv(sortType: "alphabetical" | "time"): Promise
         [w.entry.p, w.entry.f, w.entry.c, w.entry.e]
     ));
     if (sortType === "alphabetical") {
+        // @ts-ignore
         forCsv.sort((a, b) => a[0].localeCompare(b[0], "ps"));
     }
     const csv = Papa.unparse(forCsv);

@@ -10,6 +10,9 @@ import {
     getVerbInfo,
 } from "@lingdocs/pashto-inflector";
 import { isPashtoScript } from "./is-pashto";
+import {
+    InflectionSearchResult,
+} from "../types/dictionary-types";
 
 // 1st iteration: Brute force make every single conjugation and check all - 5300ms
 // 2nd iteration: Check if it makes a big difference to search via function - 5100ms

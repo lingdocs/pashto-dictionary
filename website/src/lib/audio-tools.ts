@@ -10,6 +10,7 @@ import {
     addToAttachmentObject,
     removeAttachmentFromObject,
 } from "./wordlist-database";
+import { WordlistWord, WordlistWordWAttachments } from "../types/dictionary-types";
 
 export function addAudioToWordlistWord(word: WordlistWord, file: File): WordlistWord {
     return {

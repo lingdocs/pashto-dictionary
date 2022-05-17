@@ -20,6 +20,7 @@ export declare type EmailVerified = true | Hash | false;
 export declare type ActionComplete = {
     ok: true;
     message: string;
+    tests?: TestResult[];
 };
 export declare type ActionError = {
     ok: false;
@@ -48,6 +49,11 @@ export declare type UserTextOptionsRecord = {
     lastModified: TimeStamp;
     userTextOptions: UserTextOptions;
 };
+export declare type TestResult = {
+    done: true;
+    time: TimeStamp;
+    id: string;
+};
 export declare type LingdocsUser = {
     userId: UUID;
     admin?: boolean;
@@ -63,7 +69,7 @@ export declare type LingdocsUser = {
         requestedOn: TimeStamp;
     };
     upgradeToStudentRequest?: "waiting" | "denied";
-    tests: [];
+    tests: TestResult[];
     lastLogin: TimeStamp;
     lastActive: TimeStamp;
     userTextOptionsRecord: undefined | UserTextOptionsRecord;
@@ -87,6 +93,14 @@ export declare type UpgradeUserResponse = {
     ok: true;
     message: "user already upgraded" | "user upgraded to student";
     user: LingdocsUser;
+};
+export declare type PostTestResultsBody = {
+    tests: TestResult[];
+};
+export declare type PostTestResultsResponse = {
+    ok: true;
+    message: "posted test results";
+    tests: TestResult[];
 };
 export declare type UpdateUserTextOptionsRecordBody = {
     userTextOptionsRecord: UserTextOptionsRecord;

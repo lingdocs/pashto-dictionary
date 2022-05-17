@@ -7,6 +7,12 @@
  */
 
 import { useRef } from "react";
+import { State } from "../types/dictionary-types";
+import {
+  OptionsAction,
+  Language,
+  SearchType,
+} from "../types/dictionary-types";
 
 const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }: {
   state: State

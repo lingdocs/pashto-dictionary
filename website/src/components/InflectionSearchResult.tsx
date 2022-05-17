@@ -14,6 +14,10 @@ import {
     displayFormResult,
     displayPositionResult,
 } from "../lib/inflection-search-helpers";
+import {
+    InflectionSearchResult,
+    InflectionName,
+} from "../types/dictionary-types";
 
 function InflectionSearchResult(
     { result, textOptions, entry }:

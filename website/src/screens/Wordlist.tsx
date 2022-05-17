@@ -44,6 +44,13 @@ import AudioPlayButton from "../components/AudioPlayButton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import hitBottom from "../lib/hitBottom";
+import {
+    Options,
+    WordlistWord,
+    Language,
+    OptionsAction,
+    WordlistMode,
+} from "../types/dictionary-types";
 
 const cleanupIcon = "broom";
 

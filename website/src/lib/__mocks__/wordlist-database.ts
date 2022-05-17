@@ -2,6 +2,7 @@ import { Types as T } from "@lingdocs/pashto-inflector";
 import { dictionary } from "../dictionary";
 import { baseSupermemo } from "../spaced-repetition";
 import { refreshWordlist } from "./pouch-dbs";
+import { WordlistWord } from "../../types/dictionary-types";
 
 let wordlistDb: {
     name: string,

@@ -14,6 +14,11 @@ import {
     isPluralInflectionSet,
 } from "@lingdocs/pashto-inflector";
 import { personFromVerbBlockPos } from "@lingdocs/pashto-inflector";
+import {
+    InflectionName,
+    PluralInflectionName,
+    InflectionSearchResult,
+} from "../types/dictionary-types";
 
 const inflectionNames: { inflections: InflectionName[], plural: PluralInflectionName[] } = {
     inflections: ["plain", "1st", "2nd"],

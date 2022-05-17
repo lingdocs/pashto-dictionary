@@ -2,6 +2,7 @@ import Resizer from "react-image-file-resizer";
 import {
     addToAttachmentObject, removeAttachmentFromObject,
 } from "./wordlist-database";
+import { WordlistWord, WordlistWordWAttachments, AttachmentWithData } from "../types/dictionary-types";
 
 const maxImgSize = {
     width: 1200,

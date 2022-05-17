@@ -1,5 +1,6 @@
 import * as AT from "./website/src/types/account-types";
 import * as FT from "./website/src/types/functions-types";
+import * as DT from "./website/src/types/dictionary-types";
 import {
     getTimestamp,
 } from "./account/src/lib/time-utils";
@@ -54,4 +55,5 @@ export {
     // TYPES
     AT,
     FT,
+    DT,
 };

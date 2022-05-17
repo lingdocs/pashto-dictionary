@@ -15,6 +15,9 @@ import dayjs from "dayjs";
 import {
     getMillisecondsPeriod,
 } from "./time-utils";
+import {
+    WordlistWord,
+} from "../types/dictionary-types";
 
 /* starting stage of review, based on Pimseleur intervals */
 const warmupIntervals = [

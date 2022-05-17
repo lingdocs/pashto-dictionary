@@ -74,6 +74,12 @@ import classNames from "classnames";
 import { getTextOptions } from "./lib/get-text-options";
 import { getTextFromShareTarget } from "./lib/share-target";
 import { objIsEqual, userObjIsEqual } from "./lib/misc-helpers";
+import {
+    State,
+    TextOptionsRecord,
+    TextOptionsAction,
+    OptionsAction,
+} from "./types/dictionary-types";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {

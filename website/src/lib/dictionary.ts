@@ -21,6 +21,10 @@ import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
 import relevancy from "relevancy";
 import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 import { getTextOptions } from "./get-text-options";
+import {
+    DictionaryAPI,
+    State,
+} from "../types/dictionary-types";
 
 // const dictionaryBaseUrl = "https://storage.googleapis.com/lingdocs/";
 const dictionaryUrl = `https://storage.googleapis.com/lingdocs/dictionary`;
@@ -30,22 +34,6 @@ const dictionaryInfoLocalStorageKey = "dictionaryInfo5";
 const dictionaryCollectionName = "dictionary3";
 // const dictionaryDatabaseName = "dictdb.db";
 export const pageSize = 35;
-
-export type DictionaryAPI = {
-    initialize: () => Promise<{
-        response: "loaded first time" | "loaded from saved",
-        dictionaryInfo: T.DictionaryInfo,
-    }>,
-    update: (updateComing: () => void) => Promise<{
-        response: "no need for update" | "updated" | "unable to check",
-        dictionaryInfo: T.DictionaryInfo,
-    }>,
-    search: (state: State) => T.DictionaryEntry[],
-    exactPashtoSearch: (search: string) => T.DictionaryEntry[],
-    getNewWordsThisMonth: () => T.DictionaryEntry[],
-    findOneByTs: (ts: number) => T.DictionaryEntry | undefined,
-    findRelatedEntries: (entry: T.DictionaryEntry) => T.DictionaryEntry[],
-}
 
 const relevancySorter = new relevancy.Sorter();
 

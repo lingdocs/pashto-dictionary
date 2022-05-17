@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import {
     getAudioAttachment,
 } from "../lib/wordlist-database";
+import { WordlistWord } from "../types/dictionary-types";
 
 export function AudioPlayButton({ word }: { word: WordlistWord }) {
     const [src, setSrc] = useState<string | undefined>(undefined);

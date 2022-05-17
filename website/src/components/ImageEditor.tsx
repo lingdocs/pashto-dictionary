@@ -12,6 +12,7 @@ import {
     updateWordlistWord,
 } from "../lib/wordlist-database";
 import WordlistImage from "./WordlistImage";
+import { WordlistWord } from "../types/dictionary-types";
 
 // TODO: !! remember to save the new dimensions whenever modifying the image
 

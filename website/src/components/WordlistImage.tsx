@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getImageAttachment } from "../lib/wordlist-database";
+import { WordlistWord } from "../types/dictionary-types";
 
 function WordlistImage({ word }: { word: WordlistWord }) {
     const [imgSrc, setImgSrc] = useState<string | undefined>(undefined);

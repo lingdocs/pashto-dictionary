@@ -11,6 +11,15 @@ import {
 } from "@lingdocs/pashto-inflector";
 import { Helmet } from "react-helmet";
 import { wordlistEnabled } from "../lib/level-management";
+import {
+    State,
+    Options,
+    PTextSize,
+    SearchBarPosition,
+    Theme,
+    OptionsAction,
+    TextOptionsAction,
+} from "../types/dictionary-types";
 
 const fontSizeOptions: {
     label: string,

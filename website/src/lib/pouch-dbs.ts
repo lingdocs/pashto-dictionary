@@ -1,6 +1,10 @@
 import PouchDB from "pouchdb";
 import * as AT from "../types/account-types";
 import * as FT from "../types/functions-types";
+import {
+    WordlistWord,
+    WordlistWordDoc,
+} from "../types/dictionary-types";
 
 type LocalDbType = "submissions" | "wordlist" | "reviewTasks";
 

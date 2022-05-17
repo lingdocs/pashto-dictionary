@@ -21,9 +21,13 @@ import {
     Types as T,
     revertSpelling,
 } from "@lingdocs/pashto-inflector";
-import InflectionSearchResult from "../components/InflectionSearchResult";
+import InflectionSearchResultDisplay from "../components/InflectionSearchResult";
 import { searchAllInflections } from "../lib/search-all-inflections";
 import { getTextOptions } from "../lib/get-text-options";
+import {
+    State,
+    InflectionSearchResult,
+} from "../types/dictionary-types";
 
 const inflectionSearchIcon = "fas fa-search-plus";
 
@@ -125,7 +129,7 @@ function Results({ state, isolateEntry }: {
                     />
                     <div className="mb-3 ml-2">
                         {p.results.map((result: InflectionSearchResult, i) => (
-                            <InflectionSearchResult
+                            <InflectionSearchResultDisplay
                                 key={"inf-result" + i}
                                 textOptions={textOptions}
                                 result={result}

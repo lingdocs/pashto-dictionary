@@ -8,6 +8,7 @@
 
 import { Helmet } from "react-helmet";
 import dayjs from "dayjs";
+import { State } from "../types/dictionary-types";
 
 const About = ({ state } : { state: State }) => (
     <div className="width-limiter">

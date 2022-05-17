@@ -9,6 +9,9 @@ import {
 } from "@lingdocs/pashto-inflector";
 import { Helmet } from "react-helmet";
 import { getTextOptions } from "../lib/get-text-options";
+import {
+    State,
+} from "../types/dictionary-types";
 
 function ReviewTask({ reviewTask, textOptions }: { reviewTask: FT.ReviewTask, textOptions: T.TextOptions }) {
     function handleDelete() {
