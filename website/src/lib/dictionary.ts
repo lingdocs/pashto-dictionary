@@ -386,12 +386,14 @@ function makeVerbLookupPortal(): T.EntryLookupPortal<T.VerbEntry> {
                 page: 1,
                 tpFilter: tp.isVerbDictionaryEntry,
             });
-            return vEntries.map((entry): T.VerbEntry => ({
+            const r = vEntries.map((entry): T.VerbEntry => ({
                 entry,
                 complement: (entry.c?.includes("comp.") && entry.l)
                     ? dictionary.findOneByTs(entry.l)
                     : undefined,
             }));
+            console.log(r);
+            return r;
         },
         getByTs: (ts: number): T.VerbEntry | undefined => {
             const entry = dictDb.findOneByTs(ts);

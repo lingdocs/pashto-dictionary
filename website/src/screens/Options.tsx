@@ -136,7 +136,7 @@ const booleanOptions: {
     },
 ];
 
-function Options({
+function OptionsScreen({
     options,
     state,
     optionsDispatch,
@@ -246,4 +246,4 @@ function Options({
     </div>
 }
 
-export default Options;
+export default OptionsScreen;

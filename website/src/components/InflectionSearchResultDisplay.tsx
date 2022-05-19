@@ -19,7 +19,7 @@ import {
     InflectionName,
 } from "../types/dictionary-types";
 
-function InflectionSearchResult(
+function InflectionSearchResultDisplay(
     { result, textOptions, entry }:
     { result: InflectionSearchResult, textOptions: T.TextOptions, entry: T.DictionaryEntry }
 ) {
@@ -57,4 +57,4 @@ function InflectionSearchResult(
     </div>;
 }
 
-export default InflectionSearchResult;
+export default InflectionSearchResultDisplay;

@@ -80,6 +80,7 @@ import {
     TextOptionsAction,
     OptionsAction,
 } from "./types/dictionary-types";
+import PhraseBuilder from "./screens/PhraseBuilder";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -490,10 +491,16 @@ class App extends Component<RouteComponentProps, State> {
                                 <Link to="/new-entries" className="plain-link font-weight-light">
                                     <div className="my-4">New words this month</div>
                                 </Link>
+                                <Link to="/phrase-builder" className="plain-link font-weight-light">
+                                    <div className="my-4">Phrase Builder</div>
+                                </Link>
                             </div>
                         </Route>
                         <Route path="/about">
                             <About state={this.state} />
+                        </Route>
+                        <Route path="/phrase-builder">
+                            <PhraseBuilder state={this.state} />
                         </Route>
                         <Route path="/settings">
                             <Options
@@ -574,7 +581,7 @@ class App extends Component<RouteComponentProps, State> {
                         }
                     </div>
                 </Route>
-                <Route path={["/about", "/settings", "/new-entries", "/account", "/wordlist", "/edit", "/review-tasks"]}>
+                <Route path={["/about", "/settings", "/new-entries", "/account", "/wordlist", "/edit", "/review-tasks", "/phrase-builder"]}>
                     <div className="buttons-footer">
                         <BottomNavItem label="Home" icon="home" page="/" />
                     </div>

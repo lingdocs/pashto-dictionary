@@ -21,7 +21,7 @@ import {
     Types as T,
     revertSpelling,
 } from "@lingdocs/pashto-inflector";
-import InflectionSearchResultDisplay from "../components/InflectionSearchResult";
+import InflectionSearchResultDisplay from "../components/InflectionSearchResultDisplay";
 import { searchAllInflections } from "../lib/search-all-inflections";
 import { getTextOptions } from "../lib/get-text-options";
 import {
