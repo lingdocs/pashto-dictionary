@@ -82,6 +82,8 @@ import {
 } from "./types/dictionary-types";
 import PhraseBuilder from "./screens/PhraseBuilder";
 
+// FIXME why
+
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
     return false;
