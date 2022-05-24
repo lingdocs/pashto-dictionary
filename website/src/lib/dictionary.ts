@@ -423,6 +423,7 @@ export const entryFeeder: T.EntryFeeder = {
     verbs: makeVerbLookupPortal(),
     adjectives: makeLookupPortal(tp.isAdjectiveEntry),
     locativeAdverbs: makeLookupPortal(tp.isLocativeAdverbEntry),
+    adverbs: makeLookupPortal(tp.isAdverbEntry),
 }
 
 export const dictionary: DictionaryAPI = {

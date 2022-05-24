@@ -19,7 +19,7 @@ function PhraseBuilder({ state }: {
     // isolateEntry: (ts: number) => void,
 }) {
     // const [entry, setEntry] = useStickyState<T.VerbEntry | undefined>(undefined, "vEntrySelect");
-    return <div>
+    return <div style={{ maxWidth: "1250px", margin: "0 auto" }}>
         <h3 className="mb-4">Equative Phrase Builder</h3>
         <EPExplorer
             opts={getTextOptions(state)}

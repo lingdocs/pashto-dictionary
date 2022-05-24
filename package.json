@@ -17,12 +17,12 @@
     "url": "git@github.com-lingdocs:lingdocs/lingdocs-main.git"
   },
   "peerDependencies": {
-    "@lingdocs/pashto-inflector": "2.5.7"
+    "@lingdocs/pashto-inflector": "2.5.9"
   },
   "author": "lingdocs.com",
   "license": "MIT",
   "dependencies": {
-    "@lingdocs/pashto-inflector": "2.5.7",
+    "@lingdocs/pashto-inflector": "2.5.9",
     "lokijs": "^1.5.12",
     "nano": "^9.0.5",
     "passport-github2": "^0.1.12",
