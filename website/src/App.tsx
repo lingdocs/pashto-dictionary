@@ -500,7 +500,10 @@ class App extends Component<RouteComponentProps, State> {
                             <About state={this.state} />
                         </Route>
                         <Route path="/phrase-builder">
-                            <PhraseBuilder state={this.state} />
+                            <PhraseBuilder
+                                state={this.state}
+                                isolateEntry={this.handleIsolateEntry}
+                            />
                         </Route>
                         <Route path="/settings">
                             <Options
