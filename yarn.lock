@@ -173,13 +173,12 @@
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.1.tgz"
   "version" "9.2.1"
 
-"@lingdocs/pashto-inflector@2.5.9":
-  "integrity" "sha512-5Z/g6gv4Fu0BsITqJrIIDmERCAfoNlJBNAHS9iJKCY54NgpJCPEEf5nFr+7aYfcG4QbWEgJtUCokVPOv10FFfQ=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.5.9.tgz"
-  "version" "2.5.9"
+"@lingdocs/pashto-inflector@2.6.9":
+  "integrity" "sha512-KfPs0KaThBGalO+VEDqsPnk3KBspyVJ9viahpVIzJfsMNcnI0acs8B2M1x+ldc/Ddo9vDIJCrzbiXLTNlndQ4A=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.6.9.tgz"
+  "version" "2.6.9"
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.1"
-    "assert-never" "^1.2.1"
     "classnames" "^2.2.6"
     "jsurl2" "^2.1.0"
     "lz-string" "^1.4.4"
@@ -426,11 +425,6 @@
     "inherits" "^2.0.1"
     "minimalistic-assert" "^1.0.0"
     "safer-buffer" "^2.1.0"
-
-"assert-never@^1.2.1":
-  "integrity" "sha512-TaTivMB6pYI1kXwrFlEhLeGfOqoDNdTxjCdwRfFFkEA30Eu+k48W34nlok2EYWJfFFzqaEmichdNM7th6M5HNw=="
-  "resolved" "https://registry.npmjs.org/assert-never/-/assert-never-1.2.1.tgz"
-  "version" "1.2.1"
 
 "assert@2.0.0":
   "integrity" "sha512-se5Cd+js9dXJnu6Ag2JFc00t+HmHOen+8Q+L7O9zI0PqQXr20uk2J0XQqMxZEeo5U50o8Nvmmx7dZrl+Ufr35A=="
