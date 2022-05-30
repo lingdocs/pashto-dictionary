@@ -1590,12 +1590,13 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@lingdocs/pashto-inflector@2.6.7":
-  version "2.6.7"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.6.7.tgz#0b40b96772ec0bee284af711b017b86e2175c9ef"
-  integrity sha512-wXRCkZc2+H+MkMx1gka2iABHWBxPuz96gcNMTtxPFF/cJSP6pIMmTNXgFgjbSXK3frHteJGvnBaISnAQ05J7wg==
+"@lingdocs/pashto-inflector@2.5.9":
+  version "2.5.9"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.5.9.tgz#5fd0a2ec62b728360f931dfb40d6279fdd78c5ec"
+  integrity sha512-5Z/g6gv4Fu0BsITqJrIIDmERCAfoNlJBNAHS9iJKCY54NgpJCPEEf5nFr+7aYfcG4QbWEgJtUCokVPOv10FFfQ==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.1"
+    assert-never "^1.2.1"
     classnames "^2.2.6"
     jsurl2 "^2.1.0"
     lz-string "^1.4.4"
@@ -3113,6 +3114,11 @@ asn1@~0.2.3:
   integrity sha512-jxwzQpLQjSmWXgwaCZE9Nz+glAG01yF1QnWgbhGwHI5A6FRIEY6IVqtHhIepHqI7/kyEyQEagBC5mBEFlIYvdg==
   dependencies:
     safer-buffer "~2.1.0"
+
+assert-never@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/assert-never/-/assert-never-1.2.1.tgz#11f0e363bf146205fb08193b5c7b90f4d1cf44fe"
+  integrity sha512-TaTivMB6pYI1kXwrFlEhLeGfOqoDNdTxjCdwRfFFkEA30Eu+k48W34nlok2EYWJfFFzqaEmichdNM7th6M5HNw==
 
 assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
