@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import { VPExplorer } from "@lingdocs/pashto-inflector";
 import { entryFeeder } from "../lib/dictionary";
 import {
-    ConjugationViewer,
     InflectionsTable,
     inflectWord,
     Types as T,
@@ -355,11 +354,19 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
                     handleLinkClick="none"
                 />
             </div>}
-            <ConjugationViewer
-                entry={entry}
-                complement={complement}
-                textOptions={textOptions}
-            />
+            {typePredicates.isVerbEntry({ entry, complement }) && <div className="pb-4">
+                <VPExplorer
+                    verb={{
+                        // TODO: CLEAN THIS UP!
+                        // @ts-ignore
+                        entry,
+                        complement,
+                    }}
+                    opts={textOptions}
+                    entryFeeder={entryFeeder}
+                    handleLinkClick={"none"}
+                />
+            </div>}
         </div>}
     </div>;
 }
