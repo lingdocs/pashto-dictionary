@@ -148,6 +148,11 @@
   "resolved" "https://registry.npmjs.org/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz"
   "version" "0.2.5"
 
+"@formkit/auto-animate@^1.0.0-beta.1":
+  "integrity" "sha512-I3OWOBaPZKSJL4bsooXI8kC3q7bcgibD2oML0P/Lir6MnbvUe/0/7EH8br024juvM/Ulm9C9xGx9CJUQYrOWSA=="
+  "resolved" "https://registry.npmjs.org/@formkit/auto-animate/-/auto-animate-1.0.0-beta.1.tgz"
+  "version" "1.0.0-beta.1"
+
 "@hapi/accept@5.0.2":
   "integrity" "sha512-CmzBx/bXUR8451fnZRuZAJRlzgm0Jgu5dltTX/bszmR2lheb9BpyN47Q1RbaGTsvFzn0PXAEs+lXDKfshccYZw=="
   "resolved" "https://registry.npmjs.org/@hapi/accept/-/accept-5.0.2.tgz"
@@ -168,12 +173,15 @@
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.1.tgz"
   "version" "9.2.1"
 
-"@lingdocs/pashto-inflector@2.1.6":
-  "integrity" "sha512-2zgl23Ea5yBY/r0mKt9qRhHnYN5cCMvwXcrzqdhpCRkedrp9TYlkN3oPr4xXLQK3QZ/DnGr5w8GsRuGSrYMX6A=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-2.1.6.tgz"
-  "version" "2.1.6"
+"@lingdocs/pashto-inflector@3.1.6":
+  "integrity" "sha512-FwLI8bHfELRn3UlZKdUQCx0jSbnivjcZUmcXxPXth4U0Xw2VpunNj7F/yrKZkxM2b384A1fIjOVxXbXFB8ZadQ=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-3.1.6.tgz"
+  "version" "3.1.6"
   dependencies:
+    "@formkit/auto-animate" "^1.0.0-beta.1"
     "classnames" "^2.2.6"
+    "jsurl2" "^2.1.0"
+    "lz-string" "^1.4.4"
     "pbf" "^3.2.1"
     "rambda" "^6.7.0"
     "react-select" "^5.2.2"
@@ -1403,6 +1411,11 @@
   dependencies:
     "minimist" "^1.2.0"
 
+"jsurl2@^2.1.0":
+  "integrity" "sha512-dN5xpdjYWxhkn/hN9jGovVP/sy8HqP3BiNU7nKm7pwtRSfQlKG8FZO7wlO4kmydAYzv3UwVVzGjAnEBr4KCmmw=="
+  "resolved" "https://registry.npmjs.org/jsurl2/-/jsurl2-2.1.0.tgz"
+  "version" "2.1.0"
+
 "lines-and-columns@^1.1.6":
   "integrity" "sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg=="
   "resolved" "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz"
@@ -1440,6 +1453,11 @@
   "version" "1.4.0"
   dependencies:
     "js-tokens" "^3.0.0 || ^4.0.0"
+
+"lz-string@^1.4.4":
+  "integrity" "sha512-0ckx7ZHRPqb0oUm8zNr+90mtf9DQB60H1wMCjBtfi62Kl3a7JbHob6gA2bC+xRvZoOL+1hzUK8jeuEIQE8svEQ=="
+  "resolved" "https://registry.npmjs.org/lz-string/-/lz-string-1.4.4.tgz"
+  "version" "1.4.4"
 
 "make-dir@^3.0.2":
   "integrity" "sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw=="
