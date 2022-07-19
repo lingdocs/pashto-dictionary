@@ -75,6 +75,9 @@ function paginate<T>(arr: T[], page: number): T[] {
 }
 
 function amountOfWords(number: number): string {
+    if (number === 0) {
+        return "ALL your words";
+    }
     return `${number} word${number !== 1 ? "s" : ""}`;
 }
 
@@ -378,19 +381,23 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
                 </Modal.Header>
                 <Modal.Body>
                     <p>You have {amountOfWords(wordlist.length)} in your wordlist.</p>
-                    <p>Delete words older than:</p>
+                    <p>Delete:</p>
                     <ButtonSelect
                         options={[
                             {
-                                label: "1 Month",
+                                label: "ALL words",
+                                value: "0",
+                            },
+                            {
+                                label: "Older than 1 Month",
                                 value: "1",
                             },
                             {
-                                label: "6 Months",
+                                label: "Older than 6 Months",
                                 value: "6",
                             },
                             {
-                                label: "1 Year",
+                                label: "Orlder than 1 Year",
                                 value: "12",
                             },
                         ]}

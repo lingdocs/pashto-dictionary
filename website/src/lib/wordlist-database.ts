@@ -163,6 +163,9 @@ export function searchWordlist(search: string, wordlist: WordlistWord[], textOpt
 }
 
 export function calculateWordsToDelete(wordlist: WordlistWord[], monthsBackToKeep: number): string[] {
+    if (monthsBackToKeep === 0) {
+        return [...wordlist].map((word) => word._id);
+    }
     const now = Date.now();
     const cutoffDate = now - getMillisecondsPeriod("months", monthsBackToKeep);
     return wordlist.filter((word) => {
