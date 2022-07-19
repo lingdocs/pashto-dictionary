@@ -385,10 +385,6 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
                     <ButtonSelect
                         options={[
                             {
-                                label: "ALL words",
-                                value: "0",
-                            },
-                            {
                                 label: "Older than 1 Month",
                                 value: "1",
                             },
@@ -397,8 +393,12 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
                                 value: "6",
                             },
                             {
-                                label: "Orlder than 1 Year",
+                                label: "Older than 1 Year",
                                 value: "12",
+                            },
+                            {
+                                label: "ALL words",
+                                value: "0",
                             },
                         ]}
                         value={monthsBackToKeep.toString()}
