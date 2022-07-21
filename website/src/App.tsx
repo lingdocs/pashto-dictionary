@@ -464,7 +464,7 @@ class App extends Component<RouteComponentProps, State> {
             paddingBottom: "60px",    
         }}>
             <Helmet>
-                <title>LingDocs Dictionary</title>
+                <title>LingDocs Pashto Dictionary</title>
             </Helmet>
                 {this.state.options.searchBarPosition === "top" && <SearchBar
                     state={this.state}
