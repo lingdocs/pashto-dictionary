@@ -67,8 +67,7 @@ import * as AT from "./types/account-types";
 import ReactGA from "react-ga";
 // tslint:disable-next-line
 import "@fortawesome/fontawesome-free/css/all.css";
-import "./custom-bootstrap.scss";
-// tslint:disable-next-line: ordered-imports
+import "./custom-bootstrap.css";
 import "./App.css";
 import classNames from "classnames";
 import { getTextOptions } from "./lib/get-text-options";
