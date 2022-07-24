@@ -490,9 +490,15 @@ class App extends Component<RouteComponentProps, State> {
                                 <Link to="/new-entries" className="plain-link font-weight-light">
                                     <div className="my-4">New words this month</div>
                                 </Link>
-                                <Link to="/phrase-builder" className="plain-link font-weight-light">
-                                    <div className="my-4">Phrase Builder</div>
-                                </Link>
+                                <div>
+                                    <Link to="/phrase-builder" className="plain-link font-weight-light">
+                                        <span className="my-4">Phrase Builder</span>
+                                    </Link>
+                                    {` - `}
+                                    <a href="https://grammar.lingdocs.com" className="plain-link font-weight-light">
+                                        <span className="my-4">Grammar</span>
+                                    </a>
+                                </div>
                             </div>
                         </Route>
                         <Route path="/about">
