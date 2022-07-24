@@ -494,7 +494,7 @@ class App extends Component<RouteComponentProps, State> {
                                     <Link to="/phrase-builder" className="plain-link h5 font-weight-light">
                                         Phrase Builder
                                     </Link>
-                                    {` • `}
+                                    <span className="mx-1">{` • `}</span>
                                     <a href="https://grammar.lingdocs.com" className="plain-link h5 font-weight-light">
                                         Grammar
                                     </a>
