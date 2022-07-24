@@ -21,7 +21,10 @@ function PhraseBuilder({ state, isolateEntry }: {
     isolateEntry: (ts: number) => void,
 }) {
     const [type, setType] = useStickyState<"EP" | "VP">("VP", "phraseBuilderType");
-    const [entry, setEntry] = useStickyState<T.VerbEntry | undefined>(undefined, "vEntrySelect");
+    const [entry, setEntry] = useStickyState<T.VerbEntry | undefined>(
+        undefined,
+        "vEntrySelect",
+    );
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const vp = params.get("vp");
@@ -34,7 +37,7 @@ function PhraseBuilder({ state, isolateEntry }: {
     }, [setType]);
     return <div style={{ maxWidth: "1250px", margin: "0 auto 200px auto" }}>
         <h2>Phrase Builder</h2>
-        <div className="text-center mb-3">
+        <div className="text-center mb-3 mt-3">
             <ButtonSelect
                 options={[
                     { label: "Verb Phrase", value: "VP" },

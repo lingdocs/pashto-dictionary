@@ -94,7 +94,7 @@ if (prod) {
 }
 
 const possibleLandingPages = [
-    "/", "/about", "/settings", "/word", "/account", "/new-entries", "/share-target",
+    "/", "/about", "/settings", "/word", "/account", "/new-entries", "/share-target", "/phrase-builder",
 ];
 const editorOnlyPages = [
     "/edit", "/review-tasks",
@@ -491,12 +491,12 @@ class App extends Component<RouteComponentProps, State> {
                                     <div className="my-4">New words this month</div>
                                 </Link>
                                 <div className="mt-4 pt-3">
-                                    <Link to="/phrase-builder" className="plain-link font-weight-light">
-                                        <span className="h6">Phrase Builder</span>
+                                    <Link to="/phrase-builder" className="plain-link h5 font-weight-light">
+                                        Phrase Builder
                                     </Link>
                                     {` • `}
-                                    <a href="https://grammar.lingdocs.com" className="plain-link font-weight-light">
-                                        <span className="h6">Grammar</span>
+                                    <a href="https://grammar.lingdocs.com" className="plain-link h5 font-weight-light">
+                                        Grammar
                                     </a>
                                 </div>
                             </div>
