@@ -66,6 +66,10 @@ body {
     color: var(--text-on-gender-color)
 }
 
+.block-border {
+    border: 2px solid var(--farthest);
+}
+
 pre {
     color: var(--high-contrast);
 }
