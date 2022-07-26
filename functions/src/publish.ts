@@ -67,9 +67,9 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
         },
         entries,
     }
-    await uploadDictionaryToStorage(dictionary);
+    uploadDictionaryToStorage(dictionary).catch(console.error);
     // TODO: make this async and run after publish response
-    await doHunspell(entries);
+    doHunspell(entries).catch(console.error);
     return {
         ok: true,
         info: dictionary.info
