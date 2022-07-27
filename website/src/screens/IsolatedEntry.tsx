@@ -46,6 +46,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
     dictionary: DictionaryAPI,
     isolateEntry: (ts: number) => void,
 }) {
+    const [exploded, setExploded] = useState<boolean>(false);
     const [editing, setEditing] = useState<boolean>(false);
     const [comment, setComment] = useState<string>("");
     const [editSubmitted, setEditSubmitted] = useState<boolean>(false);
@@ -103,6 +104,27 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             return false;
         }
     })();
+    function DisplayVPExplorer(props: {
+        entry: T.DictionaryEntry,
+        complement: T.DictionaryEntry | undefined,
+    }) {
+        try {
+            return <VPExplorer
+                verb={{
+                    // TODO: CLEAN THIS UP!
+                    // @ts-ignore
+                    entry: props.entry,
+                    complement: props.complement,
+                }}
+                opts={textOptions}
+                entryFeeder={entryFeeder}
+                handleLinkClick={isolateEntry}
+            />
+        } catch (e) {
+            console.error("error rendering VPExplorer", e);
+            return null;
+        }
+    }
     return <div className="width-limiter">
         <Helmet>
             <title>{entry.p} - LingDocs Pashto Dictionary</title>
@@ -111,37 +133,42 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             <div className="col-8">
                 <Entry
                     nonClickable
-                    entry={entry}
+                    entry={exploded ? explodeEntry(entry) : entry}
                     textOptions={textOptions}
                     isolateEntry={isolateEntry}
                 />
             </div>
-            {state.user && 
-                <div className="col-4">
-                    <div className="d-flex flex-row justify-content-end">
-                        {state.user.level === "editor" && <>
-                                <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(entry.ts.toString())}>
-                                    <i className="fas fa-tag"></i>
+            <div className="col-4">
+                <div className="d-flex flex-row justify-content-end">
+                    <div
+                        className="clickable mr-3"
+                        onClick={() => setExploded(os => !os)}
+                    >
+                        <i className={`fas fa-${exploded ? "compress" : "expand"}-alt`} />
+                    </div>
+                    {state.user && <>
+                        (state.user.level === "editor" && <>
+                            <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(entry.ts.toString())}>
+                                <i className="fas fa-tag"></i>
+                            </div>
+                            <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(JSON.stringify(entry))}>
+                                <i className="fas fa-code"></i>
+                            </div>
+                            <Link to={`/edit?id=${entry.ts}`} className="plain-link">
+                                <div
+                                    className="clickable mr-3"
+                                    data-testid="finalEditEntryButton"
+                                >
+                                    <i className="fa fa-gavel" />
                                 </div>
-                                <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(JSON.stringify(entry))}>
-                                    <i className="fas fa-code"></i>
-                                </div>
-                                <Link to={`/edit?id=${entry.ts}`} className="plain-link">
-                                    <div
-                                        className="clickable mr-3"
-                                        data-testid="finalEditEntryButton"
-                                    >
-                                        <i className="fa fa-gavel"></i>
-                                    </div>
-                                </Link>
-                            </>
-                        }
+                            </Link>
+                        </>)
                         <div
                             className="clickable mr-3"
                             data-testid="editEntryButton"
-                            onClick={() => setEditing(!editing)}
+                            onClick={() => setEditing(os => !os)}
                         >
-                            <i className="fa fa-pen"></i>
+                            <i className="fa fa-pen" />
                         </div>
                         {wordlistEnabled(state.user) && <div
                             className="clickable"
@@ -153,9 +180,9 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                         >
                             <i className={`fa${wordlistWord ? "s" : "r"} fa-star fa-lg`}/>
                         </div>}
-                    </div>
+                    </>}
                 </div>
-            }
+            </div>
         </div>
         {wordlistWord && <>
             {hasAttachment(wordlistWord, "audio") && <AudioPlayButton word={wordlistWord} />}
@@ -207,17 +234,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             </div>}
         </>}
         {tp.isVerbEntry({ entry, complement }) && <div className="pb-4">
-            <VPExplorer
-                verb={{
-                    // TODO: CLEAN THIS UP!
-                    // @ts-ignore
-                    entry,
-                    complement,
-                }}
-                opts={textOptions}
-                entryFeeder={entryFeeder}
-                handleLinkClick={isolateEntry}
-            />
+            <DisplayVPExplorer entry={entry} complement={complement} />
         </div>}
 
         {relatedEntries && <>
@@ -255,6 +272,13 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             </Modal.Footer>
         </Modal>
     </div>;
+}
+
+function explodeEntry(entry: T.DictionaryEntry): T.DictionaryEntry {
+    return {
+        ...entry,
+        p: entry.p.split("").join(" "),
+    };
 }
 
 export default IsolatedEntry;

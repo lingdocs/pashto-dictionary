@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "author": "lingdocs.com",
+  "homepage": "https://dictionary.lingdocs.com",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
