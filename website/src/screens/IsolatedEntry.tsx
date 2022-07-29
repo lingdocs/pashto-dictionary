@@ -237,18 +237,12 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             <DisplayVPExplorer entry={entry} complement={complement} />
         </div>}
 
-        {relatedEntries && <>
-            {relatedEntries.length ? 
-                <>
-                    <h4>Related Words</h4>
-                    <Results
-                        state={{ ...state, results: relatedEntries }}
-                        isolateEntry={isolateEntry}
-                    />
-                </>
-            :
-                <h5>No related entries</h5>
-            }
+        {relatedEntries && relatedEntries.length && <>
+            <h4>Related Words</h4>
+            <Results
+                state={{ ...state, results: relatedEntries }}
+                isolateEntry={isolateEntry}
+            />
         </>}
         <Modal
             show={showingDeleteWarning}

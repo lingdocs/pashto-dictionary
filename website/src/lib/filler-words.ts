@@ -40,6 +40,7 @@ const fillerWords = [
     "fig",
     "make",
     "etc.",
+    "see",
     "",
 ];
 
