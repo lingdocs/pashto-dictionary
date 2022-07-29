@@ -271,7 +271,18 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({ searchString, page, tp
                           .simplesort("i")
                           .data();
     resultsGiven = exactResults.map((mpd: any) => mpd.$loki);
-  
+    // Get slightly fuzzy matches
+    const slightlyFuzzy = new RegExp(makeAWeeBitFuzzy(search, infIndex), "i");
+    const slightlyFuzzyQuery = {
+        [index]: { $regex: slightlyFuzzy },
+        $loki: { $nin: resultsGiven },
+    };
+    const slightlyFuzzyResultsLimit = (pageSize * page) - resultsGiven.length;
+    const slightlyFuzzyResults = dictDb.collection.chain()
+                            .find(slightlyFuzzyQuery)
+                            .limit(slightlyFuzzyResultsLimit)
+                            .data();
+    resultsGiven.push(...slightlyFuzzyResults.map((mpd: any) => mpd.$loki));
     // Get fuzzy matches
     const pashtoRegExLogic = fuzzifyPashto(search, {
         script: index === "p" ? "Pashto" : "Latin",
@@ -301,17 +312,18 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({ searchString, page, tp
                     .limit(fuzzyResultsLimit)
                     .data();
     const results = tpFilter
-        ? [...exactResults, ...fuzzyResults].filter(tpFilter)
-        : [...exactResults, ...fuzzyResults];
-    const chunksToSort = chunkOutArray(results, pageSize);
+        ? [...exactResults, ...slightlyFuzzyResults, ...fuzzyResults].filter(tpFilter)
+        : [...exactResults, ...slightlyFuzzyResults, ...fuzzyResults];
     // sort out each chunk (based on limit used multiple times by infinite scroll)
-    // so that when infinite scrolling, it doesn't resort the previous chunks given
-    // TODO: If on the first page, only sort the fuzzyResults
+    // so that when infinite scrolling, it doesn't re-sort the previous chunks given
+    const closeResultsLength = exactResults.length + slightlyFuzzyResults.length;
+    const chunksToSort = chunkOutArray(results, pageSize);
     return chunksToSort
         .reduce((acc, cur, i) => ((i === 0)
             ? [
-                ...sortByRelevancy(cur.slice(0, exactResults.length), search, index),
-                ...sortByRelevancy(cur.slice(exactResults.length), search, index),
+                // don't sort theclose results in the first chunk
+                ...cur.slice(0, closeResultsLength),
+                ...sortByRelevancy(cur.slice(closeResultsLength), search, index),
             ]
             : [
                 ...acc,
@@ -386,14 +398,12 @@ function makeVerbLookupPortal(): T.EntryLookupPortal<T.VerbEntry> {
                 page: 1,
                 tpFilter: tp.isVerbDictionaryEntry,
             });
-            const r = vEntries.map((entry): T.VerbEntry => ({
+            return vEntries.map((entry): T.VerbEntry => ({
                 entry,
                 complement: (entry.c?.includes("comp.") && entry.l)
                     ? dictionary.findOneByTs(entry.l)
                     : undefined,
             }));
-            console.log(r);
-            return r;
         },
         getByTs: (ts: number): T.VerbEntry | undefined => {
             const entry = dictDb.findOneByTs(ts);

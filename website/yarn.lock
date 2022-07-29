@@ -1590,10 +1590,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@lingdocs/pashto-inflector@3.6.0":
-  version "3.6.0"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-3.6.0.tgz#89143246341bbca70c340f9cbcd72650f8348231"
-  integrity sha512-OCkGiTTY8s2QgiTmP5MJ110GScul7ILtzoaz6b5zWq3Qerdhs10jAA0t/9OckfLE4yBkQYWkIG+5Qj4ZJGkODg==
+"@lingdocs/pashto-inflector@3.6.2":
+  version "3.6.2"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-3.6.2.tgz#122eaeaac59253ea0ee708d772e860502aa1d6b7"
+  integrity sha512-hHvgJPrNAp/ZBvZRsm++X2vFnZyuVrpE54YWPubwk+1Xn+28otoJ34r/OsN4N7eXrXBcxawYsWhf/ot9D987GQ==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.1"
     classnames "^2.2.6"
