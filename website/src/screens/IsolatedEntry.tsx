@@ -243,7 +243,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 state={{ ...state, results: relatedEntries }}
                 isolateEntry={isolateEntry}
             />
-        </> : <div style={{ height: "200px" }} />}
+        </> : <div style={{ height: "500px" }} />}
         <Modal
             show={showingDeleteWarning}
             onHide={() => setShowingDeleteWarning(false)}
