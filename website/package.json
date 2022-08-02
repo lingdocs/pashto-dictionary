@@ -7,7 +7,7 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
-    "@lingdocs/pashto-inflector": "3.6.9",
+    "@lingdocs/pashto-inflector": "3.7.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -110,6 +110,6 @@
     "user-event": "^4.0.0"
   },
   "peerDependencies": {
-    "@lingdocs/pashto-inflector": "3.6.9"
+    "@lingdocs/pashto-inflector": "3.7.0"
   }
 }
