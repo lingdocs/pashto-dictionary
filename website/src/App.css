@@ -117,6 +117,10 @@ hr {
     max-width: 700px;
 }
 
+.wide-width-limiter {
+    max-width: 800px;
+}
+
 .thin-column {
     max-width: 1rem;
 }

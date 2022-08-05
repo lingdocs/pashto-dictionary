@@ -125,7 +125,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             return null;
         }
     }
-    return <div className="width-limiter">
+    return <div className="wide-width-limiter">
         <Helmet>
             <title>{entry.p} - LingDocs Pashto Dictionary</title>
         </Helmet>
@@ -238,7 +238,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         </div>}
 
         {!!(relatedEntries && relatedEntries.length) ? <>
-            <h4>Related Words</h4>
+            <h4 style={{ marginTop: "5rem" }}>Related Words</h4>
             <Results
                 state={{ ...state, results: relatedEntries }}
                 isolateEntry={isolateEntry}
