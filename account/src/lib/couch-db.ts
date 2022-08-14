@@ -48,7 +48,10 @@ export async function getLingdocsUser(field: "email" | "userId" | "githubId" | "
 }
 
 export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
-  const users = await usersDb.find({ selector: { userId: { $exists: true }}});
+  const users = await usersDb.find({
+    selector: { userId: { $exists: true }},
+    limit: 5000,
+  });
   return users.docs as T.LingdocsUser[];
 }
 
