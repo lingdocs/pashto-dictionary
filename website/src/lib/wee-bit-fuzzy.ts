@@ -35,6 +35,7 @@ const tSounds = "[ت|ط|ټ]";
 const dSounds = "[د|ډ]";
 const rSounds = "[ر|ړ|ڼ]";
 const nSounds = "[ن|ڼ]";
+const hKhSounds = "[خ|ح|ښ|ه]";
 
 const pReplacer = {
     "ی": fiveYeys,
@@ -67,9 +68,15 @@ const pReplacer = {
 
     "ن": nSounds,
     "ڼ": nSounds,
+
+    "خ": hKhSounds,
+    "ح": hKhSounds,
+    "ښ": hKhSounds,
+    "ه": hKhSounds,
 };
 
 const fiveYeysF = "(?:eyy|ey|ee|e|uy)";
+const hKhF = "(?:kh|h|x)";
 const zSoundsF = "(?:z|dz)";
 
 const fReplacer = {
@@ -81,11 +88,14 @@ const fReplacer = {
 
     "z": zSoundsF,
     "dz": zSoundsF,
+    "x": hKhF,
+    "h": hKhF,
+    "kh": hKhF,
 };
 
 const pRepRegex = new RegExp(Object.keys(pReplacer).join("|"), "g");
 
-const fRepRegex = /eyy|ey|uy|ee|e|z|dz/g;
+const fRepRegex = /eyy|ey|uy|ee|e|z|dz|x|kh|h/g;
 
 function makePAWeeBitFuzzy(s: string): string {
     // + s.replace(/ /g, "").split("").join(" *");
