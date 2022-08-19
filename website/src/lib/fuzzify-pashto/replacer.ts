@@ -34,6 +34,11 @@ interface IPhoneticsReplacerInfoItem extends IReplacerInfoItem {
   replWhenBeginning?: string;
 }
 
+const ghzCombo = ["غز", "زغ"];
+const pxCombo = ["پښ", "ښپ"];
+const kshCombo = ["کش", "شک", "کښ", "کش"];
+
+
 export const pashtoReplacerInfo: IPashtoReplacerInfoItem[] = [
   { char: "اً", range: "ان" },
   {
@@ -103,6 +108,13 @@ export const pashtoReplacerInfo: IPashtoReplacerInfoItem[] = [
   { char: "ډ", range: tdSounds },
   { char: "ڈ", range: tdSounds },
 
+  { char: "غز", plus: ghzCombo },
+  { char: "زغ", plus: ghzCombo },
+  { char: "پښ", plus: pxCombo },
+  { char: "ښپ", plus: pxCombo },
+  { char: "کش", plus: kshCombo },
+  { char: "شک", plus: kshCombo },
+
   { char: "مب", plus: ["مب", "نب"] },
   { char: "نب", plus: ["مب", "نب"] },
   { char: "ن", range: "نڼ", plus: ["اً"] }, // allow for words using اٌ at the end to be seached for with ن
@@ -121,7 +133,7 @@ export const pashtoReplacerInfo: IPashtoReplacerInfoItem[] = [
 ];
 
 // tslint:disable-next-line
-export const pashtoReplacerRegex = /اً|أ|ا|آ|ٱ|ٲ|ٳ|ئی|ئي|ئے|یٰ|ی|ي|ې|ۍ|ئ|ے|س|ص|ث|څ|ج|چ|هٔ|ه|ۀ|ہ|ع|و|ؤ|ښ|غ|خ|ح|ش|ز|ض|ذ|ځ|ظ|ژ|ر|ړ|ڑ|ت|ټ|ٹ|ط|د|ډ|ڈ|مب|م|نب|ن|ڼ|ک|ګ|گ|ل|ق|ږ|ب|پ|ف/g;
+export const pashtoReplacerRegex = /اً|أ|ا|آ|ٱ|ٲ|ٳ|ئی|ئي|ئے|یٰ|ی|ي|ې|ۍ|ئ|ے|س|ص|ث|څ|ج|چ|هٔ|ه|ۀ|غز|زغ|کش|شک|ښک|ښک|پښ|ښپ|ہ|ع|و|ؤ|ښ|غ|خ|ح|ش|ز|ض|ذ|ځ|ظ|ژ|ر|ړ|ڑ|ت|ټ|ٹ|ط|د|ډ|ڈ|مب|م|نب|ن|ڼ|ک|ګ|گ|ل|ق|ږ|ب|پ|ف/g;
 
 // TODO: I removed the h? 's at the beginning and ends. was that a good idea?
 const aaySoundLatin = "(?:[aá]a?i|[eé]y|[aá]a?y|[aá]h?i)";
