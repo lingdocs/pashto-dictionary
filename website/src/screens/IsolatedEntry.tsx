@@ -104,6 +104,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             return false;
         }
     })();
+    const isVerbEntry = tp.isVerbEntry({ entry, complement });
     function DisplayVPExplorer(props: {
         entry: T.DictionaryEntry,
         complement: T.DictionaryEntry | undefined,
@@ -233,12 +234,12 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />
             </div>}
         </>}
-        {tp.isVerbEntry({ entry, complement }) && <div className="pb-4">
+        {isVerbEntry && <div className="pb-4">
             <DisplayVPExplorer entry={entry} complement={complement} />
         </div>}
 
         {!!(relatedEntries && relatedEntries.length) ? <>
-            <h4 style={{ marginTop: "5rem" }}>Related Words</h4>
+            <h4 style={{ marginTop: isVerbEntry ? "10rem" : "5rem" }}>Related Words</h4>
             <Results
                 state={{ ...state, results: relatedEntries }}
                 isolateEntry={isolateEntry}

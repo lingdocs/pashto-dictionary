@@ -8,6 +8,7 @@
 
 const fillerWords = [
     "to",
+    "go",
     "being",
     "through",
     "for",
