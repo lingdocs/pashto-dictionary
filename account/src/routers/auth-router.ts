@@ -151,7 +151,9 @@ const authRouter = (passport: PassportStatic) => {
       if (!req.user || !req.user.admin) {
         return res.redirect("/");
       }
-      const users = await getAllLingdocsUsers();
+      const users = (await getAllLingdocsUsers()).sort((a, b) => (
+        (a.accountCreated || 0) - (b.accountCreated || 0)
+      ));
       res.render("admin", { users });
     } catch (e) {
       next(e);

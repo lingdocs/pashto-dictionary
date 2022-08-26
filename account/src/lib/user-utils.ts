@@ -106,6 +106,7 @@ export async function createNewUser(input: {
             password,
             level: "basic",
             tests: [],
+            accountCreated: now,
             lastLogin: now,
             lastActive: now,
             userTextOptionsRecord: undefined,
@@ -124,6 +125,7 @@ export async function createNewUser(input: {
             [input.strategy]: input.profile,
             level: "basic",
             tests: [],
+            accountCreated: now,
             lastLogin: now,
             lastActive: now,
             userTextOptionsRecord: undefined,
@@ -146,6 +148,7 @@ export async function createNewUser(input: {
             lastLogin: now,
             tests: [],
             lastActive: now,
+            accountCreated: now,
             level: "basic",
             userTextOptionsRecord: undefined,
         }
@@ -163,6 +166,7 @@ export async function createNewUser(input: {
         lastLogin: now,
         tests: [],
         lastActive: now,
+        accountCreated: now,
         level: "basic",
         userTextOptionsRecord: undefined,
     }

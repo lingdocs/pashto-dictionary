@@ -47,6 +47,7 @@ export type LingdocsUser = {
     },
     upgradeToStudentRequest?: "waiting" | "denied",
     tests: TestResult[],
+    accountCreated?: TimeStamp,
     lastLogin: TimeStamp,
     lastActive: TimeStamp,
     userTextOptionsRecord: undefined | UserTextOptionsRecord,
