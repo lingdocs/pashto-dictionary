@@ -89,7 +89,9 @@
                 <% } %>
               </td>
               <td>
-                <%= users[i].accountCreated %>
+                <% if (users[i].accountCreated) { %>
+                  <%= new Date(users[i].accountCreated).toString().slice(0, 15) %>
+                <% } %>
               </td>
               <td>
                 <button class="btn btn-sm btn-danger" onClick="handleDeleteUser('<%= users[i].userId %>', '<%= users[i].name %>')"><i class="fa fa-trash"></i></button>
