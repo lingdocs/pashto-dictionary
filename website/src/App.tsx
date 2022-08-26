@@ -562,6 +562,15 @@ class App extends Component<RouteComponentProps, State> {
                     </>
                 }
             </div>
+            {!localStorage.getItem("clickedBulbul") && <Route path="/" exact>
+                <div className="text-center" style={{ marginTop: "5rem" }}>
+                    <a href="https://bulbulapp.com/kPJV" onClick={() => {
+                        localStorage.setItem("clickedBulbul", "true");
+                    }}>
+                        <button className="btn btn-secondary">Try Bulbul Pashto Audiobooks! 📚🦻</button>
+                    </a>
+                </div>
+            </Route>}
             <footer className={classNames(
                 "footer",
                 { "bg-white": !["/search", "/word"].includes(this.props.location.pathname) },
