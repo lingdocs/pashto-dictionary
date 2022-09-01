@@ -58,8 +58,7 @@ export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.Lingdo
     return newUser;
   } catch(e) {
     console.log("ERROR on insertLingdocsUser", user);
-    console.log(e);
-    throw new Error("error inserting user");
+    throw new Error("error inserting user - on update");
   }
 }
 
