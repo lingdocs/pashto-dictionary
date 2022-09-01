@@ -49,7 +49,6 @@ export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
 }
 
 export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.LingdocsUser> {
-  console.log("coming to insert this user", user);
   const res = await usersDb.insert(user);
   const newUser = processAPIResponse(user, res);
   if (!newUser) {
@@ -100,12 +99,12 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   } |
   { userTextOptionsRecord: T.UserTextOptionsRecord } |
   { upgradeToStudentRequest: "waiting" } | 
-  { upgradeToStudentRequest: "denied" } | 
-  { lastActive: T.TimeStamp } |
+  { upgradeToStudentRequest: "denied" } |
   { tests: T.TestResult[] }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
+  console.log("inUpdateLingdocsUser", toUpdate);
   if ("tests" in toUpdate) {
     const newTests = toUpdate.tests.filter((t) => !user.tests.some(x => x.time === t.time));
     console.log("will try to add test");
