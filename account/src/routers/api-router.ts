@@ -51,6 +51,7 @@ apiRouter.put("/user/tests", async (req, res, next) => {
     if (!req.user) return next("user not found");
     try {
         const { tests } = req.body as T.PostTestResultsBody;
+        console.log("will update with", tests);
         await updateLingdocsUser(req.user.userId, { tests });
         sendResponse(res, {
             ok: true,

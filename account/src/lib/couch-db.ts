@@ -49,6 +49,7 @@ export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
 }
 
 export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.LingdocsUser> {
+  console.log("coming to insert this user", user);
   const res = await usersDb.insert(user);
   const newUser = processAPIResponse(user, res);
   if (!newUser) {
