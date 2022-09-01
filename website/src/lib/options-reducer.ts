@@ -117,7 +117,10 @@ export function resolveTextOptions(userOnServer: AT.LingdocsUser, prevUser: AT.L
       };
   }
   // if the new user is the same as the existing user that we had
-  const serverOptionsAreNewer = !!(userOnServer.userTextOptionsRecord && (userOnServer.userTextOptionsRecord.lastModified > localTextOptionsRecord.lastModified));
+  const serverOptionsAreNewer = (
+    !!userOnServer.userTextOptionsRecord &&
+    (userOnServer.userTextOptionsRecord.lastModified > localTextOptionsRecord.lastModified)
+  );
   return {
     serverOptionsAreNewer,
     userTextOptionsRecord: (serverOptionsAreNewer && userOnServer.userTextOptionsRecord)

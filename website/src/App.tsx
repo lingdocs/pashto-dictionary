@@ -292,7 +292,7 @@ class App extends Component<RouteComponentProps, State> {
                 saveUser(undefined);
                 return;
             }
-            const { userTextOptionsRecord, serverOptionsAreNewer } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord);
+            const { userTextOptionsRecord } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord);
             const user: AT.LingdocsUser = {
                 ...userOnServer,
                 userTextOptionsRecord,
