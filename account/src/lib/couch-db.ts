@@ -113,10 +113,9 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
   if ("tests" in toUpdate) {
-    const newTests = toUpdate.tests.filter((t) => !user.tests.some(x => x.time === t.time));
     return await insertLingdocsUser({
       ...user,
-      tests: [...user.tests, ...newTests],
+      tests: addNewTests(user.tests, toUpdate.tests, 2),
     });
   }
   if ("password" in toUpdate) {
@@ -180,6 +179,10 @@ export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.Us
 //   }
 // }
 
+export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
+  return `${userDbPrefix}${stringToHex(uid)}` as T.WordlistDbName;
+}
+
 function generateWordlistDbPassword(): T.UserDbPassword {
   function makeChunk(): string {
       return Math.random().toString(36).slice(2)
@@ -199,6 +202,26 @@ function stringToHex(str: string) {
 	return arr1.join('');
 }
 
-export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
-    return `${userDbPrefix}${stringToHex(uid)}` as T.WordlistDbName;
+/**
+ * Adds new tests to a users record, only keeping up to amountToKeep records of the most
+ * recent repeat passes
+ * 
+ * @param existing - the existing tests in a users record
+ * @param newResults - the tests to be added to a users record
+ * @param amountToKeep - the amount of repeat tests to keep (defaults to 2)
+ */
+function addNewTests(existing: Readonly<T.TestResult[]>, toAdd: T.TestResult[], amountToKeep = 2): T.TestResult[] {
+  const tests = [...existing];
+  // check to make sure that we're only adding test results that are not already added
+  const newTests = toAdd.filter((t) => !tests.some(x => x.time === t.time));
+  newTests.forEach((nt) => {
+    const repeatPasses = tests.filter(t => t.id === nt.id);
+    if (repeatPasses.length > (amountToKeep - 1)) {
+      // already have enough repeat passes saved, remove the oldest one
+      const i = tests.findIndex(x => x.id === nt.id);
+      if (i > -1) tests.splice(i, 1);  
+    }
+    tests.push(nt);
+  });
+  return tests;
 }
