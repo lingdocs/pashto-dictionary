@@ -49,12 +49,18 @@ export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
 }
 
 export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.LingdocsUser> {
-  const res = await usersDb.insert(user);
-  const newUser = processAPIResponse(user, res);
-  if (!newUser) {
+  try {
+    const res = await usersDb.insert(user);
+    const newUser = processAPIResponse(user, res);
+    if (!newUser) {
+      throw new Error("error inserting user");
+    }
+    return newUser;
+  } catch(e) {
+    console.log("ERROR on insertLingdocsUser", user);
+    console.log(e);
     throw new Error("error inserting user");
   }
-  return newUser;
 }
 
 export async function deleteLingdocsUser(uuid: T.UUID): Promise<void> {
@@ -104,7 +110,7 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
-  // console.log("inUpdateLingdocsUser", toUpdate);
+  console.log("inUpdateLingdocsUser", toUpdate);
   if ("tests" in toUpdate) {
     return await insertLingdocsUser({
       ...user,

@@ -18,12 +18,10 @@ app.use(cors({
     // origin: "*",
     origin: inProd ? /\.lingdocs\.com$/ : "*",
     credentials: true,
-    methods: ["GET","HEAD","PUT","POST","DELETE"],
 }));
 app.use((req, res, next) => {
     // res.append('Access-Control-Allow-Origin', ['*']);
-    res.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE');
-    res.append("test-header", "cool");
+    res.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
     next();
 });
 if (inProd) app.set('trust proxy', 1);
