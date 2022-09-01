@@ -20,6 +20,12 @@ app.use(cors({
     credentials: true,
     methods: ["GET","HEAD","PUT","POST","DELETE"],
 }));
+app.use((req, res, next) => {
+    // res.append('Access-Control-Allow-Origin', ['*']);
+    res.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE');
+    res.append("test-header", "cool");
+    next();
+});
 if (inProd) app.set('trust proxy', 1);
 setupSession(app);
 app.use(passport.initialize());
