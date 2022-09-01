@@ -18,7 +18,7 @@ app.use(cors({
     // origin: "*",
     origin: inProd ? /\.lingdocs\.com$/ : "*",
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: ["GET","HEAD","PUT","POST","DELETE"],
 }));
 if (inProd) app.set('trust proxy', 1);
 setupSession(app);
