@@ -211,17 +211,22 @@ function stringToHex(str: string) {
  * @param amountToKeep - the amount of repeat tests to keep (defaults to 2)
  */
 function addNewTests(existing: Readonly<T.TestResult[]>, toAdd: T.TestResult[], amountToKeep = 2): T.TestResult[] {
-  const tests = [...existing];
-  // check to make sure that we're only adding test results that are not already added
-  const newTests = toAdd.filter((t) => !tests.some(x => x.time === t.time));
-  newTests.forEach((nt) => {
-    const repeatPasses = tests.filter(t => t.id === nt.id);
-    if (repeatPasses.length > (amountToKeep - 1)) {
-      // already have enough repeat passes saved, remove the oldest one
-      const i = tests.findIndex(x => x.id === nt.id);
-      if (i > -1) tests.splice(i, 1);  
-    }
-    tests.push(nt);
-  });
-  return tests;
+  console.log({ existing, toAdd, amountToKeep });
+  return [
+    ...existing,
+    ...toAdd,
+  ];
+  // const tests = [...existing];
+  // // check to make sure that we're only adding test results that are not already added
+  // const newTests = toAdd.filter((t) => !tests.some(x => x.time === t.time));
+  // newTests.forEach((nt) => {
+  //   const repeatPasses = tests.filter(t => t.id === nt.id);
+  //   if (repeatPasses.length > (amountToKeep - 1)) {
+  //     // already have enough repeat passes saved, remove the oldest one
+  //     const i = tests.findIndex(x => x.id === nt.id);
+  //     if (i > -1) tests.splice(i, 1);  
+  //   }
+  //   tests.push(nt);
+  // });
+  // return tests;
 }
