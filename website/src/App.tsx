@@ -310,9 +310,10 @@ class App extends Component<RouteComponentProps, State> {
                 },
             };
             this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
-            if (!serverOptionsAreNewer) {
-                updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
-            }
+            // TODO: THIS IS BROKEN! IT'S CALLING UNNECCESSARILY
+            // if (!serverOptionsAreNewer) {
+            //     updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
+            // }
             if (user) {
                 startLocalDbs(user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
             } else {
