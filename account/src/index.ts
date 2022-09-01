@@ -14,7 +14,11 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(cors({ origin: inProd ? /\.lingdocs\.com$/ : "*", credentials: true }));
+app.use(cors({
+    origin: "*",
+    // origin: inProd ? /\.lingdocs\.com$/ : "*",
+    credentials: true,
+}));
 if (inProd) app.set('trust proxy', 1);
 setupSession(app);
 app.use(passport.initialize());
