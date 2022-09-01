@@ -8,13 +8,6 @@ const nano = Nano(env.couchDbURL);
 const usersDb = nano.db.use("lingdocs-users");
 const userDbPrefix = "userdb-";
 
-export function updateLastActive(user: T.LingdocsUser): T.LingdocsUser {
-  return {
-    ...user,
-    lastActive: getTimestamp(),
-  };
-}
-
 export function updateLastLogin(user: T.LingdocsUser): T.LingdocsUser {
   return {
     ...user,

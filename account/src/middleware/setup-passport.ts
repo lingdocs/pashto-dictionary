@@ -162,14 +162,16 @@ function setupPassport(passport: PassportStatic) {
         cb(null, false);
         return;
       }
-      try {
-        // skip if there's an update conflict
-        const newUser = await updateLingdocsUser(userId, { lastActive: getTimestamp() });
-        cb(null, newUser);
-      } catch (e) {
-        console.error(e);
-        cb(null, user);
-      }
+      // THIS IS ERRORING TOO MUCH!
+      // try {
+      //   // skip if there's an update conflict
+      //   const newUser = await updateLingdocsUser(userId, { lastActive: getTimestamp() });
+      //   cb(null, newUser);
+      // } catch (e) {
+      //   console.error(e);
+      //   cb(null, user);
+      // }
+      cb(null, user);
     } catch (err) {
       cb(err, null);
     }
