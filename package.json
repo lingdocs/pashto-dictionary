@@ -1,6 +1,6 @@
 {
   "name": "@lingdocs/lingdocs-main",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "types and functions for lingdocs stuff",
   "main": "dist/library.js",
   "module": "dist/library.js",

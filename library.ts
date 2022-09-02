@@ -21,7 +21,6 @@ import {
     signOut,
     upgradeAccount,
     upgradeToStudentRequest,
-    updateUserTextOptionsRecord,
     getUser,
     postTestResults,
 } from "./website/src/lib/backend-calls";
@@ -45,7 +44,6 @@ export {
     signOut,
     upgradeAccount,
     upgradeToStudentRequest,
-    updateUserTextOptionsRecord,
     getUser,
     postTestResults,
     // withLingdocsUser functions
