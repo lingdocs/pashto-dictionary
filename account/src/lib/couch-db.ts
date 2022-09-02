@@ -201,7 +201,7 @@ function stringToHex(str: string) {
 
 /**
  * Adds new tests to a users record, only keeping up to amountToKeep records of the most
- * recent repeat passes
+ * recent repeat passes/fails
  * 
  * @param existing - the existing tests in a users record
  * @param newResults - the tests to be added to a users record
@@ -212,11 +212,11 @@ function addNewTests(existing: Readonly<T.TestResult[]>, toAdd: T.TestResult[], 
   // check to make sure that we're only adding test results that are not already added
   const newTests = toAdd.filter((t) => !tests.some(x => x.time === t.time));
   newTests.forEach((nt) => {
-    const repeatPasses = tests.filter(t => t.id === nt.id);
-    if (repeatPasses.length > (amountToKeep - 1)) {
+    const repeats = tests.filter(x => ((x.id === nt.id)) && (x.done === nt.done));
+    if (repeats.length > (amountToKeep - 1)) {
       // already have enough repeat passes saved, remove the oldest one
-      const i = tests.findIndex(x => x.id === nt.id);
-      if (i > -1) tests.splice(i, 1);  
+      const i = tests.findIndex(x => x.time === repeats[0].time);
+      if (i > -1) tests.splice(i, 1);
     }
     tests.push(nt);
   });
