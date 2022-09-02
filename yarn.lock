@@ -178,10 +178,10 @@
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.2.1.tgz"
   "version" "9.2.1"
 
-"@lingdocs/pashto-inflector@3.8.7":
-  "integrity" "sha512-rVjQole0oQpsGBZOqQ7btO80mbL04JhHC6z21G0vLYAswOe4OFdnQyBfKztMclYKiJV2vdtWLXpjjdIPt+Ypbg=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-3.8.7.tgz"
-  "version" "3.8.7"
+"@lingdocs/pashto-inflector@3.8.8":
+  "integrity" "sha512-GUr3MwM6m0+IqFQopkn1+/s2rEF8u626ZpvullGVejB+Z5PEcIV5WzulM6aDAqgsMCPAy7qulJIxjQ9anGSvcw=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-3.8.8.tgz"
+  "version" "3.8.8"
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.1"
     "classnames" "^2.2.6"
