@@ -25,7 +25,7 @@ export type UserTextOptionsRecord = {
 };
 
 export type TestResult = {
-    done: true,
+    done: boolean,
     time: TimeStamp,
     id: string,
 }
