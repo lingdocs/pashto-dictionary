@@ -50,7 +50,6 @@ export type LingdocsUser = {
     accountCreated?: TimeStamp,
     lastLogin: TimeStamp,
     lastActive: TimeStamp,
-    userTextOptionsRecord: undefined | UserTextOptionsRecord,
 } & (
     { level: "basic" } |
     {

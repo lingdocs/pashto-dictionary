@@ -35,8 +35,6 @@ import { dictionary, pageSize } from "./lib/dictionary";
 import {
     optionsReducer,
     textOptionsReducer,
-    resolveTextOptions,
-    removePTextSize,
 } from "./lib/options-reducer";
 import hitBottom from "./lib/hitBottom";
 import getWordId from "./lib/get-word-id";
@@ -47,7 +45,6 @@ import {
 } from "./lib/submissions";
 import { 
     getUser,
-    updateUserTextOptionsRecord,
 } from "./lib/backend-calls";
 import {
     getWordlist,
@@ -281,10 +278,10 @@ class App extends Component<RouteComponentProps, State> {
     private async handleLoadUser(): Promise<void> {
         try {
             const prevUser = this.state.user;
-            const userOnServer = await getUser();
-            if (userOnServer === "offline") return;
-            if (userOnServer) sendSubmissions();
-            if (!userOnServer) {
+            const user = await getUser();
+            if (user === "offline") return;
+            if (user) sendSubmissions();
+            if (!user) {
                 if (this.state.user) {
                     console.log("setting state user because user is newly undefined");
                     this.setState({ user: undefined });
@@ -292,28 +289,11 @@ class App extends Component<RouteComponentProps, State> {
                 saveUser(undefined);
                 return;
             }
-            const { userTextOptionsRecord } = resolveTextOptions(userOnServer, prevUser, this.state.options.textOptionsRecord);
-            const user: AT.LingdocsUser = {
-                ...userOnServer,
-                userTextOptionsRecord,
-            };
             if (!userObjIsEqual(prevUser, user)) {
                 console.log("setting state user because something is different about the user")
                 this.setState({ user });
                 saveUser(user);
             }
-            const textOptionsRecord: TextOptionsRecord = {
-                lastModified: userTextOptionsRecord.lastModified,
-                textOptions: {
-                    ...userTextOptionsRecord.userTextOptions,
-                    pTextSize: getTextOptions(this.state).pTextSize,
-                },
-            };
-            this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
-            // TODO: THIS IS BROKEN! IT'S CALLING UNNECCESSARILY
-            // if (!serverOptionsAreNewer) {
-            //     updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
-            // }
             if (user) {
                 startLocalDbs(user, { wordlist: this.handleRefreshWordlist, reviewTasks: this.handleRefreshReviewTasks });
             } else {
@@ -371,15 +351,6 @@ class App extends Component<RouteComponentProps, State> {
             textOptions,
         };
         this.handleOptionsUpdate({ type: "updateTextOptionsRecord", payload: textOptionsRecord });
-        // try to save the new text options to the user 
-        if (this.state.user) {
-            const userTextOptions = removePTextSize(textOptions);
-            const userTextOptionsRecord = {
-                userTextOptions,
-                lastModified,
-            };
-            updateUserTextOptionsRecord(userTextOptionsRecord).catch(console.error);
-        }
     }
 
     private handleSearchValueChange(searchValue: string) {

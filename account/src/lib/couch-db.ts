@@ -102,7 +102,6 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     couchDbPassword: T.UserDbPassword,
     upgradeToStudentRequest: undefined,
   } |
-  { userTextOptionsRecord: T.UserTextOptionsRecord } |
   { upgradeToStudentRequest: "waiting" } | 
   { upgradeToStudentRequest: "denied" } |
   { tests: T.TestResult[] }

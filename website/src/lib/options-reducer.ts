@@ -1,10 +1,8 @@
 import { Types as IT } from "@lingdocs/pashto-inflector";
-import * as AT from "../types/account-types";
 import {
   Options,
   OptionsAction,
   TextOptionsAction,
-  TextOptionsRecord,
 } from "../types/dictionary-types";
 
 export function optionsReducer(options: Options, action: OptionsAction): Options {
@@ -91,43 +89,4 @@ export function textOptionsReducer(textOptions: IT.TextOptions, action: TextOpti
     };
   }
   throw new Error("action type not recognized in text options reducer");
-}
-
-export function removePTextSize(textOptions: IT.TextOptions): AT.UserTextOptions {
-  const { pTextSize, ...userTextOptions } = textOptions;
-  return userTextOptions;
-}
-
-export function resolveTextOptions(userOnServer: AT.LingdocsUser, prevUser: AT.LingdocsUser | undefined, localTextOptionsRecord: TextOptionsRecord): { userTextOptionsRecord: AT.UserTextOptionsRecord, serverOptionsAreNewer: boolean } {
-  const isANewUser = !prevUser || (userOnServer.userId !== prevUser.userId);
-  if (isANewUser) {
-    // take the new user's text options, if the have any
-    // if not just take the equivalent of the user text options from the saved record 
-    return userOnServer.userTextOptionsRecord
-      ? {
-        serverOptionsAreNewer: true,
-        userTextOptionsRecord: userOnServer.userTextOptionsRecord,
-      }
-      : {
-          serverOptionsAreNewer: false,
-          userTextOptionsRecord: {
-            lastModified: localTextOptionsRecord.lastModified,
-            userTextOptions: removePTextSize(localTextOptionsRecord.textOptions),
-          }
-      };
-  }
-  // if the new user is the same as the existing user that we had
-  const serverOptionsAreNewer = (
-    !!userOnServer.userTextOptionsRecord &&
-    (userOnServer.userTextOptionsRecord.lastModified > localTextOptionsRecord.lastModified)
-  );
-  return {
-    serverOptionsAreNewer,
-    userTextOptionsRecord: (serverOptionsAreNewer && userOnServer.userTextOptionsRecord)
-      ? userOnServer.userTextOptionsRecord
-      : {
-        lastModified: localTextOptionsRecord.lastModified,
-        userTextOptions: removePTextSize(localTextOptionsRecord.textOptions),
-      },
-  };
 }

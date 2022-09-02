@@ -109,7 +109,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
             <p className="lead mb-4">When you sign in or make a LingDocs account you can:</p>
             <div className="mb-3"><i className="fas fa-pen mr-2" /> contribute by suggesting corrections and new words</div>
             <div className="mb-3"><i className="fas fa-star mr-2" /> upgrade your account and start collecting a personal <strong>wordlist</strong></div>
-            <div className="mb-3"><i className="fas fa-sync mr-2" /> sync your script preferences across devices</div>
             <button className="btn btn-lg btn-primary my-4" onClick={handleOpenSignup}><i className="fas fa-sign-in-alt mr-2" /> Sign In</button>
         </div>
     }

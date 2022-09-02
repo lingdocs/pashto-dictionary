@@ -109,7 +109,6 @@ export async function createNewUser(input: {
             accountCreated: now,
             lastLogin: now,
             lastActive: now,
-            userTextOptionsRecord: undefined,
         };
         const user = await insertLingdocsUser(newUser);
         sendVerificationEmail(user, email.token).catch(console.error);
@@ -128,7 +127,6 @@ export async function createNewUser(input: {
             accountCreated: now,
             lastLogin: now,
             lastActive: now,
-            userTextOptionsRecord: undefined,
         };
         const user = await insertLingdocsUser(newUser);
         return user;
@@ -150,7 +148,6 @@ export async function createNewUser(input: {
             lastActive: now,
             accountCreated: now,
             level: "basic",
-            userTextOptionsRecord: undefined,
         }
         const user = await insertLingdocsUser(newUser);
         sendVerificationEmail(user, em.token);
@@ -168,7 +165,6 @@ export async function createNewUser(input: {
         lastActive: now,
         accountCreated: now,
         level: "basic",
-        userTextOptionsRecord: undefined,
     }
     const user = await insertLingdocsUser(newUser);
     return user;

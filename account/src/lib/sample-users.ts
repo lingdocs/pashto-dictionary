@@ -12,10 +12,6 @@ const basic: AT.LingdocsUser = {
     "tests":[],
     "lastLogin":1629893763810 as AT.TimeStamp,
     "lastActive":1630414108552 as AT.TimeStamp,
-    "userTextOptionsRecord":{
-        "lastModified":1629983812750 as AT.TimeStamp,
-        "userTextOptions":{"spelling":"Afghan","diacritics":false,"dialect":"standard","phonetics":"lingdocs"}
-    },
 };
 
 const student: AT.LingdocsUser = {
@@ -32,10 +28,6 @@ const student: AT.LingdocsUser = {
     "lastActive":1630414108552 as AT.TimeStamp,
     "couchDbPassword": "12345" as AT.UserDbPassword,
     "wordlistDbName": "jim-db" as AT.WordlistDbName,
-    "userTextOptionsRecord":{
-        "lastModified":1629983812750 as AT.TimeStamp,
-        "userTextOptions":{"spelling":"Afghan","diacritics":false,"dialect":"standard","phonetics":"lingdocs"}
-    },
 };
 
 const admin: AT.LingdocsUser = {
@@ -53,10 +45,6 @@ const admin: AT.LingdocsUser = {
     "lastActive":1630414108552 as AT.TimeStamp,
     "couchDbPassword": "12345" as AT.UserDbPassword,
     "wordlistDbName": "jim-db" as AT.WordlistDbName,
-    "userTextOptionsRecord":{
-        "lastModified":1629983812750 as AT.TimeStamp,
-        "userTextOptions":{"spelling":"Afghan","diacritics":false,"dialect":"standard","phonetics":"lingdocs"}
-    },
 };
 
 const editor: AT.LingdocsUser = {
@@ -73,10 +61,6 @@ const editor: AT.LingdocsUser = {
     "lastActive":1630414108552 as AT.TimeStamp,
     "couchDbPassword": "12345" as AT.UserDbPassword,
     "wordlistDbName": "jim-db" as AT.WordlistDbName,
-    "userTextOptionsRecord":{
-        "lastModified":1629983812750 as AT.TimeStamp,
-        "userTextOptions":{"spelling":"Afghan","diacritics":false,"dialect":"standard","phonetics":"lingdocs"}
-    },
 };
 
 // @ts-ignore

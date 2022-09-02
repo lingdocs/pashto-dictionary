@@ -30,11 +30,6 @@ export async function upgradeToStudentRequest(): Promise<AT.APIResponse> {
     return await myFetch("account", "user/upgradeToStudentRequest", "POST") as AT.APIResponse;
 }
 
-export async function updateUserTextOptionsRecord(userTextOptionsRecord: AT.UserTextOptionsRecord): Promise<AT.UpdateUserTextOptionsRecordResponse> {
-    const response = await myFetch("account", "user/userTextOptionsRecord", "PUT", { userTextOptionsRecord }) as AT.UpdateUserTextOptionsRecordResponse;
-    return response;
-}
-
 export async function postTestResults(tests: AT.TestResult[]): Promise<AT.PostTestResultsResponse> {
     const response = await myFetch("account", "user/tests", "PUT", { tests }) as AT.PostTestResultsResponse;
     return response;

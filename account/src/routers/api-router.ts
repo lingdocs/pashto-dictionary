@@ -113,18 +113,6 @@ apiRouter.put("/email-verification", async (req, res, next) => {
     }
 });
 
-apiRouter.put("/user/userTextOptionsRecord", async (req, res, next) => {
-    if (!req.user) throw new Error("user not found");
-    try {
-        const { userTextOptionsRecord } = req.body as T.UpdateUserTextOptionsRecordBody;
-        const user = await updateLingdocsUser(req.user.userId, { userTextOptionsRecord });
-        const toSend: T.UpdateUserTextOptionsRecordResponse = { ok: true, message: "updated userTextOptionsRecord", user };
-        res.send(toSend);
-    } catch (e) {
-        next(e);
-    }
-});
-
 apiRouter.put("/user/upgrade", async (req, res, next) => {
     if (!req.user) throw new Error("user not found");
     try {
