@@ -15,15 +15,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors({
-    // origin: "*",
     origin: inProd ? /\.lingdocs\.com$/ : "*",
     credentials: true,
 }));
-app.use((req, res, next) => {
-    // res.append('Access-Control-Allow-Origin', ['*']);
-    res.append('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
-    next();
-});
 if (inProd) app.set('trust proxy', 1);
 setupSession(app);
 app.use(passport.initialize());
