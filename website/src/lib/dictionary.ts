@@ -135,6 +135,11 @@ function fuzzyLookup<S extends T.DictionaryEntry>({ searchString, language, page
     tpFilter?: (e: T.DictionaryEntry) => e is S,
 }): S[] {
     // TODO: Implement working with both
+    if (Number(searchString)) {
+        const entry = dictionary.findOneByTs(Number(searchString));
+        // @ts-ignore;
+        return entry ? [entry] : [] as S[];
+    }
     return language === "Pashto"
         ? pashtoFuzzyLookup({ searchString, page, tpFilter })
         : englishLookup({ searchString, page, tpFilter })
