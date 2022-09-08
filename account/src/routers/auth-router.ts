@@ -306,7 +306,7 @@ const authRouter = (passport: PassportStatic) => {
 function getTestCompletionSummary(users: T.LingdocsUser[]) {
   const tests: { id: string, passes: number }[] = [];
   users.forEach(u => (
-    u.tests.forEach(({id}) => {
+    Array.from(new Set(u.tests.map(x => x.id))).forEach(id => {
       const ti = tests.findIndex(x => x.id === id);
       if (ti > -1) tests[ti].passes++;
       else tests.push({ id, passes: 1 });
