@@ -154,14 +154,7 @@ const authRouter = (passport: PassportStatic) => {
       const users = (await getAllLingdocsUsers()).sort((a, b) => (
         (a.accountCreated || 0) - (b.accountCreated || 0)
       ));
-      const tests: { id: string, passes: number }[] = [];
-      users.forEach(u => (
-        u.tests.forEach(({id}) => {
-          const ti = tests.findIndex(x => x.id === id);
-          if (ti > -1) tests[ti].passes++;
-          else tests.push({ id, passes: 0 });
-        })
-      ));
+      const tests = getTestCompletionSummary(users)
       res.render("admin", { users, tests });
     } catch (e) {
       next(e);
@@ -309,5 +302,17 @@ const authRouter = (passport: PassportStatic) => {
   
   return router;
 } 
+
+function getTestCompletionSummary(users: T.LingdocsUser[]) {
+  const tests: { id: string, passes: number }[] = [];
+  users.forEach(u => (
+    u.tests.forEach(({id}) => {
+      const ti = tests.findIndex(x => x.id === id);
+      if (ti > -1) tests[ti].passes++;
+      else tests.push({ id, passes: 1 });
+    })
+  ));
+  return tests;
+}
 
 export default authRouter;
