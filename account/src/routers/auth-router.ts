@@ -154,7 +154,11 @@ const authRouter = (passport: PassportStatic) => {
       const users = (await getAllLingdocsUsers()).sort((a, b) => (
         (a.accountCreated || 0) - (b.accountCreated || 0)
       ));
-      res.render("admin", { users });
+      const tests = new Set<string>();
+      users.forEach(u => u.tests.forEach(t => (
+        tests.add(t.id)
+      )));
+      res.render("admin", { users, tests: Array.from(tests) });
     } catch (e) {
       next(e);
     }

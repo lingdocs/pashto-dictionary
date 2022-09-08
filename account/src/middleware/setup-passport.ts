@@ -17,7 +17,6 @@ import {
 } from "../lib/user-utils";
 import env from "../lib/env-vars";
 import * as T from "../../../website/src/types/account-types";
-import { getTimestamp } from "../lib/time-utils";
 
 export const outsideProviders: ("github" | "google" | "twitter")[] = ["github", "google", "twitter"];
 
