@@ -304,15 +304,42 @@ const authRouter = (passport: PassportStatic) => {
 } 
 
 function getTestCompletionSummary(users: T.LingdocsUser[]) {
-  const tests: { id: string, passes: number }[] = [];
-  users.forEach(u => (
-    Array.from(new Set(u.tests.map(x => x.id))).forEach(id => {
-      const ti = tests.findIndex(x => x.id === id);
-      if (ti > -1) tests[ti].passes++;
-      else tests.push({ id, passes: 1 });
-    })
-  ));
+  const tests: { id: string, passes: number, fails: number }[] = [];
+  users.forEach(u => {
+    const usersTests = removeDuplicateTests(u.tests)
+    usersTests.forEach(ut => {
+      const ti = tests.findIndex(x => x.id === ut.id);
+      if (ti === -1) {
+        tests.push({
+          id: ut.id,
+          ...ut.done ? { passes: 1, fails: 0 } : { passes: 0, fails: 1 },
+        });
+      }
+      else tests[ti][ut.done ? "passes" : "fails"]++;
+    });
+  });
   return tests;
 }
+
+function removeDuplicateTests(tests: T.TestResult[]): T.TestResult[] {
+  return tests.reduceRight((acc, curr) => {
+    const redundant = acc.filter(x => ((x.id === curr.id) && (x.done === curr.done)));
+    return redundant.length
+      ? acc
+      : [...acc, curr];
+  }, [...tests]);
+}
+
+// function getTestCompletionSummary(users: T.LingdocsUser[]) {
+//   const tests: { id: string, passes: number }[] = [];
+//   users.forEach(u => (
+//     Array.from(new Set(u.tests.map(x => x.id))).forEach(id => {
+//       const ti = tests.findIndex(x => x.id === id);
+//       if (ti > -1) tests[ti].passes++;
+//       else tests.push({ id, passes: 1 });
+//     })
+//   ));
+//   return tests;
+// }
 
 export default authRouter;

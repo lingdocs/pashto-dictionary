@@ -101,9 +101,9 @@
         </tbody>
       </table>
       <div>
-        <h5>Tests Completed</h5>
+        <h5>Tests Completed: Pass / Fail</h5>
         <% for(var i=0; i < tests.length; i++) { %>
-          <div><%= tests[i].id %>: <%= tests[i].passes %></div>
+          <div><%= tests[i].id %>: <%= tests[i].passes %> / <%= tests[i].fails %></div>
         <% } %>
       </div>
     </div>
