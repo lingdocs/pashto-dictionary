@@ -63,6 +63,11 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
             onChange={(e) => {
               handleSearchValueChange(e.target.value);
             }}
+            onBlur={e => {
+              if (e.relatedTarget === null) {
+                e.target.focus();
+              }
+            }}
             name="search"
             className="form-control py-2 border-right-0 border"
             autoFocus={true}
