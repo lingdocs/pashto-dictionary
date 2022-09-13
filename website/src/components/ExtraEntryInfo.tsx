@@ -5,14 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
-import React from "react";
-import { inflectWord, Types, InlinePs } from "@lingdocs/pashto-inflector";
+import {
+    inflectWord,
+    Types,
+    InlinePs,
+} from "@lingdocs/pashto-inflector";
+import { isAdjectiveEntry, isNounEntry } from "@lingdocs/pashto-inflector/dist/lib/type-predicates";
 
 const InflectionsInfo = ({ entry, textOptions }: {
     entry: Types.DictionaryEntry,
     textOptions: Types.TextOptions,
 }) => {
+    if (!isNounEntry(entry) && !isAdjectiveEntry(entry)) {
+        return null;
+    }
     const inf = ((): Types.InflectorOutput | false => {
         try {
             return inflectWord(entry);
@@ -24,27 +30,24 @@ const InflectionsInfo = ({ entry, textOptions }: {
     if (!inf) {
         return null;
     }
-    // unisex noun / adjective
-    if (inf.inflections && "masc" in inf.inflections && "fem" in inf.inflections) {
+    if (inf.inflections) {
+        // TODO: would be nice if inflection pattern number was in the inflections object
         return (
             <div className="entry-extra-info" data-testid="inflections-info">
-                <InlinePs opts={textOptions}>{inf.inflections.masc[1][0]}</InlinePs>
-                {` `}
-                <InlinePs opts={textOptions}>{inf.inflections.fem[0][0]}</InlinePs>
-            </div>
-        );
-    }
-    // masculine noun
-    if (inf.inflections && "masc" in inf.inflections) {
-        return (
-            <div className="entry-extra-info" data-testid="inflections-info">
-                <InlinePs opts={textOptions}>{inf.inflections.masc[1][0]}</InlinePs>
+                <InflectionsPreview inf={inf.inflections} opts={textOptions} />
             </div>
         );
     }
     // shouldn't happen, but in case there are special inflections info on a feminine noun
     return null;
 };
+
+function InflectionsPreview({ inf, opts }: { inf: Types.Inflections, opts: Types.TextOptions }) {
+    return <div className="small">
+            {"masc" in inf && <span className="mr-2"><InlinePs opts={opts}>{inf.masc[1][0]}</InlinePs></span>}
+            {"fem" in inf && <InlinePs opts={opts}>{inf.fem[1][0]}</InlinePs>}
+    </div>
+}
 
 const ArabicPluralInfo = ({ entry, textOptions }: {
     entry: Types.DictionaryEntry,

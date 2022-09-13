@@ -140,6 +140,14 @@ hr {
     margin-left: 1rem;
 }
 
+.inflections-preview-table {
+    table-layout: fixed;
+}
+
+.inflections-preview-table td {
+    padding-right: 1rem;
+}
+
 kbd {
     background-color: #eee;
     border-radius: 3px;
