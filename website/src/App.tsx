@@ -23,6 +23,7 @@ import Account from "./screens/Account";
 import ReviewTasks from "./screens/ReviewTasks";
 import EntryEditor from "./screens/EntryEditor";
 import IsolatedEntry from "./screens/IsolatedEntry";
+import PrivacyPolicy from "./screens/PrivacyPolicy";
 import Wordlist from "./screens/Wordlist";
 import { wordlistEnabled } from "./lib/level-management";
 import { 
@@ -92,6 +93,7 @@ if (prod) {
 
 const possibleLandingPages = [
     "/", "/about", "/settings", "/word", "/account", "/new-entries", "/share-target", "/phrase-builder",
+    "/privacy-policy",
 ];
 const editorOnlyPages = [
     "/edit", "/review-tasks",
@@ -475,6 +477,9 @@ class App extends Component<RouteComponentProps, State> {
                         </Route>
                         <Route path="/about">
                             <About state={this.state} />
+                        </Route>
+                        <Route path="/privacy-policy">
+                            <PrivacyPolicy />
                         </Route>
                         <Route path="/phrase-builder">
                             <PhraseBuilder
