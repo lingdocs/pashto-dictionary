@@ -195,7 +195,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
             </div>
             <Modal show={showingUpgradePrompt} onHide={closeUpgrade}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Upgrade Account</Modal.Title>
+                    <Modal.Title>Upgrade to Student Account</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>Enter the secret upgrade password to upgrade your account or <button className="btn btn-sm btn-outline-secondary my-2" onClick={handleUpgradeRequest}>request an upgrade</button></Modal.Body>
                 <div className="form-group px-3">
