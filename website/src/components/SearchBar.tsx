@@ -64,6 +64,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
               handleSearchValueChange(e.target.value);
             }}
             onBlur={e => {
+              // don't loose focus/cursor if clicking on a word/star etc.
               if (e.relatedTarget === null) {
                 e.target.focus();
               }
@@ -88,7 +89,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
                 handleSearchValueChange("");
                 // keep the focus on the input after pressing the X
                 inputRef.current && inputRef.current.focus();
-              }: () => null}
+              } : undefined}
               data-testid="clearButton"
             >
               <i className="fa fa-times" style={!state.searchValue ? { visibility: "hidden" } : {}}></i>
