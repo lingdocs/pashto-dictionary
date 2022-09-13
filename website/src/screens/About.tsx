@@ -38,7 +38,7 @@ const About = ({ state } : { state: State }) => (
         <p>The LingDocs Pashto Dictionary assumes no responsibility or liability for any errors or omissions in
         the content of this site. The information contained in this site is provided on an “as is” basis with
         no guarantees of completeness, accuracy, usefulness or timeliness.</p>
-        <p><Link to="/privacy-policy">Privacy Policy</Link></p>
+        <p><Link to="/privacy">Privacy Policy</Link></p>
         <p>© Copyright 2021 - <a href="https://www.lingdocs.com/">lingdocs.com</a></p>
         {state.dictionaryInfo && <p className="text-muted">
             Number of Entries: {state.dictionaryInfo.numberOfEntries} - Updated: {dayjs(state.dictionaryInfo.release).toString()}

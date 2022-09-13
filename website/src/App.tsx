@@ -93,7 +93,7 @@ if (prod) {
 
 const possibleLandingPages = [
     "/", "/about", "/settings", "/word", "/account", "/new-entries", "/share-target", "/phrase-builder",
-    "/privacy-policy",
+    "/privacy",
 ];
 const editorOnlyPages = [
     "/edit", "/review-tasks",
@@ -478,7 +478,7 @@ class App extends Component<RouteComponentProps, State> {
                         <Route path="/about">
                             <About state={this.state} />
                         </Route>
-                        <Route path="/privacy-policy">
+                        <Route path="/privacy">
                             <PrivacyPolicy />
                         </Route>
                         <Route path="/phrase-builder">
