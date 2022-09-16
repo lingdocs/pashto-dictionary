@@ -161,6 +161,10 @@ const authRouter = (passport: PassportStatic) => {
     }
   });
 
+  router.get("/privacy", async (req, res, next) => {
+    res.render("privacy");
+  });
+
   /**
    * Grant request for upgrade to student
    */
