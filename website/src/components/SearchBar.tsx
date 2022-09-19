@@ -57,7 +57,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
         <div className="input-group">
           <input
             type="text"
-            style={{ borderRight: "0px", zIndex: 200 }}
+            style={{ borderRight: "0px", zIndex:  200 }}
             placeholder={placeholder}
             value={state.searchValue}
             onChange={(e) => {
@@ -65,6 +65,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
             }}
             onBlur={e => {
               // don't loose focus/cursor if clicking on a word/star etc.
+              // const clicked = e.relatedTarget as null | HTMLElement;
               if (e.relatedTarget === null) {
                 e.target.focus();
               }

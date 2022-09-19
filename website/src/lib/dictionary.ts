@@ -316,7 +316,6 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({ searchString, page, tp
                     .find(fuzzyQuery)
                     .limit(fuzzyResultsLimit)
                     .data();
-    console.log({ exactResults, slightlyFuzzyResults, fuzzyResults });
     const results = tpFilter
         ? [...exactResults, ...slightlyFuzzyResults, ...fuzzyResults].filter(tpFilter)
         : [...exactResults, ...slightlyFuzzyResults, ...fuzzyResults];

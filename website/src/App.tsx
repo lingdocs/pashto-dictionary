@@ -87,6 +87,7 @@ Mousetrap.prototype.stopCallback = function () {
 const prod = document.location.hostname === "dictionary.lingdocs.com";
 
 if (prod) {
+    // TODO: migrate to https://www.npmjs.com/package/react-ga4
     ReactGA.initialize("UA-196576671-1");
     ReactGA.set({ anonymizeIp: true });
 }
