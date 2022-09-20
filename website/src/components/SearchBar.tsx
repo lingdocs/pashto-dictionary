@@ -64,9 +64,8 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
               handleSearchValueChange(e.target.value);
             }}
             onBlur={e => {
-              // don't loose focus/cursor if clicking on a word/star etc.
-              // const clicked = e.relatedTarget as null | HTMLElement;
-              if (e.relatedTarget === null) {
+              // don't loose focus/cursor if clicking on a word/star etc if searchBarStickyFocus is enabled
+              if (state.options.searchBarStickyFocus && e.relatedTarget === null) {
                 e.target.focus();
               }
             }}

@@ -60,6 +60,7 @@ export type Options = {
     wordlistReviewLanguage: Language,
     wordlistReviewBadge: boolean,
     searchBarPosition: SearchBarPosition,
+    searchBarStickyFocus: boolean,
 }
 
 export type Language = "Pashto" | "English";
@@ -90,9 +91,6 @@ export type OptionsAction = {
     type: "changeSearchBarPosition",
     payload: SearchBarPosition,
 } | {
-    type: "changeUserLevel",
-    payload: UserLevel,
-} | {
     type: "changeWordlistMode",
     payload: WordlistMode,
 } | {
@@ -104,7 +102,10 @@ export type OptionsAction = {
 } | {
     type: "updateTextOptionsRecord",
     payload: TextOptionsRecord,
-};
+} | {
+    type: "changeSearchBarStickyFocus",
+    payload: boolean,
+}
 
 export type TextOptionsAction = {
     type: "changePTextSize",

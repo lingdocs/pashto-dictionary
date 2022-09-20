@@ -178,6 +178,14 @@ function OptionsScreen({
             value={options.theme}
             handleChange={(p) => optionsDispatch({ type: "changeTheme", payload: p as Theme })}
         />
+        <h4 className="mt-3">Sticky Focus on Search Bar</h4>
+        <div className="mb-2 small">Keep the cursor active on the search bar even if you click other parts of the app.</div>
+        <ButtonSelect
+            small
+            options={booleanOptions}
+            value={options.searchBarStickyFocus.toString()}
+            handleChange={(p) => optionsDispatch({ type: "changeSearchBarStickyFocus", payload: p === "true" })}
+        />
         <h4 className="mt-3">Search Bar Position</h4>
         <ButtonSelect
             small

@@ -23,6 +23,10 @@ export const readOptions = (): undefined | Options => {
   }
   try {
     const options = JSON.parse(optionsRaw) as Options;
+    if (!("searchBarStickyFocus" in options)) {
+      // compatibility with legacy options
+      options.searchBarStickyFocus = false;
+    }
     return options;
   } catch (e) {
     console.error("error parsing saved state JSON", e);

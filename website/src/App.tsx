@@ -111,6 +111,7 @@ class App extends Component<RouteComponentProps, State> {
             options: savedOptions ? savedOptions : {
               language: "Pashto",
               searchType: "fuzzy",
+              searchBarStickyFocus: false,
               theme: /* istanbul ignore next */ (window.matchMedia &&
                 window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light",
               textOptionsRecord: {

@@ -54,6 +54,12 @@ export function optionsReducer(options: Options, action: OptionsAction): Options
         textOptionsRecord: action.payload,
       };
     }
+    if (action.type === "changeSearchBarStickyFocus") {
+      return {
+        ...options,
+        searchBarStickyFocus: action.payload,
+      }
+    }
     throw new Error("action type not recognized in options reducer");
 }
 
