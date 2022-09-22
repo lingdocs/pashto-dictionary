@@ -73,6 +73,9 @@ function initializeLocalDb(type: LocalDbType, refresh: () => void, user: AT.Ling
         ? user.wordlistDbName
         : "";
     const password = "couchDbPassword" in user ? user.couchDbPassword : "";
+    console.log("initializing db", type);
+    console.log("using pwd", password);
+    console.log({ user });
     const db = dbs[type];
     // only initialize the db if it doesn't exist or if it has a different name
     if ((!db) || (db.db?.name !== name)) {
