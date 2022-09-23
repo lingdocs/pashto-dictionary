@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet";
 import dayjs from "dayjs";
 import { State } from "../types/dictionary-types";
 import { Link } from "react-router-dom";
+import VideoPlayer from "../components/VideoPlayer";
 
 const About = ({ state } : { state: State }) => (
     <div className="width-limiter">
@@ -21,13 +22,28 @@ const About = ({ state } : { state: State }) => (
         <h2>About</h2>
         <p>The <strong>LingDocs Pashto Dictionary</strong> aims to make an
         easily searchable and accessible dictionary of the Pashto Language.</p>
+        <h3>Features</h3>
+        <ul>
+            <li>Approximate search-as-you-type</li>
+            <li>Alphabetical browsing</li>
+            <li>Inflections and Verb Conjugations</li>
+            <li>Phrase Generator</li>
+            <li>Ability to suggest additions or corrections (with sign-in)</li>
+            <li>...and more</li>
+        </ul>
+        <h3>Video Introduction</h3>
+        <VideoPlayer url="https://www.youtube.com/watch?v=MMpSpaMMdp4&t=1s&ab_channel=LingDocs" />
+        <h3>Installing</h3>
+        <p>After visiting this dictionary for the first time it will be accessible from your browser even without an internet connection. You can also
+        {` `}<strong>install it as an app</strong> on your phone or desktop by choosing "Add to Home Screen" on "Install" on your browser menu. It is also
+        {` `}<a href="https://play.google.com/store/apps/details?id=com.lingdocs.pashto.dictionary">find and install it on the Google Play Store</a>.</p>
         <h3>Inspiration and Sources</h3>
         <p>This dictionary is grateful for and indebted to the excellent work available
         at <a href="https://qamosona.com/">qamosona.com</a>, <a href="https://www.wiktionary.org/">wiktionary.org</a>,
         and <a href="https://translate.google.com/">Google Translate</a>. These sources were used extensively as a reference for definitions.</p>
         <p>Currently this dictionary contains {state.dictionaryInfo ? state.dictionaryInfo.numberOfEntries : "about 14,000"} entries. It is nowhere near as comprehensive
         or accurate as some of these other sources, but it does strive to present something uniquely
-        accesible to learners through offline web-app availability and smart searching algorithms.</p>
+        accesible to learners through offline web-app availability, inflection/conjugation/phrase-building engine, and smart searching algorithms.</p>
         <h3>License and Legal Info</h3>
         <h4>Dictionary Content</h4>
         <p>The contents of this dictionary are licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, with the added stipulation that this material cannot be used or re-distributed by any people or groups involved with military, violence, or government intelligence work.</p>
