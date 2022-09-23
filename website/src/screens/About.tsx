@@ -47,12 +47,12 @@ const About = ({ state } : { state: State }) => (
         or accurate as some of these other sources, but it does strive to present something uniquely
         accesible to learners through offline web-app availability, inflection/conjugation/phrase-building engine, and smart searching algorithms.</p>
         <h3>Contact</h3>
-        <p>Feedback and suggestions are appreciated</p>
+        <p>Feedback and suggestions are appreciated.</p>
         <ul>
             <li>Twitter: <a href="https://twitter.com/@lingdocs">@lingdocs</a></li>
             <li>Reddit: <a href="https://reddit.com/r/lingdocs">/r/lingdocs</a></li>
             <li>YouTube: <a href="https://www.youtube.com/channel/UC1-yjDec5VDtia5s1gcMw4A">LingDocs YouTube Channel</a></li>
-            <li>Email: <a href="mailto:dev234@lingdocs.com">dev234@lingdocs.com</a></li>
+            <li>Email: dev234 AT lingdocs DOT com</li>
         </ul>
         <h3>License and Legal Info</h3>
         <h4>Dictionary Content</h4>
