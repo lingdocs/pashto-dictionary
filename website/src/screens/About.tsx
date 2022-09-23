@@ -51,6 +51,7 @@ const About = ({ state } : { state: State }) => (
         <ul>
             <li>Twitter: <a href="https://twitter.com/@lingdocs">@lingdocs</a></li>
             <li>Reddit: <a href="https://reddit.com/r/lingdocs">/r/lingdocs</a></li>
+            <li>YouTube: <a href="https://www.youtube.com/channel/UC1-yjDec5VDtia5s1gcMw4A">LingDocs YouTube Channel</a></li>
             <li>Email: <a href="mailto:dev234@lingdocs.com">dev234@lingdocs.com</a></li>
         </ul>
         <h3>License and Legal Info</h3>
