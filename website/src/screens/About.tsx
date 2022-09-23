@@ -20,14 +20,13 @@ const About = ({ state } : { state: State }) => (
             <title>About - LingDocs Pashto Dictionary</title>
         </Helmet>
         <h2>About</h2>
-        <p>The <strong>LingDocs Pashto Dictionary</strong> aims to make an
-        easily searchable and accessible dictionary of the Pashto Language.</p>
+        <p>The <strong>LingDocs Pashto Dictionary</strong> aims to make an easily searchable and accessible dictionary of the Pashto Language, along with its inflections and verb conjugations.</p>
         <h3>Features</h3>
         <ul>
             <li>Approximate search-as-you-type</li>
             <li>Alphabetical browsing</li>
             <li>Inflections and Verb Conjugations</li>
-            <li>Phrase Generator</li>
+            <li>Phrase Generation Engine</li>
             <li>Ability to suggest additions or corrections (with sign-in)</li>
             <li>...and more</li>
         </ul>
