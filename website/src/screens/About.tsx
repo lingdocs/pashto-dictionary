@@ -46,6 +46,13 @@ const About = ({ state } : { state: State }) => (
         <p>Currently this dictionary contains {state.dictionaryInfo ? state.dictionaryInfo.numberOfEntries : "about 14,000"} entries. It is nowhere near as comprehensive
         or accurate as some of these other sources, but it does strive to present something uniquely
         accesible to learners through offline web-app availability, inflection/conjugation/phrase-building engine, and smart searching algorithms.</p>
+        <h3>Contact</h3>
+        <p>Feedback and suggestions are appreciated</p>
+        <ul>
+            <li>Twitter: <a href="https://twitter.com/@lingdocs">@lingdocs</a></li>
+            <li>Reddit: <a href="https://reddit.com/r/lingdocs">/r/lingdocs</a></li>
+            <li>Email: <a href="mailto:dev234@lingdocs.com">dev234@lingdocs.com</a></li>
+        </ul>
         <h3>License and Legal Info</h3>
         <h4>Dictionary Content</h4>
         <p>The contents of this dictionary are licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, with the added stipulation that this material cannot be used or re-distributed by any people or groups involved with military, violence, or government intelligence work.</p>
