@@ -28,6 +28,7 @@ const About = ({ state } : { state: State }) => (
             <li>Inflections and Verb Conjugations</li>
             <li>Phrase Generation Engine</li>
             <li>Ability to suggest additions or corrections (with sign-in)</li>
+            <li>Choice of spelling/phonetic systems</li>
             <li>...and more</li>
         </ul>
         <h3>Video Introduction</h3>
@@ -36,6 +37,8 @@ const About = ({ state } : { state: State }) => (
         <p>After visiting this dictionary for the first time it will be accessible from your browser even without an internet connection. You can also
         {` `}<strong>install it as an app</strong> on your phone or desktop by choosing "Add to Home Screen" on "Install" on your browser menu. It is also
         {` `}<a href="https://play.google.com/store/apps/details?id=com.lingdocs.pashto.dictionary">find and install it on the Google Play Store</a>.</p>
+        <h3>Phonetic System</h3>
+        <p>This dictionary (and the <a href="https://grammar.lingdocs.com">grammar</a> that goes along with it) uses a <a href="https://grammar.lingdocs.com/writing/phonetics/">special phonetic system</a> for writing the Pashto words in Latin letters, showing the pronunciation the vowels. This has been designed to allow people to write and search words <em>without needing to type an special characters</em>.</p>
         <h3>Inspiration and Sources</h3>
         <p>This dictionary is grateful for and indebted to the excellent work available
         at <a href="https://qamosona.com/">qamosona.com</a>, <a href="https://www.wiktionary.org/">wiktionary.org</a>,
