@@ -11,9 +11,9 @@ import sanitizePashto from "./sanitize-pashto";
 import fillerWords from "./filler-words";
 import {
     Types as T,
-    convertSpelling,
     simplifyPhonetics,
     typePredicates as tp,
+    revertSpelling,
 } from "@lingdocs/pashto-inflector";
 import { isPashtoScript } from "./is-pashto";
 import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
@@ -447,7 +447,7 @@ export const dictionary: DictionaryAPI = {
     initialize: async () => await dictDb.initialize(),
     update: async (notifyUpdateComing: () => void) => await dictDb.updateDictionary(notifyUpdateComing),
     search: function(state: State): T.DictionaryEntry[] {
-        const searchString = convertSpelling(
+        const searchString = revertSpelling(
             state.searchValue,
             getTextOptions(state).spelling,
         );

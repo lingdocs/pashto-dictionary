@@ -36,6 +36,7 @@ const dSounds = "[د|ډ]";
 const rSounds = "[ر|ړ|ڼ]";
 const nSounds = "[ن|ڼ]";
 const hKhSounds = "[خ|ح|ښ|ه]";
+const alef = "[آ|ا]";
 
 const pReplacer = {
     "ی": fiveYeys,
@@ -73,6 +74,9 @@ const pReplacer = {
     "ح": hKhSounds,
     "ښ": hKhSounds,
     "ه": hKhSounds,
+
+    "ا": alef,
+    "آ": alef,
 };
 
 const fiveYeysF = "(?:eyy|ey|ee|e|uy)";
