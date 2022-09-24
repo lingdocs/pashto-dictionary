@@ -108,7 +108,6 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
-  console.log("inUpdateLingdocsUser", toUpdate);
   if ("tests" in toUpdate) {
     return await insertLingdocsUser({
       ...user,
