@@ -13,6 +13,7 @@ import { isPashtoScript } from "./is-pashto";
 import {
     InflectionSearchResult,
 } from "../types/dictionary-types";
+import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 
 // 1st iteration: Brute force make every single conjugation and check all - 5300ms
 // 2nd iteration: Check if it makes a big difference to search via function - 5100ms
@@ -32,14 +33,21 @@ function fFuzzy(f: string): string {
 
 export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[] {
     // const timerLabel = "Search inflections";
-    const beg = fFuzzy(searchValue.slice(0, 2));
+    const script = isPashtoScript(searchValue) ? "p" : "f";
+    const beg = script === "p"
+        ? makeAWeeBitFuzzy(searchValue.slice(0, 2), script)
+        : fFuzzy(searchValue.slice(0, 2));
     const preSearchFun = isPashtoScript(searchValue)
-        ? (ps: T.PsString) => ps.p.slice(0, 2) === beg
+        ? (ps: T.PsString) => !!ps.p.slice(0, 2).match(beg)
         : (ps: T.PsString) => !!ps.f.slice(0, 2).match(beg);
-    const fRegex = new RegExp("^" + fFuzzy(searchValue) + "$");
+    const searchRegex = new RegExp("^"
+        + (script === "f" ? fFuzzy(searchValue) : makeAWeeBitFuzzy(searchValue, "p"))
+        + "$");
+    // add little bit fuzzy
+    // also do version without directional pronoun on front
     const searchFun = isPashtoScript(searchValue)
-        ? (ps: T.PsString)  =>  ps.p === searchValue
-        : (ps: T.PsString) => !!ps.f.match(fRegex);
+        ? (ps: T.PsString)  => !!ps.p.match(searchRegex)
+        : (ps: T.PsString) => !!ps.f.match(searchRegex);
     // console.time(timerLabel);
     const results = allDocs.reduce((all: { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[], entry) => {
         const type = isNounAdjOrVerb(entry);
@@ -78,5 +86,19 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
         return all;
     }, []);
     // console.timeEnd(timerLabel);
+    if (["را", "ور", "در"].includes(searchValue.slice(0, 2))) {
+        return [
+            ...results,
+            // also search without the directionary pronoun
+            ...searchAllInflections(allDocs, searchValue.slice(2)),
+        ];
+    }
+    if (["raa", "war", "dar", "wăr", "dăr"].includes(searchValue.slice(0, 3))) {
+        return [
+            ...results,
+            // also search without the directionary pronoun
+            ...searchAllInflections(allDocs, searchValue.slice(3)),
+        ];
+    }
     return results;
 }
