@@ -110,6 +110,7 @@ const defaultLatinInfo: IDefaultInfoBlock = {
         ["otsedul", "osedul"],
         ["ghaara", "ghaaRa"],
         ["maafiat", "maafiyat"],
+        ["tasalUt", "tassalUt"],
     ],
     nonMatches: [
         ["kor", "por"],

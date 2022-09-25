@@ -193,6 +193,7 @@ export const latinReplacerInfo: IPhoneticsReplacerInfoItem[] = [
 
   { char: "ts", repl: "(?:s{1,2}|z{1,2|ts|c)"},
   { char: "s", repl: "(?:s{1,2}|z{1,2|ts|c)"},
+  { char: "ss", repl: "(?:s{1,2}|z{1,2|ts|c)"},
   { char: "c", repl: "(?:s{1,2}|z{1,2|ts|c)"},
   { char: "dz", repl: "(?:dz|z{1,2}|j)"},
   { char: "z", repl: "(?:s{1,2}|dz|z{1,2}|ts)"},
@@ -291,7 +292,9 @@ export const simpleLatinReplacerInfo: IPhoneticsReplacerInfoItem[] = [
   { char: "kh", repl: "(?:kh|gh|x|h){1,2}"},
 
   { char: "k", repl: "(?:k{1,2}|q{1,2})"},
+  { char: "kk", repl: "(?:k{1,2}|q{1,2})"},
   { char: "q", repl: "(?:k{1,2}|q{1,2})"},
+  { char: "qq", repl: "(?:k{1,2}|q{1,2})"},
 
   { char: "jz", repl: "(?:G|jz)"},
   { char: "G", repl: "(?:jz|G|g)"},
@@ -310,6 +313,6 @@ export const simpleLatinReplacerInfo: IPhoneticsReplacerInfoItem[] = [
 ];
 
 // tslint:disable-next-line
-export const latinReplacerRegex = /yee|a{1,2}[i|y]|á{1,2}[i|y]|aa|áa|a|ắ|ă|á|U|Ú|u|ú|oo|óo|o|ó|e{1,2}|ée|é|ey|éy|uy|úy|i|í|w|y|q|ts|sh|s|dz|z|tt|t|T|dd|d|D|r{1,2}|R|nb|mb|n{1,2}|N|f{1,2}|b{1,2}|p{1,2}|x|kh|q|k|gh|g|G|j|ch|c|ll|l|m{1,2}|h|’|'|`/g;
+export const latinReplacerRegex = /yee|a{1,2}[i|y]|á{1,2}[i|y]|aa|áa|a|ắ|ă|á|U|Ú|u|ú|oo|óo|o|ó|e{1,2}|ée|é|ey|éy|uy|úy|i|í|w|y|q|q|ts|sh|ss|s|dz|z|tt|t|T|dd|d|D|r{1,2}|R|nb|mb|n{1,2}|N|f{1,2}|b{1,2}|p{1,2}|x|kh|q|kk|k|gh|g|G|j|ch|c|ll|l|m{1,2}|h|’|'|`/g;
 
 export const simpleLatinReplacerRegex = /yee|a{1,2}[i|y]|aa|a|U|u|oo|o|e{1,2}|ey|uy|i|w|y|q|ts|sh|s|dz|z|tt|t|T|dd|d|D|r{1,2}|R|nb|mb|n{1,2}|N|f{1,2}|b{1,2}|p{1,2}|x|kh|q|k|gh|g|G|j|ch|c|ll|l|m{1,2}|h/g;
