@@ -44,7 +44,7 @@ function InflectionSearchResultDisplay(
     };
     return <div className="mb-4">
         <div className="mb-2"><strong>{displayFormResult(result.form)}</strong></div>
-        {result.matches.map((match) => <div className="ml-2">
+        {result.matches.map((match, i) => <div className="ml-2" key={i}>
             <InlinePs opts={textOptions}>{match.ps}</InlinePs>
             <div className="ml-3 my-2">
                 <em>

@@ -22,32 +22,21 @@ import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 //    That's so much better I'm removing the option of skipping compounds
 // ~4th iteration:~ ignore perfective or imperfective if wasn't present in verb info (not worth it - scrapped)
 
-function fFuzzy(f: string): string {
-    return f.replace(/e|é/g, "[e|é]")
-        .replace(/i|í/g, "[i|í]")
-        .replace(/o|ó/g, "[o|ó]")
-        .replace(/u|ú/g, "[u|ú]")
-        .replace(/a|á/g, "[a|á]")
-        .replace(/U|Ú/g, "[Ú|U]");
-}
-
 export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[] {
     // const timerLabel = "Search inflections";
     const script = isPashtoScript(searchValue) ? "p" : "f";
-    const beg = script === "p"
-        ? makeAWeeBitFuzzy(searchValue.slice(0, 2), script)
-        : fFuzzy(searchValue.slice(0, 2));
-    const preSearchFun = isPashtoScript(searchValue)
-        ? (ps: T.PsString) => !!ps.p.slice(0, 2).match(beg)
-        : (ps: T.PsString) => !!ps.f.slice(0, 2).match(beg);
-    const searchRegex = new RegExp("^"
-        + (script === "f" ? fFuzzy(searchValue) : makeAWeeBitFuzzy(searchValue, "p"))
-        + "$");
+    const begRegex = new RegExp(
+        makeAWeeBitFuzzy(searchValue.slice(0, 3), script, true),
+        "i",
+    );
+    const preSearchFun = (ps: T.PsString) => !!ps[script].match(begRegex);
+    const searchRegex = new RegExp(
+        makeAWeeBitFuzzy(searchValue, script, true) + "$",
+        "i",
+    );
     // add little bit fuzzy
     // also do version without directional pronoun on front
-    const searchFun = isPashtoScript(searchValue)
-        ? (ps: T.PsString)  => !!ps.p.match(searchRegex)
-        : (ps: T.PsString) => !!ps.f.match(searchRegex);
+    const searchFun = (ps: T.PsString) => !!ps[script].match(searchRegex)
     // console.time(timerLabel);
     const results = allDocs.reduce((all: { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[], entry) => {
         const type = isNounAdjOrVerb(entry);

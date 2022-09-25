@@ -79,9 +79,10 @@ const pReplacer = {
     "آ": alef,
 };
 
-const fiveYeysF = "(?:eyy|ey|ee|e|uy)";
+const fiveYeysF = "(?:eyy|ey|ee|é|e|uy)";
 const hKhF = "(?:kh|h|x)";
 const zSoundsF = "(?:z|dz)";
+const sSoundsF = "(?:ts|s)";
 
 const fReplacer = {
     "eyy": fiveYeysF,
@@ -95,11 +96,31 @@ const fReplacer = {
     "x": hKhF,
     "h": hKhF,
     "kh": hKhF,
+    "ts": sSoundsF,
+    "s": sSoundsF,
+    // only used if ignoring accents
+    "a": "[a|á]",
+    "á": "[a|á]",
+    "u": "[u|ú]",
+    "ú": "[u|ú]",
+    "o": "[o|ó]",
+    "ó": "[o|ó]",
+    "i": "[i|í]",
+    "í": "[i|í]",
+    "U": "[U|Ú]",
+    "Ú": "[U|Ú]",
+    "éy": fiveYeysF,
+    "éyy": fiveYeysF,
+    "úy": fiveYeysF,
+    "ée": fiveYeysF,
+    "é": fiveYeysF,
 };
 
 const pRepRegex = new RegExp(Object.keys(pReplacer).join("|"), "g");
 
-const fRepRegex = /eyy|ey|uy|ee|e|z|dz|x|kh|h/g;
+const fRepRegex = /eyy|ey|uy|ee|e|z|dz|x|kh|h|ts|s/g;
+
+const fRepRegexWAccents = /eyy|éyy|ey|éy|uy|úy|ee|ée|e|é|z|dz|x|ts|s|kh|h|a|á|i|í|o|ó|u|ú|U|Ú/g;
 
 function makePAWeeBitFuzzy(s: string): string {
     // + s.replace(/ /g, "").split("").join(" *");
@@ -109,15 +130,15 @@ function makePAWeeBitFuzzy(s: string): string {
     });
 }
 
-function makeFAWeeBitFuzzy(s: string): string {
-    return "^" + s.replace(fRepRegex, mtch => {
+function makeFAWeeBitFuzzy(s: string, ignoreAccent?: boolean): string {
+    return "^" + s.replace((ignoreAccent ? fRepRegexWAccents : fRepRegex), mtch => {
         // @ts-ignore
         return fReplacer[mtch];
     });
 }
 
-export function makeAWeeBitFuzzy(s: string, i: "f" | "p"): string {
+export function makeAWeeBitFuzzy(s: string, i: "f" | "p", ignoreAccent?: boolean): string {
     return i === "p"
         ? makePAWeeBitFuzzy(s)
-        : makeFAWeeBitFuzzy(s);
+        : makeFAWeeBitFuzzy(s, ignoreAccent);
 }
