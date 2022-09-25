@@ -89,7 +89,7 @@ function prepareMainRegexLogicPashto(sanitizedInput: string, options: IFuzzifyOp
         const isBeginningAlefFollowedByWaw = mtch === "ا" && (offset === 0 && sanitizedInput[1] === "و");
         const isBeginningWaw = offset === 0 && mtch === "و";
         // tslint:disable-next-line                                                                                                                                 // TODO: for some reason mtchIsInMiddle is not working very well on the second letter so I'm just adding this for every match (not ideal)
-        return `${isBeginningWaw ? "ا?" : ""}${section}${r && (r.ignorable || (r.ignorableIfInMiddle && mtchIsInMiddle) || isBeginningAlefFollowedByWaw) ? "?" : ""}[ا|و|ی|ي|ع]?${options.ignoreDiacritics ? `[${diacritics}]?`: ""}`;
+        return `${isBeginningWaw ? "ا?" : ""}${section}${r && (r.ignorable || (r.ignorableIfInMiddle && mtchIsInMiddle) || isBeginningAlefFollowedByWaw) ? "?" : ""}[ا|و|ی|ي|ې|ع]?${options.ignoreDiacritics ? `[${diacritics}]?`: ""}`;
     });
 }
 

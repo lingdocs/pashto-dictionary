@@ -36,6 +36,7 @@ const defaultInfo: IDefaultInfoBlock = {
         ["زنگل", "ځنګل"],
         ["جرل", "ژړل"],
         ["فرمائيل", "فرمايل"],
+        ["مرمنه", "مېرمنه"],
         // using هٔ as two characters
         ["وارېدهٔ", "وارېده"],
         // using  as one character
