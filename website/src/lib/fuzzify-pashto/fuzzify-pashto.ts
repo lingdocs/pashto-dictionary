@@ -64,8 +64,8 @@ function prepareMainRegexLogicLatin(sanitizedInput: string, options: IFuzzifyOpt
         }
         // TODO: Should we allow ignorable letters as we do with the Pashto script?
         return options.simplifiedLatin 
-            ? section
-            : `${section}[’|'|\`]?${options.allowSpacesInWords ? " ?" : ""}`;
+            ? `${section}y?`
+            : `${section}[’|'|\`|y]?${options.allowSpacesInWords ? " ?" : ""}`;
     });
 }
 
@@ -145,6 +145,5 @@ export function fuzzifyPashto(input: string, options: IFuzzifyOptions = {}): str
     }
     const beginning = prepareBeginning(options);
     const ending = prepareEnding(options);
-    const logic = `${beginning}${mainRegexLogic}${ending}`;
-    return logic;
+    return `${beginning}${mainRegexLogic}${ending}`;
 }
