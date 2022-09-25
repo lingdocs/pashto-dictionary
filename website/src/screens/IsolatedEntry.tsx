@@ -226,13 +226,19 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         }
         {editSubmitted && <p>Thank you for your help!</p>}
         {inf && <>
-            {inf.inflections && <div>
-                <div>Inflection pattern {humanReadableInflectionPattern(getInflectionPattern(
+            {inf.inflections && (() => {
+                const pattern = getInflectionPattern(
                     // @ts-ignore
                     entry
-                ), textOptions)}</div>
-                <InflectionsTable inf={inf.inflections} textOptions={textOptions} />
-            </div>}
+                );
+                return <div>
+                    <a href={`https://grammar.lingdocs.com/inflection/inflection-patterns/${inflectionSubUrl(pattern)}`} rel="noreferrer" target="_blank">
+                        <div className="badge bg-light mb-2">Inflection pattern {humanReadableInflectionPattern(pattern, textOptions)}
+                        </div>
+                    </a>
+                    <InflectionsTable inf={inf.inflections} textOptions={textOptions} />
+                </div>;
+            })()}
             {"plural" in inf && inf.plural !== undefined && <div>
                 <h5>Plural</h5>
                 <InflectionsTable inf={inf.plural} textOptions={textOptions} />
@@ -282,6 +288,23 @@ function explodeEntry(entry: T.DictionaryEntry): T.DictionaryEntry {
         ...entry,
         p: entry.p.split("").join(" "),
     };
+}
+
+function inflectionSubUrl(pattern: T.InflectionPattern): string {
+    return pattern === 0
+        ? ""
+        : pattern === 1
+        ? "#1-basic"
+        : pattern === 2
+        ? "#2-words-ending-in-an-unstressed-ی---ey"
+        : pattern === 3
+        ? "#3-words-ending-in-a-stressed-ی---éy"
+        : pattern === 4
+        ? "#4-words-with-the-pashtoon-pattern"
+        : pattern === 5
+        ? "#5-shorter-words-that-squish"
+        // : pattern === 6
+        : "#6-inanimate-feminine-nouns-ending-in-ي---ee"
 }
 
 export default IsolatedEntry;
