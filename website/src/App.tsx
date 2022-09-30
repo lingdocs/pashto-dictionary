@@ -445,6 +445,7 @@ class App extends Component<RouteComponentProps, State> {
                     state={this.state}
                     optionsDispatch={this.handleOptionsUpdate}
                     handleSearchValueChange={this.handleSearchValueChange}
+                    pathname={this.props.location.pathname}
                 />}
                 <div className="container-fluid" data-testid="body">
                 {this.state.dictionaryStatus !== "ready" ?
@@ -578,6 +579,7 @@ class App extends Component<RouteComponentProps, State> {
                     optionsDispatch={this.handleOptionsUpdate}
                     handleSearchValueChange={this.handleSearchValueChange}
                     onBottom
+                    pathname={this.props.location.pathname}
                 />}
             </footer>
         </div>;

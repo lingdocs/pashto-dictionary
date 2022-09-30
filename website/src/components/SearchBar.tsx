@@ -6,7 +6,7 @@
  *
  */
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { State } from "../types/dictionary-types";
 import {
   OptionsAction,
@@ -14,13 +14,26 @@ import {
   SearchType,
 } from "../types/dictionary-types";
 
-const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }: {
+const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom, pathname }: {
   state: State
   optionsDispatch: (action: OptionsAction) => void,
   handleSearchValueChange: (searchValue: string) => void,
   onBottom?: boolean,
+  pathname: string,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+    }
+  // eslint-disable-next-line
+  }, []);
+  function onFocus() {
+    if (["/", "/search"].includes(pathname)) {
+      inputRef.current?.focus();
+    }
+  }
   const LanguageToggle = ({ language }: { language: Language }) => {
     const arrowDirection = language === "Pashto" ? "right" : "left";
     return (
