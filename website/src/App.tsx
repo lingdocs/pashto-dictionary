@@ -216,6 +216,14 @@ class App extends Component<RouteComponentProps, State> {
             }
           });
         }
+        // shortcuts to isolote word in search results
+        Mousetrap.bind(["1", "2", "3", "4", "5", "6", "7", "8", "9"], (e) => {
+            if (e.repeat) return;
+            if (this.props.location.pathname !== "/search") return;
+            const toIsolate = this.state.results[Number(e.key) - 1];
+            if (!toIsolate) return;
+            this.handleIsolateEntry(toIsolate.ts);
+        })
         Mousetrap.bind(["ctrl+down", "ctrl+up", "command+down", "command+up"], (e) => {
             if (e.repeat) return;
             this.handleOptionsUpdate({ type: "toggleLanguage" });
@@ -358,6 +366,10 @@ class App extends Component<RouteComponentProps, State> {
     }
 
     private handleSearchValueChange(searchValue: string) {
+        const lastChar = searchValue[searchValue.length-1];
+        if (lastChar >= '0' && lastChar <= '9') {
+            return;
+        }
         if (this.state.dictionaryStatus !== "ready") return;
         if (searchValue === "") {
             this.setState({
@@ -389,7 +401,6 @@ class App extends Component<RouteComponentProps, State> {
             return;
         }
         this.setState({ isolatedEntry });
-
         if (!onlyState && (this.props.location.pathname !== "/word" || (getWordId(this.props.location.search) !== ts))) {
             this.props.history.push(`/word?id=${isolatedEntry.ts}`);
         }
