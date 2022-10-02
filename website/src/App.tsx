@@ -531,6 +531,9 @@ class App extends Component<RouteComponentProps, State> {
                                         Grammar
                                     </a>
                                 </div>
+                                <div className="mt-4 pt-2">
+                                    ✨🆕 New <Link to="/settings">keyboard shortcuts</Link> ⌨️ ✨
+                                </div>
                             </div>
                         </Route>
                         <Route path="/about">
