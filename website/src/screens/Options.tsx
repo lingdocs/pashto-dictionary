@@ -177,7 +177,7 @@ function OptionsScreen({
                     </tr>
                     <tr>
                         <td><kbd>ctrl / ⌘</kbd> + <kbd>s</kbd></td>
-                        <td>add word to wordlist <i className="fas fa-star fa-lg" /></td>
+                        <td>add word to wordlist <i className="far fa-star" /></td>
                     </tr>
                 </>}
                 <tr>

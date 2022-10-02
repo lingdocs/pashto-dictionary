@@ -246,12 +246,15 @@ class App extends Component<RouteComponentProps, State> {
             this.handlePowerSearch();
         });
         Mousetrap.bind(["ctrl+s", "command+s"], (e) => {
+            console.log("hit ctrl+s");
+            if (this.state.user?.level === "basic") return;
             e.preventDefault();
             if (!this.state.isolatedEntry) return;
             const toAdd = {
                 entry: this.state.isolatedEntry,
                 notes: "",
             };
+            console.log("Adding this to wordlist", toAdd);
             addToWordlist(toAdd);
         });
         Mousetrap.bind(["ctrl+\\", "command+\\"], (e) => {
