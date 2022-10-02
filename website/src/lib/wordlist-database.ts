@@ -45,9 +45,7 @@ export async function addToWordlist({ entry, notes }: {
         entry,
         notes,
     };
-    console.log("going to add to wordlist", entry);
     await addToLocalDb({ type: "wordlist", doc });
-    console.log("has been added");
     return doc;
 }
 

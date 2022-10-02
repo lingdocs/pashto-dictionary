@@ -79,7 +79,9 @@ import {
 } from "./types/dictionary-types";
 import PhraseBuilder from "./screens/PhraseBuilder";
 import { searchAllInflections } from "./lib/search-all-inflections";
-import { addToWordlist } from "./lib/__mocks__/wordlist-database";
+import {
+    addToWordlist,
+} from "./lib/wordlist-database";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -246,7 +248,6 @@ class App extends Component<RouteComponentProps, State> {
             this.handlePowerSearch();
         });
         Mousetrap.bind(["ctrl+s", "command+s"], (e) => {
-            console.log("hit ctrl+s");
             if (this.state.user?.level === "basic") return;
             e.preventDefault();
             if (!this.state.isolatedEntry) return;
@@ -254,7 +255,6 @@ class App extends Component<RouteComponentProps, State> {
                 entry: this.state.isolatedEntry,
                 notes: "",
             };
-            console.log("Adding this to wordlist", toAdd);
             addToWordlist(toAdd);
         });
         Mousetrap.bind(["ctrl+\\", "command+\\"], (e) => {
