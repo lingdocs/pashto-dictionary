@@ -163,6 +163,10 @@ function OptionsScreen({
                     <td>switch language</td>
                 </tr>
                 <tr>
+                    <td><kbd>shift</kbd> + <kbd>space</kbd></td>
+                    <td>put cursor in search bar</td>
+                </tr>
+                <tr>
                     <td><kbd>ctrl / ⌘</kbd> + <kbd>i</kbd></td>
                     <td>search inflections/conjugations <i className={inflectionSearchIcon} /></td>
                 </tr>

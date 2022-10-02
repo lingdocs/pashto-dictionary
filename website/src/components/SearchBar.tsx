@@ -6,6 +6,7 @@
  *
  */
 
+import Mousetrap from "mousetrap";
 import { useEffect, useRef } from "react";
 import { State } from "../types/dictionary-types";
 import {
@@ -24,8 +25,14 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom, 
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     window.addEventListener("focus", onFocus);
+    Mousetrap.bind(["shift+space"], (e) => {
+      e.preventDefault();
+      if (e.repeat) return;
+      inputRef.current?.focus();
+    });
     return () => {
       window.removeEventListener("focus", onFocus);
+      Mousetrap.unbind(["shift+space"]);
     }
   // eslint-disable-next-line
   }, []);

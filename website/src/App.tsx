@@ -276,6 +276,9 @@ class App extends Component<RouteComponentProps, State> {
         Mousetrap.unbind(["ctrl+down", "ctrl+up", "command+down", "command+up"]);
         Mousetrap.unbind(["ctrl+b", "command+b"]);
         Mousetrap.unbind(["ctrl+\\", "command+\\"]);
+        Mousetrap.unbind(["ctrl+s", "command+s"]);
+        Mousetrap.unbind(["ctrl+i", "command+i"]);
+        Mousetrap.unbind(["1", "2", "3", "4", "5", "6", "7", "8", "9"]);
     }
 
     public componentDidUpdate(prevProps: RouteComponentProps) {
@@ -392,6 +395,7 @@ class App extends Component<RouteComponentProps, State> {
     }
 
     private handleSearchValueChange(searchValue: string) {
+        if (searchValue === " ") return;
         const lastChar = searchValue[searchValue.length-1];
         if (lastChar >= '0' && lastChar <= '9') {
             return;
