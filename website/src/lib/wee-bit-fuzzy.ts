@@ -100,8 +100,8 @@ const fReplacer = {
     "s": sSoundsF,
     // only used if ignoring accents
     "a": "[a|á]",
-    "á": "[a|á]",
-    "u": "[u|ú]",
+    "á": "[a|á|u|ú]",
+    "u": "[u|ú|a|á]",
     "ú": "[u|ú]",
     "o": "[o|ó]",
     "ó": "[o|ó]",

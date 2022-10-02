@@ -11,7 +11,13 @@ export type State = {
     reviewTasks: import("./functions-types").ReviewTask[],
     dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo | undefined,
     user: undefined | import("./account-types").LingdocsUser,
+    powerResults: undefined | "searching" | PowerResult[],
 }
+
+export type PowerResult = {
+    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
+    results: InflectionSearchResult[],
+};
 
 export type DictionaryAPI = {
     initialize: () => Promise<{

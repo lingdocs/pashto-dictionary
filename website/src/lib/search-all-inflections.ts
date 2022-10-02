@@ -1,6 +1,6 @@
 import { searchPile } from "../lib/search-pile";
 import { 
-    isNounAdjOrVerb,
+    isNounAdjOrVerb, removeAccents,
 } from "@lingdocs/pashto-inflector";
 import { dictionary } from "../lib/dictionary";
 import {
@@ -11,9 +11,13 @@ import {
 } from "@lingdocs/pashto-inflector";
 import { isPashtoScript } from "./is-pashto";
 import {
-    InflectionSearchResult,
+    InflectionSearchResult, PowerResult,
 } from "../types/dictionary-types";
 import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
+// @ts-ignore
+import relevancy from "relevancy";
+
+const relevancySorter = new relevancy.Sorter();
 
 // 1st iteration: Brute force make every single conjugation and check all - 5300ms
 // 2nd iteration: Check if it makes a big difference to search via function - 5100ms
@@ -23,6 +27,36 @@ import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 // ~4th iteration:~ ignore perfective or imperfective if wasn't present in verb info (not worth it - scrapped)
 
 export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[] {
+    const index = isPashtoScript(searchValue) ? "p" : "f"
+    function sortResultsByRelevancy(arr: PowerResult[]): PowerResult[] {
+        return relevancySorter.sort(arr, searchValue, (obj: PowerResult, calc: any) => (
+            calc(removeAccents(obj.results[0].matches[0].ps[index]))
+        ));
+    }
+    // TODO: could be better to remove the accents on the searchValue as well beforehand
+    function sortMatchesByRelevancy(r: PowerResult): PowerResult {
+        // first sort all the matches of each form by relevance
+        const rStage2 = {
+            ...r,
+            results: r.results.map(x => ({
+                ...x,
+                matches: relevancySorter.sort(x.matches, searchValue, (obj: {
+                    ps: T.PsString;
+                }, calc: any) => (
+                    calc(removeAccents(obj.ps[index]))
+                ))
+            }))
+        };
+        // then sort the forms by relevance
+        const results = relevancySorter.sort(rStage2.results, searchValue, (obj: InflectionSearchResult, calc: any) => (
+            calc(removeAccents(obj.matches[0].ps[index]))
+        ));
+        return {
+            ...r,
+            results,
+        };
+    }
+    
     // const timerLabel = "Search inflections";
     const script = isPashtoScript(searchValue) ? "p" : "f";
     const begRegex = new RegExp(
@@ -38,7 +72,7 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
     // also do version without directional pronoun on front
     const searchFun = (ps: T.PsString) => !!ps[script].match(searchRegex)
     // console.time(timerLabel);
-    const results = allDocs.reduce((all: { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[], entry) => {
+    const results = allDocs.reduce((all: PowerResult[], entry) => {
         const type = isNounAdjOrVerb(entry);
         if (entry.c && type === "verb") {
             try {
@@ -89,5 +123,7 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
             ...searchAllInflections(allDocs, searchValue.slice(3)),
         ];
     }
-    return results;
+    // because we used a bit of a fuzzy search, sort the results by relevancy
+    // this is a bit complicated...
+    return sortResultsByRelevancy(results.map(sortMatchesByRelevancy));
 }

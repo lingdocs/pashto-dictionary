@@ -6,7 +6,7 @@
  *
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as FT from "../types/functions-types";
 import { 
     submissionBase,
@@ -15,41 +15,27 @@ import {
 import { isPashtoScript } from "../lib/is-pashto";
 import Entry from "../components/Entry";
 import { Helmet } from "react-helmet";
-import { allEntries } from "../lib/dictionary";
-import {
-    standardizePashto,
-    Types as T,
-    revertSpelling,
-} from "@lingdocs/pashto-inflector";
 import InflectionSearchResultDisplay from "../components/InflectionSearchResultDisplay";
-import { searchAllInflections } from "../lib/search-all-inflections";
 import { getTextOptions } from "../lib/get-text-options";
 import {
     State,
     InflectionSearchResult,
 } from "../types/dictionary-types";
 
-const inflectionSearchIcon = "fas fa-search-plus";
+export const inflectionSearchIcon = "fas fa-search-plus";
 
-function prepValueForSearch(searchValue: string, textOptions: T.TextOptions): string {
-    const s = revertSpelling(searchValue, textOptions.spelling);
-    return standardizePashto(s.trim());
-}
-
-function Results({ state, isolateEntry }: {
+// TODO: put power results in a prop so we can do it from outside with the keyboard shortcut
+function Results({ state, isolateEntry, handlePowerSearch }: {
     state: State,
     isolateEntry: (ts: number) => void,
+    handlePowerSearch: () => void,
 }) {
-    const [powerResults, setPowerResults] = useState<undefined | "searching" | { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[]>(undefined);
     const [suggestionState, setSuggestionState] = useState<"none" | "editing" | "received">("none");
     const [comment, setComment] = useState<string>("");
     const [pashto, setPashto] = useState<string>("");
     const [phonetics, setPhonetics] = useState<string>("");
     const [english, setEnglish] = useState<string>("");
     const textOptions = getTextOptions(state);
-    useEffect(() => {
-        setPowerResults(undefined);
-    }, [state.searchValue])
     function startSuggestion() {
         const toStart = state.searchValue;
         if (isPashtoScript(toStart)) {
@@ -81,18 +67,7 @@ function Results({ state, isolateEntry }: {
         addSubmission(newEntry, state.user);
         setSuggestionState("received");
     }
-    function handlePowerSearch() {
-        setPowerResults("searching");
-        // need timeout to make sure the "searching" notice gets rendered before things lock up for the big search
-        setTimeout(() => {
-            const allDocs = allEntries();
-            const results = searchAllInflections(
-                allDocs,
-                prepValueForSearch(state.searchValue, textOptions),
-            );
-            setPowerResults(results);
-        }, 20);
-    }
+    const powerResults = state.powerResults;
     return <div className="width-limiter">
         <Helmet>
             <title>LingDocs Pashto Dictionary</title>

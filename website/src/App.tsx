@@ -10,7 +10,7 @@
 // sync on initialization and cancel sync on de-initialization
 
 import { Component } from "react";
-import { defaultTextOptions } from "@lingdocs/pashto-inflector";
+import { defaultTextOptions, revertSpelling, standardizePashto, Types as T } from "@lingdocs/pashto-inflector";
 import { withRouter, Route, RouteComponentProps, Link } from "react-router-dom";
 import Helmet from "react-helmet";
 import BottomNavItem from "./components/BottomNavItem";
@@ -32,7 +32,7 @@ import {
     saveUser,
     readUser,
 } from "./lib/local-storage";
-import { dictionary, pageSize } from "./lib/dictionary";
+import { allEntries, dictionary, pageSize } from "./lib/dictionary";
 import {
     optionsReducer,
     textOptionsReducer,
@@ -78,6 +78,8 @@ import {
     OptionsAction,
 } from "./types/dictionary-types";
 import PhraseBuilder from "./screens/PhraseBuilder";
+import { searchAllInflections } from "./lib/search-all-inflections";
+import { addToWordlist } from "./lib/__mocks__/wordlist-database";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -130,6 +132,7 @@ class App extends Component<RouteComponentProps, State> {
             wordlist: [],
             reviewTasks: [],
             user: readUser(),
+            powerResults: undefined,
         };
         this.handleOptionsUpdate = this.handleOptionsUpdate.bind(this);
         this.handleTextOptionsUpdate = this.handleTextOptionsUpdate.bind(this);
@@ -141,6 +144,7 @@ class App extends Component<RouteComponentProps, State> {
         this.handleRefreshWordlist = this.handleRefreshWordlist.bind(this);
         this.handleRefreshReviewTasks = this.handleRefreshReviewTasks.bind(this);
         this.handleDictionaryUpdate = this.handleDictionaryUpdate.bind(this);
+        this.handlePowerSearch = this.handlePowerSearch.bind(this);
     }
 
     public componentDidMount() {
@@ -218,6 +222,7 @@ class App extends Component<RouteComponentProps, State> {
         }
         // shortcuts to isolote word in search results
         Mousetrap.bind(["1", "2", "3", "4", "5", "6", "7", "8", "9"], (e) => {
+            e.preventDefault();
             if (e.repeat) return;
             if (this.props.location.pathname !== "/search") return;
             const toIsolate = this.state.results[Number(e.key) - 1];
@@ -225,14 +230,32 @@ class App extends Component<RouteComponentProps, State> {
             this.handleIsolateEntry(toIsolate.ts);
         })
         Mousetrap.bind(["ctrl+down", "ctrl+up", "command+down", "command+up"], (e) => {
+            e.preventDefault();
             if (e.repeat) return;
             this.handleOptionsUpdate({ type: "toggleLanguage" });
         });
         Mousetrap.bind(["ctrl+b", "command+b"], (e) => {
+            e.preventDefault();
             if (e.repeat) return;
             this.handleSearchValueChange("");
         });
+        Mousetrap.bind(["ctrl+i", "command+i"], (e) => {
+            e.preventDefault();
+            if (e.repeat) return;
+            if (!this.state.searchValue) return;
+            this.handlePowerSearch();
+        });
+        Mousetrap.bind(["ctrl+s", "command+s"], (e) => {
+            e.preventDefault();
+            if (!this.state.isolatedEntry) return;
+            const toAdd = {
+                entry: this.state.isolatedEntry,
+                notes: "",
+            };
+            addToWordlist(toAdd);
+        });
         Mousetrap.bind(["ctrl+\\", "command+\\"], (e) => {
+            e.preventDefault();
             if (e.repeat) return;
             if (this.state.user?.level === "basic") return;
             if (this.props.location.pathname !== "/wordlist") {
@@ -376,6 +399,7 @@ class App extends Component<RouteComponentProps, State> {
                 searchValue: "",
                 results: [],
                 page: 1,
+                powerResults: undefined,
             });
             if (this.props.location.pathname !== "/") {
                 this.props.history.replace("/");
@@ -386,6 +410,7 @@ class App extends Component<RouteComponentProps, State> {
             searchValue,
             results: dictionary.search({ ...prevState, searchValue }),
             page: 1,
+            powerResults: undefined,
         }));
         if (this.props.history.location.pathname !== "/search") {
             this.props.history.push("/search");
@@ -425,6 +450,22 @@ class App extends Component<RouteComponentProps, State> {
                 });
             }
         }
+    }
+
+    private handlePowerSearch() {
+        function prepValueForSearch(searchValue: string, textOptions: T.TextOptions): string {
+            const s = revertSpelling(searchValue, textOptions.spelling);
+            return standardizePashto(s.trim());
+        }
+        this.setState({ powerResults: "searching" });
+        // need timeout to make sure the "searching" notice gets rendered before things lock up for the big search
+        setTimeout(() => {
+            const powerResults = searchAllInflections(
+                allEntries(),
+                prepValueForSearch(this.state.searchValue, this.state.options.textOptionsRecord.textOptions),
+            );
+            this.setState({ powerResults });
+        }, 20);
     }
 
     private handleGoBack() {
@@ -510,12 +551,20 @@ class App extends Component<RouteComponentProps, State> {
                             />
                         </Route>
                         <Route path="/search">
-                            <Results state={this.state} isolateEntry={this.handleIsolateEntry} />
+                            <Results
+                                state={this.state}
+                                isolateEntry={this.handleIsolateEntry}
+                                handlePowerSearch={this.handlePowerSearch}
+                            />
                         </Route>
                         <Route path="/new-entries">
                             <h4 className="mb-3">New Words This Month</h4>
                             {this.state.results.length ?
-                                <Results state={this.state} isolateEntry={this.handleIsolateEntry} />
+                                <Results
+                                    state={this.state}
+                                    isolateEntry={this.handleIsolateEntry}
+                                    handlePowerSearch={this.handlePowerSearch}
+                                />
                             :
                                 <div>No new words added this month 😓</div>
                             }

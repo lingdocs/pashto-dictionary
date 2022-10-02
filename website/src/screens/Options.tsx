@@ -20,6 +20,7 @@ import {
     OptionsAction,
     TextOptionsAction,
 } from "../types/dictionary-types";
+import { inflectionSearchIcon } from "./Results";
 
 const fontSizeOptions: {
     label: string,
@@ -162,16 +163,26 @@ function OptionsScreen({
                     <td>switch language</td>
                 </tr>
                 <tr>
+                    <td><kbd>ctrl / ⌘</kbd> + <kbd>i</kbd></td>
+                    <td>search inflections/conjugations <i className={inflectionSearchIcon} /></td>
+                </tr>
+                <tr>
                     <td><kbd>ctrl / ⌘</kbd> + <kbd>b</kbd></td>
                     <td>clear search</td>
                 </tr>
-                {wordlistEnabled(state.user) && <tr>
-                    <td><kbd>ctrl / ⌘</kbd> + <kbd>\</kbd></td>
-                    <td>show/hide wordlist</td>
-                </tr>}
+                {wordlistEnabled(state.user) && <>
+                    <tr>
+                        <td><kbd>ctrl / ⌘</kbd> + <kbd>\</kbd></td>
+                        <td>show/hide wordlist</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>ctrl / ⌘</kbd> + <kbd>s</kbd></td>
+                        <td>add word to wordlist <i className="fas fa-star fa-lg" /></td>
+                    </tr>
+                </>}
                 <tr>
                     <td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> ... <kbd>9</kbd></td>
-                    <td>Select word result number 1-9 from the top</td>
+                    <td>Select word result 1-9 from the top</td>
                 </tr>
             </tbody>
         </table>

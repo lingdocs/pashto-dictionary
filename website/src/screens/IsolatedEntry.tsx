@@ -257,6 +257,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             <Results
                 state={{ ...state, results: relatedEntries }}
                 isolateEntry={isolateEntry}
+                handlePowerSearch={() => null}
             />
         </> : <div style={{ height: "500px" }} />}
         <Modal
