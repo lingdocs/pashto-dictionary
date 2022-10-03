@@ -15,12 +15,11 @@ import {
   SearchType,
 } from "../types/dictionary-types";
 
-const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom, pathname }: {
+const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }: {
   state: State
   optionsDispatch: (action: OptionsAction) => void,
   handleSearchValueChange: (searchValue: string) => void,
   onBottom?: boolean,
-  pathname: string,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -37,7 +36,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom, 
   // eslint-disable-next-line
   }, []);
   function onFocus() {
-    if (["/", "/search"].includes(pathname)) {
+    if (["/", "/search"].includes(window.location.pathname)) {
       inputRef.current?.focus();
     }
   }

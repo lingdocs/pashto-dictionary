@@ -109,6 +109,7 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
         return all;
     }, []);
     // console.timeEnd(timerLabel);
+    // TODO!!: Sorting on this as well
     if (["را", "ور", "در"].includes(searchValue.slice(0, 2))) {
         return [
             ...results,

@@ -14,11 +14,6 @@ export type State = {
     powerResults: undefined | "searching" | PowerResult[],
 }
 
-export type PowerResult = {
-    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
-    results: InflectionSearchResult[],
-};
-
 export type DictionaryAPI = {
     initialize: () => Promise<{
         response: "loaded first time" | "loaded from saved",
@@ -159,6 +154,16 @@ export type WordlistWordDoc = WordlistWord & { _rev: string, _id: string };
 export type InflectionName = "plain" | "1st" | "2nd";
 
 export type PluralInflectionName = "plural" | "2nd";
+
+// MatchingEntry (InflectionSearchResult)
+//  forms
+//    for each form
+//      the possible matches, and their person/inflection number
+
+export type PowerResult = {
+    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
+    results: InflectionSearchResult[],
+};
 
 export type InflectionSearchResult = {
     form: string[],
