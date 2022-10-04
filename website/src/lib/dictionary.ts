@@ -287,6 +287,7 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({ searchString, page, tp
                             .find(slightlyFuzzyQuery)
                             .limit(slightlyFuzzyResultsLimit)
                             .data();
+    console.log({ slightlyFuzzyResults });
     resultsGiven.push(...slightlyFuzzyResults.map((mpd: any) => mpd.$loki));
     // Get fuzzy matches
     const pashtoRegExLogic = fuzzifyPashto(search, {

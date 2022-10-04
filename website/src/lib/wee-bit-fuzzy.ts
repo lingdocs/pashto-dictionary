@@ -126,7 +126,7 @@ function makePAWeeBitFuzzy(s: string): string {
     // + s.replace(/ /g, "").split("").join(" *");
     return "^" + s.replace(pRepRegex, mtch => {
         // @ts-ignore
-        return pReplacer[mtch];
+        return `${pReplacer[mtch]}`;
     });
 }
 

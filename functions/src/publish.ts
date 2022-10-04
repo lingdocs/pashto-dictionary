@@ -42,20 +42,11 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
     if (errors.length) {
         return({ ok: false, errors });
     }
-    const duplicate = findDuplicateTs(entries);
-    if (duplicate) {
-        return({
-            ok: false,
-            errors: [{
-                errors: [`${duplicate.ts} is a duplicate ts`],
-                ts: duplicate.ts,
-                p: duplicate.p,
-                f: duplicate.f,
-                e: duplicate.e,
-                erroneousFields: ["ts"],
-            }],
-        });
-    }
+    const duplicates = findDuplicates(entries);
+    duplicates.forEach((duplicate) => {
+        const index = entries.findIndex(e => e.ts === duplicate.ts);
+        if (index > -1) entries.splice(index, 1);
+    })
     const dictionary: T.Dictionary = {
         info: { 
             title,
@@ -166,17 +157,18 @@ function checkForErrors(entries: T.DictionaryEntry[]): T.DictionaryEntryError[] 
     }, []);
 }
 
-function findDuplicateTs(entries: T.DictionaryEntry[]): T.DictionaryEntry | undefined {
+function findDuplicates(entries: T.DictionaryEntry[]): T.DictionaryEntry[] {
     const tsSoFar = new Set();
+    const duplicates: T.DictionaryEntry[] = [];
     // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < entries.length; i++) {
         const ts = entries[i].ts;
         if (tsSoFar.has(ts)) {
-            return entries[i];
+            duplicates.push(entries[i]);
         }
         tsSoFar.add(ts);
     }
-    return undefined;
+    return duplicates;
 }
 
 async function upload(content: Buffer | string, filename: string) {
