@@ -134,7 +134,7 @@ class App extends Component<RouteComponentProps, State> {
             wordlist: [],
             reviewTasks: [],
             user: readUser(),
-            powerResults: undefined,
+            inflectionSearchResults: undefined,
         };
         this.handleOptionsUpdate = this.handleOptionsUpdate.bind(this);
         this.handleTextOptionsUpdate = this.handleTextOptionsUpdate.bind(this);
@@ -146,7 +146,7 @@ class App extends Component<RouteComponentProps, State> {
         this.handleRefreshWordlist = this.handleRefreshWordlist.bind(this);
         this.handleRefreshReviewTasks = this.handleRefreshReviewTasks.bind(this);
         this.handleDictionaryUpdate = this.handleDictionaryUpdate.bind(this);
-        this.handlePowerSearch = this.handlePowerSearch.bind(this);
+        this.handleInflectionSearch = this.handleInflectionSearch.bind(this);
     }
 
     public componentDidMount() {
@@ -245,7 +245,7 @@ class App extends Component<RouteComponentProps, State> {
             e.preventDefault();
             if (e.repeat) return;
             if (!this.state.searchValue) return;
-            this.handlePowerSearch();
+            this.handleInflectionSearch();
         });
         Mousetrap.bind(["ctrl+s", "command+s"], (e) => {
             if (this.state.user?.level === "basic") return;
@@ -406,7 +406,7 @@ class App extends Component<RouteComponentProps, State> {
                 searchValue: "",
                 results: [],
                 page: 1,
-                powerResults: undefined,
+                inflectionSearchResults: undefined,
             });
             if (this.props.location.pathname !== "/") {
                 this.props.history.replace("/");
@@ -417,7 +417,7 @@ class App extends Component<RouteComponentProps, State> {
             searchValue,
             results: dictionary.search({ ...prevState, searchValue }),
             page: 1,
-            powerResults: undefined,
+            inflectionSearchResults: undefined,
         }));
         if (this.props.history.location.pathname !== "/search") {
             this.props.history.push("/search");
@@ -459,19 +459,19 @@ class App extends Component<RouteComponentProps, State> {
         }
     }
 
-    private handlePowerSearch() {
+    private handleInflectionSearch() {
         function prepValueForSearch(searchValue: string, textOptions: T.TextOptions): string {
             const s = revertSpelling(searchValue, textOptions.spelling);
             return standardizePashto(s.trim());
         }
-        this.setState({ powerResults: "searching" });
+        this.setState({ inflectionSearchResults: "searching" });
         // need timeout to make sure the "searching" notice gets rendered before things lock up for the big search
         setTimeout(() => {
-            const powerResults = searchAllInflections(
+            const inflectionSearchResults = searchAllInflections(
                 allEntries(),
                 prepValueForSearch(this.state.searchValue, this.state.options.textOptionsRecord.textOptions),
             );
-            this.setState({ powerResults });
+            this.setState({ inflectionSearchResults });
         }, 20);
     }
 
@@ -563,7 +563,7 @@ class App extends Component<RouteComponentProps, State> {
                             <Results
                                 state={this.state}
                                 isolateEntry={this.handleIsolateEntry}
-                                handlePowerSearch={this.handlePowerSearch}
+                                handleInflectionSearch={this.handleInflectionSearch}
                             />
                         </Route>
                         <Route path="/new-entries">
@@ -572,7 +572,7 @@ class App extends Component<RouteComponentProps, State> {
                                 <Results
                                     state={this.state}
                                     isolateEntry={this.handleIsolateEntry}
-                                    handlePowerSearch={this.handlePowerSearch}
+                                    handleInflectionSearch={this.handleInflectionSearch}
                                 />
                             :
                                 <div>No new words added this month 😓</div>

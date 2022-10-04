@@ -15,19 +15,19 @@ import {
     displayPositionResult,
 } from "../lib/inflection-search-helpers";
 import {
-    InflectionSearchResult,
     InflectionName,
+    InflectionFormMatch,
 } from "../types/dictionary-types";
 
-function InflectionSearchResultDisplay(
-    { result, textOptions, entry }:
-    { result: InflectionSearchResult, textOptions: T.TextOptions, entry: T.DictionaryEntry }
+function InflectionFormMatchDisplay(
+    { form, textOptions, entry }:
+    { form: InflectionFormMatch, textOptions: T.TextOptions, entry: T.DictionaryEntry }
 ) {
     function getTransitivity(): "transitive" | "intransitive" | "grammatically transitive" {
-        if (result.form.includes("grammaticallyTransitive")) {
+        if (form.path.includes("grammaticallyTransitive")) {
             return "grammatically transitive";
         }
-        if (result.form.includes("transitive")) {
+        if (form.path.includes("transitive")) {
             return "transitive";
         }
         if (entry.c?.includes("intrans.")) {
@@ -36,15 +36,15 @@ function InflectionSearchResultDisplay(
         return "transitive";
     }
     const transitivity = getTransitivity();
-    const isPast = (result.form.includes("past") || result.form.includes("perfect"));
+    const isPast = (form.path.includes("past") || form.path.includes("perfect"));
     const isErgative = (transitivity !== "intransitive") && isPast;
     const isVerbPos = (x: InflectionName[] | T.Person[] | null) => {
         if (x === null) return false;
         return (typeof x[0] !== "string");
     };
     return <div className="mb-4">
-        <div className="mb-2"><strong>{displayFormResult(result.form)}</strong></div>
-        {result.matches.map((match, i) => <div className="ml-2" key={i}>
+        <div className="mb-2"><strong>{displayFormResult(form.path)}</strong></div>
+        {form.matches.map((match, i) => <div className="ml-2" key={i}>
             <InlinePs opts={textOptions}>{match.ps}</InlinePs>
             <div className="ml-3 my-2">
                 <em>
@@ -57,4 +57,4 @@ function InflectionSearchResultDisplay(
     </div>;
 }
 
-export default InflectionSearchResultDisplay;
+export default InflectionFormMatchDisplay;

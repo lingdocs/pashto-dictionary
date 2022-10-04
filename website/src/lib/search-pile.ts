@@ -17,7 +17,7 @@ import { personFromVerbBlockPos } from "@lingdocs/pashto-inflector";
 import {
     InflectionName,
     PluralInflectionName,
-    InflectionSearchResult,
+    InflectionFormMatch,
 } from "../types/dictionary-types";
 
 const inflectionNames: { inflections: InflectionName[], plural: PluralInflectionName[] } = {
@@ -42,17 +42,17 @@ function isPsString(x: T.PsString | ObPile): x is T.PsString {
     );
 }
 
-function isBlockResult(x: InflectionSearchResult[] | BlockResult): x is BlockResult {
+function isBlockResult(x: InflectionFormMatch[] | BlockResult): x is BlockResult {
     return "ps" in x[0];
 }
 
 // NOTE: perfectiveSplit needs to be ignored because the [PsString, PsString] structure breaks the search!
 const defaultFieldsToIgnore = ["info", "type", "perfectiveSplit"];
 
-export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, toIgnore: string[] = []): InflectionSearchResult[] {
+export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, toIgnore: string[] = []): InflectionFormMatch[] {
     const fieldsToIgnore = [...defaultFieldsToIgnore, toIgnore];
 
-    function searchObRecord(record: ObRec): null | BlockResult | SinglePsResult | InflectionSearchResult[] {
+    function searchObRecord(record: ObRec): null | BlockResult | SinglePsResult | InflectionFormMatch[] {
         // hit a bottom part a tree, see if what we're looking for is there
         if (Array.isArray(record)) {
             // @ts-ignore
@@ -68,7 +68,7 @@ export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, 
         return searchPile(record, searchFun);
     }
 
-    return Object.entries(pile).reduce((res: InflectionSearchResult[], entry): InflectionSearchResult[] => {
+    return Object.entries(pile).reduce((res: InflectionFormMatch[], entry): InflectionFormMatch[] => {
         const [name, value] = entry;
         if (fieldsToIgnore.includes(name)) {
             return res;
@@ -83,7 +83,7 @@ export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, 
             return [
                 ...res,
                 {
-                    form: [name],
+                    path: [name],
                     matches: [{ ps: result, pos: null }],
                 },
             ];
@@ -96,18 +96,18 @@ export function searchPile(pile: ObPile, searchFun: (s: T.PsString) => boolean, 
             return [
                 ...res,
                 {
-                    form: [name],
+                    path: [name],
                     matches: result,
                 }
             ];
         }
         // Result: Have to keep looking down recursively
         // add in the current path to all the results
-        const rb: InflectionSearchResult[] = [
+        const rb: InflectionFormMatch[] = [
             ...res,
             ...result.map((r) => ({
                 ...r,
-                form: [name, ...r.form]
+                path: [name, ...r.path]
             })),
         ]
         return rb;

@@ -11,7 +11,7 @@ export type State = {
     reviewTasks: import("./functions-types").ReviewTask[],
     dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo | undefined,
     user: undefined | import("./account-types").LingdocsUser,
-    powerResults: undefined | "searching" | PowerResult[],
+    inflectionSearchResults: undefined | "searching" | InflectionSearchResult[],
 }
 
 export type DictionaryAPI = {
@@ -160,13 +160,13 @@ export type PluralInflectionName = "plural" | "2nd";
 //    for each form
 //      the possible matches, and their person/inflection number
 
-export type PowerResult = {
-    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
-    results: InflectionSearchResult[],
-};
-
 export type InflectionSearchResult = {
-    form: string[],
+    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
+    forms: InflectionFormMatch[],
+}
+
+export type InflectionFormMatch = {
+    path: string[],
     matches: {
         ps: import("@lingdocs/pashto-inflector").Types.PsString,
         pos: InflectionName[] | import("@lingdocs/pashto-inflector").Types.Person[] | null,

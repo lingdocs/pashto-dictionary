@@ -11,7 +11,7 @@ import {
 } from "@lingdocs/pashto-inflector";
 import { isPashtoScript } from "./is-pashto";
 import {
-    InflectionSearchResult, PowerResult,
+    InflectionSearchResult, InflectionFormMatch,
 } from "../types/dictionary-types";
 import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 // @ts-ignore
@@ -26,19 +26,19 @@ const relevancySorter = new relevancy.Sorter();
 //    That's so much better I'm removing the option of skipping compounds
 // ~4th iteration:~ ignore perfective or imperfective if wasn't present in verb info (not worth it - scrapped)
 
-export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): { entry: T.DictionaryEntry, results: InflectionSearchResult[] }[] {
+export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): InflectionSearchResult[] {
     const index = isPashtoScript(searchValue) ? "p" : "f"
-    function sortResultsByRelevancy(arr: PowerResult[]): PowerResult[] {
-        return relevancySorter.sort(arr, searchValue, (obj: PowerResult, calc: any) => (
-            calc(removeAccents(obj.results[0].matches[0].ps[index]))
+    function sortResultsByRelevancy(arr: InflectionSearchResult[]): InflectionSearchResult[] {
+        return relevancySorter.sort(arr, searchValue, (obj: InflectionSearchResult, calc: any) => (
+            calc(removeAccents(obj.forms[0].matches[0].ps[index]))
         ));
     }
     // TODO: could be better to remove the accents on the searchValue as well beforehand
-    function sortMatchesByRelevancy(r: PowerResult): PowerResult {
+    function sortMatchesByRelevancy(r: InflectionSearchResult): InflectionSearchResult {
         // first sort all the matches of each form by relevance
         const rStage2 = {
             ...r,
-            results: r.results.map(x => ({
+            forms: r.forms.map(x => ({
                 ...x,
                 matches: relevancySorter.sort(x.matches, searchValue, (obj: {
                     ps: T.PsString;
@@ -48,12 +48,12 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
             }))
         };
         // then sort the forms by relevance
-        const results = relevancySorter.sort(rStage2.results, searchValue, (obj: InflectionSearchResult, calc: any) => (
+        const forms = relevancySorter.sort(rStage2.forms, searchValue, (obj: InflectionFormMatch, calc: any) => (
             calc(removeAccents(obj.matches[0].ps[index]))
         ));
         return {
             ...r,
-            results,
+            forms,
         };
     }
     
@@ -72,7 +72,7 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
     // also do version without directional pronoun on front
     const searchFun = (ps: T.PsString) => !!ps[script].match(searchRegex)
     // console.time(timerLabel);
-    const results = allDocs.reduce((all: PowerResult[], entry) => {
+    const results = allDocs.reduce((all: InflectionSearchResult[], entry) => {
         const type = isNounAdjOrVerb(entry);
         if (entry.c && type === "verb") {
             try {
@@ -84,12 +84,12 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
                     entry,
                     complement,
                 );
-                const results = searchPile(
+                const forms = searchPile(
                     conjugation as any,
                     searchFun,
                 );
-                if (results.length) {
-                    return [...all, { entry, results }];
+                if (forms.length) {
+                    return [...all, { entry, forms }];
                 }
                 return all;
             } catch (e) {
@@ -101,9 +101,9 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
         if (entry.c && type === "nounAdj") {
             const inflections = inflectWord(entry);
             if (!inflections) return all;
-            const results = searchPile(inflections as any, searchFun);
-            if (results.length) {
-                return [...all, { entry, results }];
+            const forms = searchPile(inflections as any, searchFun);
+            if (forms.length) {
+                return [...all, { entry, forms }];
             }
         }
         return all;

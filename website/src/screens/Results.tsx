@@ -15,20 +15,19 @@ import {
 import { isPashtoScript } from "../lib/is-pashto";
 import Entry from "../components/Entry";
 import { Helmet } from "react-helmet";
-import InflectionSearchResultDisplay from "../components/InflectionSearchResultDisplay";
+import InflectionFormMatchDisplay from "../components/InflectionFormMatchDisplay";
 import { getTextOptions } from "../lib/get-text-options";
 import {
     State,
-    InflectionSearchResult,
 } from "../types/dictionary-types";
 
 export const inflectionSearchIcon = "fas fa-search-plus";
 
 // TODO: put power results in a prop so we can do it from outside with the keyboard shortcut
-function Results({ state, isolateEntry, handlePowerSearch }: {
+function Results({ state, isolateEntry, handleInflectionSearch }: {
     state: State,
     isolateEntry: (ts: number) => void,
-    handlePowerSearch: () => void,
+    handleInflectionSearch: () => void,
 }) {
     const [suggestionState, setSuggestionState] = useState<"none" | "editing" | "received">("none");
     const [comment, setComment] = useState<string>("");
@@ -67,34 +66,34 @@ function Results({ state, isolateEntry, handlePowerSearch }: {
         addSubmission(newEntry, state.user);
         setSuggestionState("received");
     }
-    const powerResults = state.powerResults;
+    const inflectionResults = state.inflectionSearchResults;
     return <div className="width-limiter">
         <Helmet>
             <title>LingDocs Pashto Dictionary</title>
         </Helmet>
-        {(state.user && (window.location.pathname !== "/word") && suggestionState === "none" && powerResults === undefined) && <button
+        {(state.user && (window.location.pathname !== "/word") && suggestionState === "none" && inflectionResults === undefined) && <button
             type="button"
             className={`btn btn-outline-secondary bg-white entry-suggestion-button${state.options.searchBarPosition === "bottom" ? " entry-suggestion-button-with-bottom-searchbar" : ""}`}
             onClick={startSuggestion}
         >
             <i className="fas fa-plus" style={{ padding: "3px" }} />
         </button>}
-        {(powerResults === undefined && suggestionState === "none" && window.location.pathname === "/search") && <button
+        {(inflectionResults === undefined && suggestionState === "none" && window.location.pathname === "/search") && <button
             type="button"
             className={`btn btn-outline-secondary bg-white conjugation-search-button${state.options.searchBarPosition === "bottom" ? " conjugation-search-button-with-bottom-searchbar" : ""}`}
-            onClick={handlePowerSearch}
+            onClick={handleInflectionSearch}
         >
             <i className={inflectionSearchIcon} style={{ padding: "3px" }} />
         </button>}
-        {powerResults === "searching" && <div>
+        {inflectionResults === "searching" && <div>
             <p className="lead mt-1">Searching conjugations/inflections... <i className="fas fa-hourglass-half" /></p>
         </div>}
-        {Array.isArray(powerResults) && <div>
+        {Array.isArray(inflectionResults) && <div>
             <h4 className="mt-1 mb-3">Conjugation/Inflection Results</h4>
-            {powerResults.length === 0 && <div className="mt-4">
+            {inflectionResults.length === 0 && <div className="mt-4">
                 <div>No conjugation/inflection matches found for <strong>{state.searchValue}</strong></div>
             </div>}
-            {powerResults.map((p) => (
+            {inflectionResults.map((p) => (
                 <div key={p.entry.ts}>
                     <Entry
                         key={p.entry.i}
@@ -103,11 +102,11 @@ function Results({ state, isolateEntry, handlePowerSearch }: {
                         isolateEntry={isolateEntry}
                     />
                     <div className="mb-3 ml-2">
-                        {p.results.map((result: InflectionSearchResult, i) => (
-                            <InflectionSearchResultDisplay
-                                key={"inf-result" + i}
+                        {p.forms.map((form, i) => (
+                            <InflectionFormMatchDisplay
+                                key={"inf-form" + i}
                                 textOptions={textOptions}
-                                result={result}
+                                form={form}
                                 entry={p.entry}
                             />
                         ))}
@@ -115,7 +114,7 @@ function Results({ state, isolateEntry, handlePowerSearch }: {
                 </div>
             ))}
         </div>}
-        {powerResults === undefined && suggestionState === "none" && state.results.map((entry) => (
+        {inflectionResults === undefined && suggestionState === "none" && state.results.map((entry) => (
             <Entry
                 key={entry.i}
                 entry={entry}
@@ -199,7 +198,7 @@ function Results({ state, isolateEntry, handlePowerSearch }: {
                 Thanks for the help!
             </div>
         }
-        {(((powerResults === undefined) && suggestionState === "none" && state.searchValue && (!state.results.length))) && <div>
+        {(((inflectionResults === undefined) && suggestionState === "none" && state.searchValue && (!state.results.length))) && <div>
             <h5 className="mt-2">No Results Found in {state.options.language}</h5>
             {state.options.language === "Pashto" && isPashtoScript(state.searchValue) && <p className="mt-3">
                 Click on the <i className={inflectionSearchIcon} /> to search inflections and conjugations
