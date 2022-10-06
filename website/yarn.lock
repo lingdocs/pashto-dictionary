@@ -2357,10 +2357,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/pashto-inflector@4.0.6":
-  version "4.0.6"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-4.0.6.tgz#d9ca156f1f28440a861c54bd3f40c14aa48f6cb6"
-  integrity sha512-BOONl07zHcHzzmryi4Ju691kah155OJ37McTvaQ+EKq7M7SeOLFIdvlYpVoaO6URBmMsA0RO08avjcHmzyiTjw==
+"@lingdocs/pashto-inflector@4.0.9":
+  version "4.0.9"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fpashto-inflector/-/pashto-inflector-4.0.9.tgz#2355b6be29c518c113fce7f37e1abe66749e163a"
+  integrity sha512-fpj4x09GX2G9JjgGqdmcmx/5YolCsRKCyVdWSWuZJ0si2ZwoGcAN0hPi26rrKInEP4HwrttJ3+BHEzURb9TnLg==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.1"
     classnames "^2.2.6"
