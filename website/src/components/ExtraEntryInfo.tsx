@@ -76,7 +76,7 @@ const PresentFormInfo = ({ entry, textOptions }: {
     }
     return (
         <div className="entry-extra-info">
-            Present Form: <InlinePs opts={textOptions}>{{
+            Imperfective Stem: <InlinePs opts={textOptions}>{{
                 p: `${entry.psp}ي`,
                 f: `${entry.psf}ee`,
             }}

@@ -25,7 +25,7 @@ export const publishDictionary = functions.runWith({
     
 export const submissions = functions.runWith({
     timeoutSeconds: 30,
-    memory: "1GB"
+    memory: "1GB",
 }).https.onRequest(lingdocsAuth(
     async (req, res: functions.Response<FT.SubmissionsResponse | FT.FunctionError>) => {
         if (!Array.isArray(req.body)) {
