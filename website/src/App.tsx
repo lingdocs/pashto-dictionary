@@ -10,7 +10,7 @@
 // sync on initialization and cancel sync on de-initialization
 
 import { Component } from "react";
-import { defaultTextOptions, revertSpelling, standardizePashto, Types as T } from "@lingdocs/pashto-inflector";
+import { defaultTextOptions, revertSpelling, standardizePashto, Types as T } from "@lingdocs/ps-react";
 import { withRouter, Route, RouteComponentProps, Link } from "react-router-dom";
 import Helmet from "react-helmet";
 import BottomNavItem from "./components/BottomNavItem";
@@ -533,9 +533,6 @@ class App extends Component<RouteComponentProps, State> {
                                     <a href="https://grammar.lingdocs.com" className="plain-link h5 font-weight-light">
                                         Grammar
                                     </a>
-                                </div>
-                                <div className="mt-4 pt-2">
-                                    ✨🆕 New <Link to="/settings">keyboard shortcuts</Link> ⌨️ ✨
                                 </div>
                             </div>
                         </Route>

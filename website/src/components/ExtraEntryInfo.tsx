@@ -9,8 +9,11 @@ import {
     inflectWord,
     Types,
     InlinePs,
-} from "@lingdocs/pashto-inflector";
-import { isAdjectiveEntry, isNounEntry } from "@lingdocs/pashto-inflector/dist/lib/type-predicates";
+} from "@lingdocs/ps-react";
+import {
+    isAdjectiveEntry,
+    isNounEntry,
+} from "@lingdocs/ps-react/dist/lib/src/type-predicates";
 
 const InflectionsInfo = ({ entry, textOptions }: {
     entry: Types.DictionaryEntry,

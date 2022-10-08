@@ -10,7 +10,7 @@ import {
     writeDictionaryInfo,
     simplifyPhonetics,
     standardizeEntry,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/inflect";
 import {
     getWordList,
 } from "./word-list-maker";

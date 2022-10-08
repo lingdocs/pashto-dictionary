@@ -17,7 +17,7 @@ export type TwitterProfile = WoutRJ<import("passport-twitter").Profile> & { toke
 export type ProviderProfile = GoogleProfile | GitHubProfile | TwitterProfile;
 export type UserLevel = "basic" | "student" | "editor"; 
 
-export type UserTextOptions = Omit<import("@lingdocs/pashto-inflector").Types.TextOptions, "pTextSize">;
+export type UserTextOptions = Omit<import("@lingdocs/ps-react").Types.TextOptions, "pTextSize">;
 
 export type UserTextOptionsRecord = {
     lastModified: TimeStamp,

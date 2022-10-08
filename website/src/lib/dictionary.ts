@@ -14,7 +14,7 @@ import {
     simplifyPhonetics,
     typePredicates as tp,
     revertSpelling,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { isPashtoScript } from "./is-pashto";
 import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
 // @ts-ignore

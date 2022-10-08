@@ -8,7 +8,7 @@
 import {
     ButtonSelect,
     Types as T,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { Helmet } from "react-helmet";
 import { wordlistEnabled } from "../lib/level-management";
 import {

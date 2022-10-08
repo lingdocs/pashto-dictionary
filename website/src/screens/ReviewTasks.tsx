@@ -6,7 +6,7 @@ import {
 } from "../lib/pouch-dbs";
 import {
     Types as T,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { Helmet } from "react-helmet";
 import { getTextOptions } from "../lib/get-text-options";
 import {

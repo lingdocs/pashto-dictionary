@@ -5,7 +5,7 @@ import {
     dictionaryEntryBooleanFields,
     dictionaryEntryNumberFields,
     standardizeEntry,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/inflect";
 import * as FT from "../../website/src/types/functions-types";
 import * as functions from "firebase-functions";
 

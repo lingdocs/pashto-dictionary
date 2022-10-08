@@ -6,14 +6,14 @@
  *
  */
 
-import { Types as T } from "@lingdocs/pashto-inflector";
+import { Types as T } from "@lingdocs/ps-react";
 import {
     isVerbBlock,
     isImperativeBlock,
     isInflectionSet,
     isPluralInflectionSet,
-} from "@lingdocs/pashto-inflector";
-import { personFromVerbBlockPos } from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
+import { personFromVerbBlockPos } from "@lingdocs/ps-react";
 import {
     InflectionName,
     PluralInflectionName,

@@ -9,7 +9,7 @@
 import {
     InlinePs,
     Types as T,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import {
     displayFormResult,
     displayPositionResult,

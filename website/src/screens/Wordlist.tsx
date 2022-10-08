@@ -22,7 +22,7 @@ import {
     ButtonSelect,
     InlinePs,
     removeFVarients,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { 
     Modal,
     Button,

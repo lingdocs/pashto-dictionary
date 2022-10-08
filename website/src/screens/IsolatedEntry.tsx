@@ -15,8 +15,8 @@ import {
     Types as T,
     typePredicates as tp,
     getInflectionPattern,
-    humanReadableInflectionPattern,
-} from "@lingdocs/pashto-inflector";
+    HumanReadableInflectionPattern,
+} from "@lingdocs/ps-react";
 import {
     submissionBase,
     addSubmission,
@@ -233,7 +233,7 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 );
                 return <div>
                     <a href={`https://grammar.lingdocs.com/inflection/inflection-patterns/${inflectionSubUrl(pattern)}`} rel="noreferrer" target="_blank">
-                        <div className="badge bg-light mb-2">Inflection pattern {humanReadableInflectionPattern(pattern, textOptions)}
+                        <div className="badge bg-light mb-2">Inflection pattern {HumanReadableInflectionPattern(pattern, textOptions)}
                         </div>
                     </a>
                     <InflectionsTable inf={inf.inflections} textOptions={textOptions} />

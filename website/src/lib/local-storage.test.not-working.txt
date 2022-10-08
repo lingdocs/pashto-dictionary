@@ -9,7 +9,7 @@
 import { saveOptions, readOptions, optionsLocalStorageName } from "./local-storage";
 import {
     defaultTextOptions,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 
 const optionsStub: Options = {
     language: "Pashto",

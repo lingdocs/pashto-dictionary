@@ -10,7 +10,7 @@ import classNames from "classnames";
 import {
     Types as T,
     InlinePs,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 
 function Entry({ entry, textOptions, nonClickable, isolateEntry }: {
     entry: T.DictionaryEntry,

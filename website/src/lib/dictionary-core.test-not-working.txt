@@ -4,7 +4,7 @@ import {
     writeDictionary,
     writeDictionaryInfo,
     Types as T,
-} from "@lingdocs/pashto-inflector"
+} from "@lingdocs/ps-react"
 
 // tslint:disable-next-line
 require("fake-indexeddb/auto");

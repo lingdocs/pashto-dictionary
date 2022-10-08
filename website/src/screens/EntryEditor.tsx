@@ -9,7 +9,7 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
-import { VPExplorer } from "@lingdocs/pashto-inflector";
+import { VPExplorer } from "@lingdocs/ps-react";
 import { entryFeeder } from "../lib/dictionary";
 import {
     InflectionsTable,
@@ -18,7 +18,7 @@ import {
     InlinePs,
     validateEntry,
     typePredicates,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import Entry from "../components/Entry";
 import * as FT from "../types/functions-types";
 import {
@@ -26,7 +26,7 @@ import {
     addSubmission,
 } from "../lib/submissions";
 import { Helmet } from "react-helmet";
-import { TextOptions } from "@lingdocs/pashto-inflector/dist/types";
+import { TextOptions } from "@lingdocs/ps-react/dist/types";
 import * as AT from "../types/account-types";
 import { DictionaryAPI } from "../types/dictionary-types";
 

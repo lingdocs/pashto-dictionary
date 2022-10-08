@@ -1,14 +1,14 @@
 import { searchPile } from "../lib/search-pile";
 import { 
     isNounAdjOrVerb, removeAccents,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { dictionary } from "../lib/dictionary";
 import {
     conjugateVerb,
     inflectWord,
     Types as T,
     getVerbInfo,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { isPashtoScript } from "./is-pashto";
 import {
     InflectionSearchResult, InflectionFormMatch,

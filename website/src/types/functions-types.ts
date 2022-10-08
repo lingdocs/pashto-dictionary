@@ -6,7 +6,7 @@
  *
  */
 
-import { Types as T } from "@lingdocs/pashto-inflector";
+import { Types as T } from "@lingdocs/ps-react";
 import * as AT from "./account-types";
 
 export type FunctionResponse = PublishDictionaryResponse | SubmissionsResponse | FunctionError;

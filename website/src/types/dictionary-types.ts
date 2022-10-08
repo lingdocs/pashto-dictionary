@@ -5,11 +5,11 @@ export type State = {
     searchValue: string,
     options: Options,
     page: number,
-    isolatedEntry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry | undefined,
-    results: import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
+    isolatedEntry: import("@lingdocs/ps-react").Types.DictionaryEntry | undefined,
+    results: import("@lingdocs/ps-react").Types.DictionaryEntry[],
     wordlist: WordlistWord[],
     reviewTasks: import("./functions-types").ReviewTask[],
-    dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo | undefined,
+    dictionaryInfo: import("@lingdocs/ps-react").Types.DictionaryInfo | undefined,
     user: undefined | import("./account-types").LingdocsUser,
     inflectionSearchResults: undefined | "searching" | InflectionSearchResult[],
 }
@@ -17,23 +17,23 @@ export type State = {
 export type DictionaryAPI = {
     initialize: () => Promise<{
         response: "loaded first time" | "loaded from saved",
-        dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo,
+        dictionaryInfo: import("@lingdocs/ps-react").Types.DictionaryInfo,
     }>,
     update: (updateComing: () => void) => Promise<{
         response: "no need for update" | "updated" | "unable to check",
-        dictionaryInfo: import("@lingdocs/pashto-inflector").Types.DictionaryInfo,
+        dictionaryInfo: import("@lingdocs/ps-react").Types.DictionaryInfo,
     }>,
-    search: (state: State) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-    exactPashtoSearch: (search: string) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-    getNewWordsThisMonth: () => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
-    findOneByTs: (ts: number) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry | undefined,
-    findRelatedEntries: (entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry) => import("@lingdocs/pashto-inflector").Types.DictionaryEntry[],
+    search: (state: State) => import("@lingdocs/ps-react").Types.DictionaryEntry[],
+    exactPashtoSearch: (search: string) => import("@lingdocs/ps-react").Types.DictionaryEntry[],
+    getNewWordsThisMonth: () => import("@lingdocs/ps-react").Types.DictionaryEntry[],
+    findOneByTs: (ts: number) => import("@lingdocs/ps-react").Types.DictionaryEntry | undefined,
+    findRelatedEntries: (entry: import("@lingdocs/ps-react").Types.DictionaryEntry) => import("@lingdocs/ps-react").Types.DictionaryEntry[],
 }
 
 export type WordlistWordBase = {
     _id: string,
     /* a backup copy of the full dictionary entry in case it gets deleted from the dictionary */
-    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
+    entry: import("@lingdocs/ps-react").Types.DictionaryEntry,
     /* the notes/context provided by the user for the word in their wordlist */
     notes: string,
     supermemo: import("supermemo").SuperMemoItem,
@@ -76,7 +76,7 @@ export type WordlistMode = "browse" | "review";
 
 export type TextOptionsRecord = {
     lastModified: import("./account-types").TimeStamp,
-    textOptions: import("@lingdocs/pashto-inflector").Types.TextOptions,
+    textOptions: import("@lingdocs/ps-react").Types.TextOptions,
 };
 
 export type UserLevel = "basic" | "student" | "editor";
@@ -113,7 +113,7 @@ export type TextOptionsAction = {
     payload: PTextSize,
 } | {
     type: "changeSpelling",
-    payload: import("@lingdocs/pashto-inflector").Types.Spelling,
+    payload: import("@lingdocs/ps-react").Types.Spelling,
 } | {
     type: "changePhonetics",
     payload: "lingdocs" | "ipa" | "alalc" | "none",
@@ -161,15 +161,15 @@ export type PluralInflectionName = "plural" | "2nd";
 //      the possible matches, and their person/inflection number
 
 export type InflectionSearchResult = {
-    entry: import("@lingdocs/pashto-inflector").Types.DictionaryEntry,
+    entry: import("@lingdocs/ps-react").Types.DictionaryEntry,
     forms: InflectionFormMatch[],
 }
 
 export type InflectionFormMatch = {
     path: string[],
     matches: {
-        ps: import("@lingdocs/pashto-inflector").Types.PsString,
-        pos: InflectionName[] | import("@lingdocs/pashto-inflector").Types.Person[] | null,
+        ps: import("@lingdocs/ps-react").Types.PsString,
+        pos: InflectionName[] | import("@lingdocs/ps-react").Types.Person[] | null,
     }[],
 };
 

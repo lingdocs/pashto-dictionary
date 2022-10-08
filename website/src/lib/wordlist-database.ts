@@ -10,7 +10,7 @@ import {
     standardizePashto,
     revertSpelling,
     Types as T,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { dictionary } from "./dictionary";
 import { baseSupermemo } from "./spaced-repetition";
 import {

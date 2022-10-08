@@ -2,7 +2,7 @@ import {
     inflectWord,
     conjugateVerb,
     Types as T,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/inflect";
 
 
 function search(key: string, object: any): string[] {

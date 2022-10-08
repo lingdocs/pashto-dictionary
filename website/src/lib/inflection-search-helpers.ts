@@ -1,7 +1,7 @@
 import {
     Types as T,
     getEnglishPersonInfo,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 
 function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

@@ -1,4 +1,4 @@
-import { Types as T } from "@lingdocs/pashto-inflector";
+import { Types as T } from "@lingdocs/ps-react";
 import {
     State,
 } from "../types/dictionary-types";

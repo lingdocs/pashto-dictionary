@@ -1,19 +1,14 @@
 {
   "compilerOptions": {
-    "lib": [
-      "ES2021"
-    ],
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "target": "ES5",
+    "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
+    "target": "es2017",
+    "skipLibCheck": true,	
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "allowJs": true
   },
   "compileOnSave": true,
   "include": [

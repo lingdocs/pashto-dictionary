@@ -3,7 +3,7 @@ import {
     Types as T,
     readDictionary,
     readDictionaryInfo,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 
 const dontUseFaultyIndexedDB = (): boolean => (
     /^Apple/.test(navigator.vendor) && /AppleWebKit[/]60.*Version[/][89][.]/.test(navigator.appVersion)

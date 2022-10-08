@@ -6,7 +6,7 @@
  *
  */
 
-import { standardizePashto } from "@lingdocs/pashto-inflector";
+import { standardizePashto } from "@lingdocs/ps-react";
 
 export default function sanitizePashto(input: string): string {
     return standardizePashto(input.trim())

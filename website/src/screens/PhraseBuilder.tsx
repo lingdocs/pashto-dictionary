@@ -11,7 +11,7 @@ import {
     useStickyState,
     ButtonSelect,
     Types as T,
-} from "@lingdocs/pashto-inflector";
+} from "@lingdocs/ps-react";
 import { getTextOptions } from "../lib/get-text-options";
 import { useEffect } from "react";
 

@@ -1,4 +1,4 @@
-import { Types as IT } from "@lingdocs/pashto-inflector";
+import { Types as IT } from "@lingdocs/ps-react";
 import {
   Options,
   OptionsAction,
