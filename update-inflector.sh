@@ -1,16 +1,15 @@
 #!/bin/bash
 
-# updates all necessary package.json files in this monorepo with the given version for pashto inflector
+# updates all necessary package.json files in this monorepo with the latest given version for pashto inflector
+
+version=$1
 
 if [ $# -eq 0 ]
   then
-    echo "Script to update the version of @lingdocs/ps-react and @lingdocs/inflect across this monorepo"
-    echo ""
-    echo "usage: ./update-inlector.sh [version]"
-    exit 0
+    version=$(npm show @lingdocs/ps-react version)
 fi
 
-version=$1
+
 
 # update all instances of @lingdocs/inflect and @lingdocs/ps-react in various package.json files
 # in website

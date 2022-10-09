@@ -2349,15 +2349,17 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/ps-react@0.0.7":
-  version "0.0.7"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fps-react/-/ps-react-0.0.7.tgz#d5a40ce3af30e44808127346342b5d3a042186b3"
-  integrity sha512-A83XNe66aIiLJMdPxy4xbPqbKcxmJWrgQqQ4WBboiHymmvKPIHSoUXuuTWF/R+ahfYcVgWnb95CLVOsOrcT00g==
+"@lingdocs/ps-react@5.0.11":
+  version "5.0.11"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fps-react/-/ps-react-5.0.11.tgz#97b37666b9cf27e7568c9c11cd85e6482c795b99"
+  integrity sha512-ZpW0pZF6Ruf4hNEtSsvEEjuIfY89cHAVQ17d1xaJPF8leogoz+/y+3tTGvYauBwXefpnLOzKBiTkBy0exGQLWw==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.3"
     classnames "^2.2.6"
     jsurl2 "^2.1.0"
     lz-string "^1.4.4"
+    pbf "^3.2.1"
+    rambda "^7.3.0"
     react-select "^5.4.0"
 
 "@nodelib/fs.scandir@2.1.5":
@@ -11192,6 +11194,11 @@ raf@^3.4.1:
   integrity sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==
   dependencies:
     performance-now "^2.1.0"
+
+rambda@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/rambda/-/rambda-7.3.0.tgz#90e440ead53030a216093865d8d97997a80868ca"
+  integrity sha512-RFVofZYaG2TaVcxjnM0ejdVWf/59rFq1f57OGnjP3GT/bthzFw0GVr5rkP9PKbVlEuF/Y7bOVPLfiiYfxq/EWQ==
 
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
