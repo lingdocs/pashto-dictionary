@@ -16,8 +16,13 @@ const feedbackRouter = express.Router();
  */
 feedbackRouter.put("/", (req, res, next) => {
     const { anonymous, ...feedback } = req.body;
+    const user = anonymous
+        ? "anonymous"
+        : req.user
+        ? req.user.name
+        : "not logged in";
     addFeedback({
-        user: anonymous ? "anonymous" : req.user?.name,
+        user,
         feedback,
     }).then(() => {
         res.send({ ok: true, message: "feedback received" });
