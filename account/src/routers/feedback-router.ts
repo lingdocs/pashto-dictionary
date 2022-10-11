@@ -15,14 +15,18 @@ const feedbackRouter = express.Router();
  * receives a piece of feedback
  */
 feedbackRouter.put("/", (req, res, next) => {
-    if (!req.user) {
-        addFeedback({
-            user: req.user,
-            feedback: req.body,
-        });
-    }
-    // @ts-ignore;
-    sendResponse(res, { ok: true, message: "feedback received" });
+    const feedback = { user: req.user, feedback: req.body };
+    addFeedback({
+        user: req.user,
+        feedback: req.body,
+    }).then(() => {
+        res.send({ ok: true, message: "feedback received" });
+    }).catch((e) => {
+        console.error("error receiving feedback");
+        console.error("feedback missed", feedback);
+        console.error(e);
+        next("error receiving feedback");
+    });
 });
 
 export default feedbackRouter;
