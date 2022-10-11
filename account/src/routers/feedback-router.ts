@@ -17,7 +17,7 @@ const feedbackRouter = express.Router();
 feedbackRouter.put("/", (req, res, next) => {
     const feedback = { user: req.user, feedback: req.body };
     addFeedback({
-        user: req.user,
+        user: req.user?.name,
         feedback: req.body,
     }).then(() => {
         res.send({ ok: true, message: "feedback received" });
