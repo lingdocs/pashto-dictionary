@@ -15,10 +15,10 @@ const feedbackRouter = express.Router();
  * receives a piece of feedback
  */
 feedbackRouter.put("/", (req, res, next) => {
-    const feedback = { user: req.user, feedback: req.body };
+    const { anonymous, ...feedback } = req.body;
     addFeedback({
-        user: req.user?.name,
-        feedback: req.body,
+        user: anonymous ? "anonymous" : req.user?.name,
+        feedback,
     }).then(() => {
         res.send({ ok: true, message: "feedback received" });
     }).catch((e) => {
