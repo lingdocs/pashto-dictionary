@@ -10,7 +10,7 @@ const feedbackDb = nano.db.use("feedback");
 const userDbPrefix = "userdb-";
 
 export async function addFeedback(feedback: any) {
-  await usersDb.insert(feedback);
+  await feedbackDb.insert(feedback);
 }
 
 export function updateLastLogin(user: T.LingdocsUser): T.LingdocsUser {
