@@ -21,30 +21,34 @@ paymentRouter.use((req, res, next) => {
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
     console.log("creating checkout session");
     console.log("lookup key:", req.body.lookup_key);
-    const prices = await stripe.prices.list({
-      lookup_keys: [req.body.lookup_key],
-      expand: ['data.product'],
-    });
-    console.log(prices);
-    const session = await stripe.checkout.sessions.create({
-      billing_address_collection: 'auto',
-      line_items: [
-        {
-          price: prices.data[0].id,
-          // For metered billing, do not pass quantity
-          quantity: 1,
-  
-        },
-      ],
-      mode: 'subscription',
-      success_url: `/success`,
-      cancel_url: `/cancel`,
-    });
-    console.log("session", session);
-    if (!session.url) {
-        return next("error creating session url");
+    try {
+        const prices = await stripe.prices.list({
+        lookup_keys: [req.body.lookup_key],
+        expand: ['data.product'],
+        });
+        console.log(prices);
+        const session = await stripe.checkout.sessions.create({
+        billing_address_collection: 'auto',
+        line_items: [
+            {
+            price: prices.data[0].id,
+            // For metered billing, do not pass quantity
+            quantity: 1,
+    
+            },
+        ],
+        mode: 'subscription',
+        success_url: `/success`,
+        cancel_url: `/cancel`,
+        });
+        if (!session.url) {
+            return next("error creating session url");
+        }
+        res.redirect(303, session.url);
+    } catch (err) {
+        console.log(err);
+        return next("error connection to Stripe");
     }
-    res.redirect(303, session.url);
 });
 
 paymentRouter.post('/create-portal-session', async (req, res, next) => {
