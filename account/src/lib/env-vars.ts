@@ -9,6 +9,7 @@ const names = [
     "LINGDOCS_ACCOUNT_GITHUB_CLIENT_SECRET",
     "LINGDOCS_ACCOUNT_RECAPTCHA_SECRET",
     "LINGDOCS_ACCOUNT_UPGRADE_PASSWORD",
+    "STRIPE_SECRET_KEY",
 ];
 
 const values = names.map((name) => ({
@@ -33,4 +34,5 @@ export default {
     githubClientSecret: values[7].value,
     recaptchaSecret: values[8].value,
     upgradePassword: values[9].value,
+    stripeSecretKey: values[10].value,
 };

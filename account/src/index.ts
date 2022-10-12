@@ -7,6 +7,7 @@ import authRouter from "./routers/auth-router";
 import apiRouter from "./routers/api-router";
 import inProd from "./lib/inProd";
 import feedbackRouter from "./routers/feedback-router";
+import paymentRouter from "./routers/payment-router";
 
 const app = express();
 
@@ -29,7 +30,8 @@ setupPassport(passport);
 app.use("/", authRouter(passport));
  // REST API - returning json
 app.use("/api", apiRouter);
-app.use("/feedback", feedbackRouter)
+app.use("/feedback", feedbackRouter);
+app.use("/payment", paymentRouter);
 
 // START 💨 //
 app.listen(4000, () => console.log("Server Has Started on 4000"));

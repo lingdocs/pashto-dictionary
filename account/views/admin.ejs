@@ -26,6 +26,11 @@
   <body>
     <div class="container">
       <h1 class="my-4">LingDocs Auth Admin</h1>
+      <form action="/payment/create-checkout-session" method="POST">
+        <!-- Add a hidden field with the lookup_key of your Price -->
+        <input type="hidden" name="lookup_key" value="student-yearly" />
+        <button id="checkout-and-portal-button" type="submit">Checkout</button>
+      </form>
       <p><%= users.length %> Users</p>
       <table class="table">
         <thead>

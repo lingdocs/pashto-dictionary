@@ -300,7 +300,10 @@ const authRouter = (passport: PassportStatic) => {
   });
 
   router.post("/sign-out", (req, res) => {
-    req.logOut();
+    req.logOut((err) => {
+      console.error("error logging out");
+      console.error(err);
+    });
     res.redirect("/");
   });
   
