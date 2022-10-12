@@ -19,6 +19,7 @@ paymentRouter.use((req, res, next) => {
 });
 
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
+    console.log("with key", env.stripeSecretKey);
     try {
         const prices = await stripe.prices.list({
         lookup_keys: [req.body.lookup_key],
@@ -44,7 +45,7 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
         }
         res.redirect(303, session.url);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return next("error connection to Stripe");
     }
 });
