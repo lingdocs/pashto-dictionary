@@ -42,11 +42,11 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
     if (errors.length) {
         return({ ok: false, errors });
     }
-    const duplicates = findDuplicates(entries);
-    duplicates.forEach((duplicate) => {
-        const index = entries.findIndex(e => e.ts === duplicate.ts);
-        if (index > -1) entries.splice(index, 1);
-    })
+    // const duplicates = findDuplicates(entries);
+    // duplicates.forEach((duplicate) => {
+    //     const index = entries.findIndex(e => e.ts === duplicate.ts);
+    //     if (index > -1) entries.splice(index, 1);
+    // })
     const dictionary: T.Dictionary = {
         info: { 
             title,
@@ -76,6 +76,14 @@ async function doHunspell(entries: T.DictionaryEntry[]) {
     await uploadHunspellToStorage(hunspell);
 }
 
+/**
+ * Gets the entries from the spreadsheet, and also deletes duplicate
+ * entries that are sometimes annoyingly created by the GoogleSheets API
+ * when adding entries programmatically
+ * 
+ * @returns 
+ * 
+ */
 async function getRawEntries(): Promise<T.DictionaryEntry[]> {
     const doc = new GoogleSpreadsheet(
         functions.config().sheet.id,
@@ -87,11 +95,14 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
-    const entries = makeEntries(rows);
+    async function deleteRow(r: number) {
+        await rows[r].delete();
+    }
+    const entries = makeEntries(rows, deleteRow);
     return entries;
 }
 
-function makeEntries(rows: any[]): T.DictionaryEntry[] {
+function makeEntries(rows: any[], deleteRow: (r: number) => Promise<void>): T.DictionaryEntry[] {
     const entries: T.DictionaryEntry[] = rows.map((row): T.DictionaryEntry => {
         const e: T.DictionaryEntry = {
             i: 1,
@@ -157,19 +168,19 @@ function checkForErrors(entries: T.DictionaryEntry[]): T.DictionaryEntryError[] 
     }, []);
 }
 
-function findDuplicates(entries: T.DictionaryEntry[]): T.DictionaryEntry[] {
-    const tsSoFar = new Set();
-    const duplicates: T.DictionaryEntry[] = [];
-    // tslint:disable-next-line: prefer-for-of
-    for (let i = 0; i < entries.length; i++) {
-        const ts = entries[i].ts;
-        if (tsSoFar.has(ts)) {
-            duplicates.push(entries[i]);
-        }
-        tsSoFar.add(ts);
-    }
-    return duplicates;
-}
+// function findDuplicates(entries: T.DictionaryEntry[]): T.DictionaryEntry[] {
+//     const tsSoFar = new Set();
+//     const duplicates: T.DictionaryEntry[] = [];
+//     // tslint:disable-next-line: prefer-for-of
+//     for (let i = 0; i < entries.length; i++) {
+//         const ts = entries[i].ts;
+//         if (tsSoFar.has(ts)) {
+//             duplicates.push(entries[i]);
+//         }
+//         tsSoFar.add(ts);
+//     }
+//     return duplicates;
+// }
 
 async function upload(content: Buffer | string, filename: string) {
     const isBuffer = typeof content !== "string";
