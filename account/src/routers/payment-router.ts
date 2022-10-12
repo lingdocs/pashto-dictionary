@@ -19,10 +19,13 @@ paymentRouter.use((req, res, next) => {
 });
 
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
+    console.log("creating checkout session");
+    console.log("lookup key:", req.body.lookup_key);
     const prices = await stripe.prices.list({
       lookup_keys: [req.body.lookup_key],
       expand: ['data.product'],
     });
+    console.log(prices);
     const session = await stripe.checkout.sessions.create({
       billing_address_collection: 'auto',
       line_items: [
@@ -37,6 +40,7 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
       success_url: `/success`,
       cancel_url: `/cancel`,
     });
+    console.log("session", session);
     if (!session.url) {
         return next("error creating session url");
     }
