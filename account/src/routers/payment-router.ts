@@ -22,24 +22,24 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
     console.log("with key", env.stripeSecretKey);
     try {
         const prices = await stripe.prices.list({
-        lookup_keys: [req.body.lookup_key],
-        expand: ['data.product'],
+            lookup_keys: [req.body.lookup_key],
+            expand: ['data.product'],
         });
         console.log(prices);
         const session = await stripe.checkout.sessions.create({
-        billing_address_collection: 'auto',
-        line_items: [
-            {
-            price: prices.data[0].id,
-            // For metered billing, do not pass quantity
-            quantity: 1,
-    
-            },
-        ],
-        mode: 'subscription',
-        // TODO ADD URLS
-        success_url: `/`,
-        cancel_url: `/`,
+            billing_address_collection: 'auto',
+            line_items: [
+                {
+                price: prices.data[0].id,
+                // For metered billing, do not pass quantity
+                quantity: 1,
+        
+                },
+            ],
+            mode: 'subscription',
+            // TODO ADD URLS
+            success_url: `https://account.lingdocs.com/`,
+            cancel_url: `https://account.lingdocs.com/`,
         });
         if (!session.url) {
             return next("error creating session url");
