@@ -37,8 +37,9 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
             },
         ],
         mode: 'subscription',
-        success_url: `/success`,
-        cancel_url: `/cancel`,
+        // TODO ADD URLS
+        success_url: `/`,
+        cancel_url: `/`,
         });
         if (!session.url) {
             return next("error creating session url");
