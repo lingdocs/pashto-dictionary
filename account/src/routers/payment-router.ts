@@ -19,8 +19,6 @@ paymentRouter.use((req, res, next) => {
 });
 
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
-    console.log("creating checkout session");
-    console.log("lookup key:", req.body.lookup_key);
     try {
         const prices = await stripe.prices.list({
         lookup_keys: [req.body.lookup_key],
