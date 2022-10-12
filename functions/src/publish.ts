@@ -103,7 +103,16 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
 }
 
 function makeEntries(rows: any[], deleteRow: (r: number) => Promise<void>): T.DictionaryEntry[] {
-    const entries: T.DictionaryEntry[] = rows.map((row): T.DictionaryEntry => {
+    const entries: T.DictionaryEntry[] = [];
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const nextRow = rows[i+1] || undefined;
+        if (row.ts === nextRow?.ts) {
+            // this looks like a duplicate entry made by the sheets api
+            // delete it and keep going
+            deleteRow(i);
+            continue;
+        }
         const e: T.DictionaryEntry = {
             i: 1,
             ts: parseInt(row.ts),
@@ -121,8 +130,8 @@ function makeEntries(rows: any[], deleteRow: (r: number) => Promise<void>): T.Di
         dictionaryEntryBooleanFields.forEach((field: T.DictionaryEntryBooleanField) => {
             if (row[field]) e[field] = true;
         });
-        return standardizeEntry(e);
-    });
+        entries.push(standardizeEntry(e));
+    }
     // add alphabetical index
     entries.sort((a, b) => a.p.localeCompare(b.p, "ps"));
     const entriesLength = entries.length;
