@@ -39,7 +39,7 @@ paymentRouter.post(
     let subscription: Stripe.Subscription;
     let status: Stripe.Subscription.Status;
     // Handle the event
-    const userId = event.data.object.subscription.metadata.userId as T.UUID;
+    const userId = event.data.object.metadata.userId as T.UUID;
     switch (event.type) {
       case 'customer.subscription.deleted':
         subscription = event.data.object;
@@ -53,6 +53,7 @@ paymentRouter.post(
       case 'customer.subscription.created':
         subscription = event.data.object;
         status = subscription.status;
+        console.log({ subscription });
         console.log(`Upgrading user ${userId}.`);
         await upgradeUser(userId);
         // TODO: save subscription to db

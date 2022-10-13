@@ -52,7 +52,7 @@
         </div>
       </form>
       <h5>Account Level: <%= user.level.charAt(0).toUpperCase() + user.level.slice(1) %></h5>
-      <% if (upgrade === "success") { %>
+      <% if (upgrade === "success" && user.level === "student") { %>
         <p>🎉 Account upgraded to student 🎉</p>
         <p>Thank you for your purchase!</p>
       <% } %>
