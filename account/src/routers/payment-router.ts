@@ -19,7 +19,6 @@ paymentRouter.use((req, res, next) => {
 });
 
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
-    console.log("with key", env.stripeSecretKey);
     try {
         const prices = await stripe.prices.list({
             lookup_keys: [req.body.lookup_key],
@@ -35,7 +34,6 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
                 },
             ],
             mode: 'subscription',
-            // TODO ADD URLS
             success_url: `https://account.lingdocs.com/user?upgrade=success`,
             cancel_url: `https://account.lingdocs.com/user`,
         });
@@ -91,13 +89,6 @@ paymentRouter.post(
       let status;
       // Handle the event
       switch (event.type) {
-        case 'customer.subscription.trial_will_end':
-          subscription = event.data.object;
-          status = subscription.status;
-          console.log(`Subscription status is ${status}.`);
-          // Then define and call a method to handle the subscription trial ending.
-          // handleSubscriptionTrialEnding(subscription);
-          break;
         case 'customer.subscription.deleted':
           subscription = event.data.object;
           status = subscription.status;
@@ -109,15 +100,9 @@ paymentRouter.post(
           subscription = event.data.object;
           status = subscription.status;
           console.log(`Subscription status is ${status}.`);
+          console.log(`Will upgrade ${request.user?.name}`);
           // Then define and call a method to handle the subscription created.
           // handleSubscriptionCreated(subscription);
-          break;
-        case 'customer.subscription.updated':
-          subscription = event.data.object;
-          status = subscription.status;
-          console.log(`Subscription status is ${status}.`);
-          // Then define and call a method to handle the subscription update.
-          // handleSubscriptionUpdated(subscription);
           break;
         default:
           // Unexpected event type
