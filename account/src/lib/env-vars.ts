@@ -10,6 +10,7 @@ const names = [
     "LINGDOCS_ACCOUNT_RECAPTCHA_SECRET",
     "LINGDOCS_ACCOUNT_UPGRADE_PASSWORD",
     "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
 ];
 
 const values = names.map((name) => ({
@@ -35,4 +36,5 @@ export default {
     recaptchaSecret: values[8].value,
     upgradePassword: values[9].value,
     stripeSecretKey: values[10].value,
+    stripeWebhookSecret: values[11].value,
 };
