@@ -2,7 +2,7 @@ import express from "express";
 import * as T from "../../../website/src/types/account-types";
 import env from "../lib/env-vars";
 import Stripe from "stripe";
-import { upgradeUser } from "../lib/user-utils";
+import { downgradeUser, upgradeUser } from "../lib/user-utils";
 
 const stripe = new Stripe(env.stripeSecretKey, {
     apiVersion: "2022-08-01",
@@ -39,18 +39,20 @@ paymentRouter.post(
     let subscription: Stripe.Subscription;
     let status: Stripe.Subscription.Status;
     // Handle the event
+    const userId = event.data.object.subscription.metadata.userId as T.UUID;
     switch (event.type) {
       case 'customer.subscription.deleted':
         subscription = event.data.object;
         status = subscription.status;
         console.log(`Subscription status is ${status}.`);
+        console.log(`Downgrading user ${userId}.`);
+        await downgradeUser(userId);
         // Then define and call a method to handle the subscription deleted.
         // handleSubscriptionDeleted(subscriptionDeleted);
         break;
       case 'customer.subscription.created':
         subscription = event.data.object;
         status = subscription.status;
-        const userId = subscription.metadata.userId as T.UUID;
         console.log(`Upgrading user ${userId}.`);
         await upgradeUser(userId);
         // TODO: save subscription to db

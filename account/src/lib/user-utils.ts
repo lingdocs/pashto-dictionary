@@ -3,6 +3,7 @@ import {
     insertLingdocsUser,
     addCouchDbAuthUser,
     updateLingdocsUser,
+    deleteCouchDbAuthUser,
 } from "../lib/couch-db";
 import {
     getHash,
@@ -67,6 +68,25 @@ export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse
     return {
         ok: true,
         message: "user upgraded to student",
+        user,
+    };
+}
+
+export async function downgradeUser(userId: T.UUID): Promise<T.DowngradeUserResponse> {
+    await deleteCouchDbAuthUser(userId);
+    const user = await updateLingdocsUser(userId, {
+        level: "basic",
+        wordlistDbName: undefined,
+        couchDbPassword: undefined,
+        upgradeToStudentRequest: undefined,
+    });
+    if (user.email) {
+        // TODO
+        // sendAccountDowngradeMessage(user).catch(console.error);
+    }
+    return {
+        ok: true,
+        message: "user downgraded to basic",
         user,
     };
 }

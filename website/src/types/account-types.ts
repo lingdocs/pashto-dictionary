@@ -75,6 +75,12 @@ export type UpgradeUserResponse = {
     user: LingdocsUser,
 };
 
+export type DowngradeUserResponse = {
+    ok: true,
+    message: "user downgraded to basic",
+    user: LingdocsUser,
+};
+
 export type PostTestResultsBody = { tests: TestResult[] };
 export type PostTestResultsResponse = {
     ok: true,

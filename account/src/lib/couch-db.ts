@@ -107,6 +107,12 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     couchDbPassword: T.UserDbPassword,
     upgradeToStudentRequest: undefined,
   } |
+  {
+    level: "basic",
+    wordlistDbName: undefined,
+    couchDbPassword: undefined,
+    upgradeToStudentRequest: undefined,
+  } |
   { upgradeToStudentRequest: "waiting" } | 
   { upgradeToStudentRequest: "denied" } |
   { tests: T.TestResult[] }
