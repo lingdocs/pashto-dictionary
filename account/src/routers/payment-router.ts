@@ -8,8 +8,6 @@ const stripe = new Stripe(env.stripeSecretKey, {
 });
 
 const paymentRouter = express.Router();
-const endpointSecret = env.stripeWebhookSecret;
-console.log({ endpointSecret });
 
 paymentRouter.post(
   '/webhook',
@@ -22,11 +20,10 @@ paymentRouter.post(
     // at https://dashboard.stripe.com/webhooks
     // Only verify the event if you have an endpoint secret defined.
     // Otherwise use the basic event deserialized with JSON.parse
+    const endpointSecret = env.stripeWebhookSecret;
     if (endpointSecret) {
       // Get the signature sent by Stripe
       const signature = request.headers['stripe-signature'] || "";
-      console.log(request.headers);
-      console.log({ signature, endpointSecret });
       try {
         event = stripe.webhooks.constructEvent(
           request.body,
@@ -53,8 +50,7 @@ paymentRouter.post(
         subscription = event.data.object;
         status = subscription.status;
         console.log(`Subscription status is ${status}.`);
-        console.log(subscription);
-        console.log(subscription.metadata);
+        console.log({ userId: subscription.metadata.userId });
         // Then define and call a method to handle the subscription created.
         // handleSubscriptionCreated(subscription);
         break;
@@ -94,7 +90,11 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
                     quantity: 1,
                 },
             ],
-            client_reference_id: req.user.userId,
+            subscription_data: {
+              metadata: {
+                userId: req.user.userId,
+              }
+            },
             mode: 'subscription',
             success_url: `https://account.lingdocs.com/user?upgrade=success`,
             cancel_url: `https://account.lingdocs.com/user`,

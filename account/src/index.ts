@@ -13,7 +13,7 @@ const app = express();
 
 // MIDDLEWARE AND SETUP 🔧 //
 app.set("view engine", "ejs");
-app.use("/payment/webhook", express.raw({type: "*/*"}))
+app.use("/payment/webhook", express.raw({type: "*/*"}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
