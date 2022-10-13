@@ -2,6 +2,7 @@ import express from "express";
 import * as T from "../../../website/src/types/account-types";
 import env from "../lib/env-vars";
 import Stripe from "stripe";
+import { upgradeUser } from "../lib/user-utils";
 
 const stripe = new Stripe(env.stripeSecretKey, {
     apiVersion: "2022-08-01",
@@ -12,7 +13,7 @@ const paymentRouter = express.Router();
 paymentRouter.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
-  (request, response) => {
+  async (request, response) => {
     let event = request.body;
     // Replace this endpoint secret with your endpoint's unique secret
     // If you are testing with the CLI, find the secret by running 'stripe listen'
@@ -49,10 +50,10 @@ paymentRouter.post(
       case 'customer.subscription.created':
         subscription = event.data.object;
         status = subscription.status;
-        console.log(`Subscription status is ${status}.`);
-        console.log({ userId: subscription.metadata.userId });
-        // Then define and call a method to handle the subscription created.
-        // handleSubscriptionCreated(subscription);
+        const userId = subscription.metadata.userId as T.UUID;
+        console.log(`Upgrading user ${userId}.`);
+        await upgradeUser(userId);
+        // TODO: save subscription to db
         break;
       default:
         // Unexpected event type
