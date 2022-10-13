@@ -9,6 +9,61 @@ const stripe = new Stripe(env.stripeSecretKey, {
 
 const paymentRouter = express.Router();
 
+paymentRouter.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  (request, response) => {
+    let event = request.body;
+    // Replace this endpoint secret with your endpoint's unique secret
+    // If you are testing with the CLI, find the secret by running 'stripe listen'
+    // If you are using an endpoint defined with the API or dashboard, look in your webhook settings
+    // at https://dashboard.stripe.com/webhooks
+    const endpointSecret = 'whsec_12345';
+    // Only verify the event if you have an endpoint secret defined.
+    // Otherwise use the basic event deserialized with JSON.parse
+    if (endpointSecret) {
+      // Get the signature sent by Stripe
+      const signature = request.headers['stripe-signature'] || "";
+      try {
+        event = stripe.webhooks.constructEvent(
+          request.body,
+          signature,
+          endpointSecret
+        );
+      } catch (err: any) {
+        console.log(`⚠️  Webhook signature verification failed.`, err.message);
+        return response.sendStatus(400);
+      }
+    }
+    let subscription: Stripe.Subscription;
+    let status: Stripe.Subscription.Status;
+    // Handle the event
+    switch (event.type) {
+      case 'customer.subscription.deleted':
+        subscription = event.data.object;
+        status = subscription.status;
+        console.log(`Subscription status is ${status}.`);
+        // Then define and call a method to handle the subscription deleted.
+        // handleSubscriptionDeleted(subscriptionDeleted);
+        break;
+      case 'customer.subscription.created':
+        subscription = event.data.object;
+        status = subscription.status;
+        console.log(`Subscription status is ${status}.`);
+        console.log(subscription);
+        console.log(subscription.metadata);
+        // Then define and call a method to handle the subscription created.
+        // handleSubscriptionCreated(subscription);
+        break;
+      default:
+        // Unexpected event type
+        console.log(`Unhandled event type ${event.type}.`);
+    }
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  }
+);
+
 // Guard all api with authentication
 paymentRouter.use((req, res, next) => {
     if (req.isAuthenticated()) {
@@ -19,6 +74,9 @@ paymentRouter.use((req, res, next) => {
 });
 
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
+    if (!req.user) {
+      return next("not logged in");
+    }
     try {
         const prices = await stripe.prices.list({
             lookup_keys: [req.body.lookup_key],
@@ -33,6 +91,7 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
                     quantity: 1,
                 },
             ],
+            client_reference_id: req.user.userId,
             mode: 'subscription',
             success_url: `https://account.lingdocs.com/user?upgrade=success`,
             cancel_url: `https://account.lingdocs.com/user`,
@@ -59,58 +118,5 @@ paymentRouter.post('/create-portal-session', async (req, res, next) => {
     res.redirect(303, portalSession.url);
 });
 
-paymentRouter.post(
-    '/webhook',
-    express.raw({ type: 'application/json' }),
-    (request, response) => {
-      let event = request.body;
-      // Replace this endpoint secret with your endpoint's unique secret
-      // If you are testing with the CLI, find the secret by running 'stripe listen'
-      // If you are using an endpoint defined with the API or dashboard, look in your webhook settings
-      // at https://dashboard.stripe.com/webhooks
-      const endpointSecret = 'whsec_12345';
-      // Only verify the event if you have an endpoint secret defined.
-      // Otherwise use the basic event deserialized with JSON.parse
-      if (endpointSecret) {
-        // Get the signature sent by Stripe
-        const signature = request.headers['stripe-signature'] || "";
-        try {
-          event = stripe.webhooks.constructEvent(
-            request.body,
-            signature,
-            endpointSecret
-          );
-        } catch (err: any) {
-          console.log(`⚠️  Webhook signature verification failed.`, err.message);
-          return response.sendStatus(400);
-        }
-      }
-      let subscription;
-      let status;
-      // Handle the event
-      switch (event.type) {
-        case 'customer.subscription.deleted':
-          subscription = event.data.object;
-          status = subscription.status;
-          console.log(`Subscription status is ${status}.`);
-          // Then define and call a method to handle the subscription deleted.
-          // handleSubscriptionDeleted(subscriptionDeleted);
-          break;
-        case 'customer.subscription.created':
-          subscription = event.data.object;
-          status = subscription.status;
-          console.log(`Subscription status is ${status}.`);
-          console.log(`Will upgrade ${request.user?.name}`);
-          // Then define and call a method to handle the subscription created.
-          // handleSubscriptionCreated(subscription);
-          break;
-        default:
-          // Unexpected event type
-          console.log(`Unhandled event type ${event.type}.`);
-      }
-      // Return a 200 response to acknowledge receipt of the event
-      response.send();
-    }
-);
 
 export default paymentRouter;
