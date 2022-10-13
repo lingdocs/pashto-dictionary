@@ -52,11 +52,18 @@
         </div>
       </form>
       <h5>Account Level: <%= user.level.charAt(0).toUpperCase() + user.level.slice(1) %></h5>
+      <% if (upgrade === "success") { %>
+        <p>🎉 Subscription started. Thank you for your purchase! 🎉</p>
+      <% } %>
       <% if (user.level === "basic") { %>
         <% if (user.upgradeToStudentRequest === "waiting") { %>
           <p>Wating for upgrade approval</p>
-        <% } else { %>
-          <button class="btn btn-sm btn-secondary" id="upgrade-request-button" onclick="handleRequestUpgrade()">Request Upgrade</button>
+        <% } %>
+        <% if (user.tester) { %>
+          <form action="/payment/create-checkout-session" method="POST">
+            <input type="hidden" name="lookup_key" value="student-yearly" />
+            <button class="btn btn-sm btn-secondary" id="checkout-and-portal-button" type="submit">Upgrade Account</button>
+          </form>
         <% } %>
       <% } %>
       <% if (user.email) { %>
@@ -173,24 +180,23 @@
         console.error(e);
       }
     }
-    function handleRequestUpgrade() {
-      console.log("got here");
-      const btn = document.getElementById("upgrade-request-button");
-      btn.innerHTML = "Sending...";
-      fetch("/api/user/upgradeToStudentRequest", {
-        method: "POST",
-      }).then((res) => res.json()).then((res) => {
-        console.log(res);
-        if (res.ok) {
-          btn.innerHTML = "Upgrade request sent";
-        } else {
-          btn.innerHTML = "Error requesting upgrade";
-        }
-      }).catch((e) => {
-        console.error(e);
-        btn.innerHTML = "Error requesting upgrade";
-      });
-    }
+    // function handleRequestUpgrade() {
+    //   const btn = document.getElementById("upgrade-request-button");
+    //   btn.innerHTML = "Sending...";
+    //   fetch("/api/user/upgradeToStudentRequest", {
+    //     method: "POST",
+    //   }).then((res) => res.json()).then((res) => {
+    //     console.log(res);
+    //     if (res.ok) {
+    //       btn.innerHTML = "Upgrade request sent";
+    //     } else {
+    //       btn.innerHTML = "Error requesting upgrade";
+    //     }
+    //   }).catch((e) => {
+    //     console.error(e);
+    //     btn.innerHTML = "Error requesting upgrade";
+    //   });
+    // }
     function clearPasswordForm() {
       document.getElementById("oldPassword").value = "";
       document.getElementById("password").value = "";

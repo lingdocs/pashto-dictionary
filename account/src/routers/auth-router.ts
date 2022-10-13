@@ -42,7 +42,12 @@ const authRouter = (passport: PassportStatic) => {
     if (!req.isAuthenticated()) {
       return res.redirect("/");
     }
-    res.render("user", { user: req.user, error: null, removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+    res.render("user", {
+      user: req.user,
+      error: null,
+      removeProviderOption: canRemoveOneOutsideProvider(req.user),
+      upgrade: req.query.upgrade,
+    });
   });
 
   router.post("/user", async (req, res, next) => {
