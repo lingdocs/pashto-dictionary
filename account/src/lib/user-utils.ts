@@ -16,6 +16,12 @@ import {
 } from "../lib/mail-utils";
 import { outsideProviders } from "../middleware/setup-passport";
 import * as T from "../../../website/src/types/account-types";
+import env from "../lib/env-vars";
+import Stripe from "stripe";
+
+const stripe = new Stripe(env.stripeSecretKey, {
+    apiVersion: "2022-08-01",
+});
 
 function getUUID(): T.UUID {
     return uuidv4() as T.UUID;
@@ -51,7 +57,7 @@ export function getEmailFromGoogleProfile(profile: T.GoogleProfile): { email: st
     };
 }
 
-export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse> {
+export async function upgradeUser(userId: T.UUID, subscriptionId?: string): Promise<T.UpgradeUserResponse> {
     // add user to couchdb authentication db
     const { password, userDbName } = await addCouchDbAuthUser(userId);
     // // create user db
@@ -61,6 +67,7 @@ export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse
         wordlistDbName: userDbName,
         couchDbPassword: password,
         upgradeToStudentRequest: undefined,
+        subscriptionId,
     });
     if (user.email) {
         sendAccountUpgradeMessage(user).catch(console.error);
@@ -72,8 +79,11 @@ export async function upgradeUser(userId: T.UUID): Promise<T.UpgradeUserResponse
     };
 }
 
-export async function downgradeUser(userId: T.UUID): Promise<T.DowngradeUserResponse> {
+export async function downgradeUser(userId: T.UUID, subscriptionId?: string): Promise<T.DowngradeUserResponse> {
     await deleteCouchDbAuthUser(userId);
+    if (subscriptionId) {
+        stripe.subscriptions.del(subscriptionId);
+    }
     const user = await updateLingdocsUser(userId, {
         level: "basic",
         wordlistDbName: undefined,

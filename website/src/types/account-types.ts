@@ -56,6 +56,7 @@ export type LingdocsUser = {
         level: "student" | "editor",
         couchDbPassword: UserDbPassword,
         wordlistDbName: WordlistDbName,
+        subscriptionId: string | undefined,
     }
 ) & import("nano").MaybeDocument;
 

@@ -28,6 +28,7 @@ const student: AT.LingdocsUser = {
     "lastActive":1630414108552 as AT.TimeStamp,
     "couchDbPassword": "12345" as AT.UserDbPassword,
     "wordlistDbName": "jim-db" as AT.WordlistDbName,
+    subscriptionId: undefined,
 };
 
 const admin: AT.LingdocsUser = {
@@ -45,6 +46,7 @@ const admin: AT.LingdocsUser = {
     "lastActive":1630414108552 as AT.TimeStamp,
     "couchDbPassword": "12345" as AT.UserDbPassword,
     "wordlistDbName": "jim-db" as AT.WordlistDbName,
+    subscriptionId: undefined,
 };
 
 const editor: AT.LingdocsUser = {
@@ -61,6 +63,7 @@ const editor: AT.LingdocsUser = {
     "lastActive":1630414108552 as AT.TimeStamp,
     "couchDbPassword": "12345" as AT.UserDbPassword,
     "wordlistDbName": "jim-db" as AT.WordlistDbName,
+    subscriptionId: undefined,
 };
 
 // @ts-ignore
