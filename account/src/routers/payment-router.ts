@@ -53,7 +53,6 @@ paymentRouter.post(
       case 'customer.subscription.created':
         subscription = event.data.object;
         status = subscription.status;
-        console.log({ subscription });
         console.log(`Upgrading user ${userId}.`);
         await upgradeUser(userId);
         // TODO: save subscription to db
@@ -97,7 +96,8 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
             subscription_data: {
               metadata: {
                 userId: req.user.userId,
-              }
+                startTime: Date.now(),
+              },
             },
             mode: 'subscription',
             success_url: `https://account.lingdocs.com/user?upgrade=success`,

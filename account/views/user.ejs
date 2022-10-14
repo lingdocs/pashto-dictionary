@@ -67,6 +67,11 @@
           </form>
         <% } %>
       <% } %>
+      <% if (user.tester && user.level === "student") { %>
+        <form action="/downgradeToBasic" method="POST">
+          <button class="btn btn-sm btn-secondary" type="submit">Downgrade Account</button>
+        </form>
+      <% } %>
       <% if (user.email) { %>
         <h4 class="mt-3 mb-3">Password <i class="fas fa-key ml-2"></i></h4>
         <% if (!user.password) { %>

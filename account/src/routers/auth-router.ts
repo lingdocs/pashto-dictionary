@@ -6,7 +6,7 @@ import {
   getLingdocsUser,
   updateLingdocsUser,
 } from "../lib/couch-db";
-import { createNewUser, canRemoveOneOutsideProvider } from "../lib/user-utils";
+import { createNewUser, canRemoveOneOutsideProvider, downgradeUser } from "../lib/user-utils";
 import {
   getHash,
   getURLToken,
@@ -191,6 +191,18 @@ const authRouter = (passport: PassportStatic) => {
     }
   });
 
+  router.post("/downgradeToBasic", async (req, res, next) => {
+    try {
+      if (!req.user) {
+        return res.redirect("/");
+      }
+      await downgradeUser(req.user.userId);
+      res.redirect("/");
+    } catch (e) {
+      next(e);
+    }
+  });
+  
   router.delete("/admin/:userId", async (req, res, next) => {
     try {
       // TODO: MAKE PROPER MIDDLEWARE WITH TYPING
