@@ -76,7 +76,7 @@
       <% } %>
       <% if (user.tester && user.level === "student" && user.subscription) { %>
         <p>Current subscription: <% if (user.subscription.metadata.cycle === "monthly") { %>$1/month<% } else { %>$10/year<% } %></p>
-        <p><a href="#" onclick="handleDowngrade()">Downgrade</a> your account to cancel your subscription</p>
+        <p><a href="#" onclick="handleDowngrade()">Downgrade</a> to cancel your subscription</p>
       <% } %>
       <% if (user.email) { %>
         <h4 class="mt-3 mb-3">Password <i class="fas fa-key ml-2"></i></h4>
@@ -228,12 +228,10 @@
       }
     }
     function handleDowngrade() {
-      const answer = confirm("Are you sure you want to downgrade your account? Your wordlist will be deleted forever. (Export it to CSV from the dictionary if you want to keep it)");
+      const answer = confirm("Are you sure you want to downgrade your account? Your wordlist will be deleted forever. (Export it to CSV from the dictionary first if you want to keep it.)");
       if (answer) {
         fetch("/downgradeToBasic", { method: "POST" }).then((res) => res.json()).then((res) => {
-          if (res.ok) {
-            window.location = "/";
-          }
+          window.location = "/";
         }).catch((err) => {
           alert("Error downgrading account - check your connection");
           console.error(err);

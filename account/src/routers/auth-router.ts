@@ -196,6 +196,8 @@ const authRouter = (passport: PassportStatic) => {
       if (!req.user) {
         return res.redirect("/");
       }
+      // @ts-ignore;
+      console.log("will downgrade user with subscription id", req.user?.subscription?.id)
       await downgradeUser(req.user.userId, "subscription" in req.user
         ? req.user.subscription?.id
         : undefined);
