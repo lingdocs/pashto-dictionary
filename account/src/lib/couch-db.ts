@@ -106,7 +106,7 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     wordlistDbName: T.WordlistDbName,
     couchDbPassword: T.UserDbPassword,
     upgradeToStudentRequest: undefined,
-    subscriptionId: string | undefined, 
+    subscription?: T.StripeSubscription, 
   } |
   {
     level: "basic",

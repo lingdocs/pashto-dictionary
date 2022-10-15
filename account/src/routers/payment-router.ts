@@ -54,7 +54,7 @@ paymentRouter.post(
         subscription = event.data.object;
         status = subscription.status;
         console.log(`Upgrading user ${userId}.`);
-        await upgradeUser(userId, subscription.id);
+        await upgradeUser(userId, subscription);
         // TODO: save subscription to db
         break;
       default:

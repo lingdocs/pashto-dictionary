@@ -65,7 +65,7 @@
           <div class="d-flex flex-row">
             <form action="/payment/create-checkout-session" method="POST">
               <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pM9qqdyt6" />
-              <button class="btn btn-sm btn-outline-secondary" type="submit">$1/month</button>
+              <button class="btn btn-sm btn-outline-secondary mr-4" type="submit">$1/month</button>
             </form>
             <form action="/payment/create-checkout-session" method="POST">
               <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pHk1MQqCC" />
@@ -75,6 +75,7 @@
         <% } %>
       <% } %>
       <% if (user.tester && user.level === "student") { %>
+        <p>Downgrade your account to cancel your subscription</p>
         <form action="/downgradeToBasic" method="POST">
           <button class="btn btn-sm btn-secondary" type="submit">Downgrade Account</button>
         </form>

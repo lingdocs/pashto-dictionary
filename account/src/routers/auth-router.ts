@@ -196,8 +196,8 @@ const authRouter = (passport: PassportStatic) => {
       if (!req.user) {
         return res.redirect("/");
       }
-      await downgradeUser(req.user.userId, "subscriptionId" in req.user
-        ? req.user.subscriptionId
+      await downgradeUser(req.user.userId, "subscription" in req.user
+        ? req.user.subscription?.id
         : undefined);
       res.redirect("/");
     } catch (e) {

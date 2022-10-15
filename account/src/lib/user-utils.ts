@@ -57,7 +57,7 @@ export function getEmailFromGoogleProfile(profile: T.GoogleProfile): { email: st
     };
 }
 
-export async function upgradeUser(userId: T.UUID, subscriptionId?: string): Promise<T.UpgradeUserResponse> {
+export async function upgradeUser(userId: T.UUID, subscription?: T.StripeSubscription): Promise<T.UpgradeUserResponse> {
     // add user to couchdb authentication db
     const { password, userDbName } = await addCouchDbAuthUser(userId);
     // // create user db
@@ -67,7 +67,7 @@ export async function upgradeUser(userId: T.UUID, subscriptionId?: string): Prom
         wordlistDbName: userDbName,
         couchDbPassword: password,
         upgradeToStudentRequest: undefined,
-        subscriptionId,
+        subscription,
     });
     if (user.email) {
         sendAccountUpgradeMessage(user).catch(console.error);
