@@ -15,7 +15,7 @@ export type GoogleProfile = WoutRJ<import("passport-google-oauth").Profile> & { 
 export type GitHubProfile = WoutRJ<import("passport-github2").Profile> & { accessToken: string };
 export type TwitterProfile = WoutRJ<import("passport-twitter").Profile> & { token: string, tokenSecret: string };
 export type ProviderProfile = GoogleProfile | GitHubProfile | TwitterProfile;
-export type UserLevel = "basic" | "student" | "editor"; 
+export type UserLevel = "basic" | "student" | "editor";
 
 export type UserTextOptions = Omit<import("@lingdocs/ps-react").Types.TextOptions, "pTextSize">;
 
@@ -29,6 +29,8 @@ export type TestResult = {
     time: TimeStamp,
     id: string,
 }
+
+export type StripeSubscription = import("stripe").Stripe.Subscription;
 
 // TODO: TYPE GUARDING SO WE NEVER HAVE A USER WITH NO Id or Password
 export type LingdocsUser = {
@@ -56,7 +58,7 @@ export type LingdocsUser = {
         level: "student" | "editor",
         couchDbPassword: UserDbPassword,
         wordlistDbName: WordlistDbName,
-        subscriptionId: string | undefined,
+        subscription?: StripeSubscription,
     }
 ) & import("nano").MaybeDocument;
 
