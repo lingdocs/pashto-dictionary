@@ -62,22 +62,21 @@
         <% } %>
         <% if (user.tester) { %>
           <p>Upgrade to Student account for Wordlist features</p>
-          <div class="d-flex flex-row">
+          <div class="d-flex flex-row" style="gap: 1rem;">
             <form action="/payment/create-checkout-session" method="POST">
               <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pM9qqdyt6" />
-              <button class="btn btn-sm btn-outline-secondary mr-3" type="submit">$1/month</button>
+              <button class="btn btn-sm btn-outline-secondary" type="submit">$1/month</button>
             </form>
             <form action="/payment/create-checkout-session" method="POST">
               <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pHk1MQqCC" />
-              <button class="btn btn-sm btn-outline-secondary ml-3" type="submit">$10/year</button>
+              <button class="btn btn-sm btn-outline-secondary" type="submit">$10/year</button>
             </form>
           </div>
         <% } %>
       <% } %>
       <% if (user.tester && user.level === "student" && user.subscription) { %>
         <p>Current subscription: <% if (user.subscription.metadata.cycle === "monthly") { %>$1/month<% } else { %>$10/year<% } %></p>
-        <p>Downgrade your account to cancel your subscription</p>
-        <button class="btn btn-sm btn-secondary" type="button" onClick="handleDowngrade()"> Account</button>
+        <p><a onclick="handleDowngrade">Downgrade</a> your account to cancel your subscription</p>
       <% } %>
       <% if (user.email) { %>
         <h4 class="mt-3 mb-3">Password <i class="fas fa-key ml-2"></i></h4>
