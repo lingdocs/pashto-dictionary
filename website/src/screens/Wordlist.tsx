@@ -7,6 +7,7 @@
  */
 
 import Entry from "../components/Entry";
+import * as AT from "../types/account-types";
 import WordlistWordEditor from "../components/WordlistWordEditor";
 import { useState, useEffect } from "react";
 import Helmet from "react-helmet";
@@ -44,6 +45,7 @@ import AudioPlayButton from "../components/AudioPlayButton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 import hitBottom from "../lib/hitBottom";
+import { Link } from "react-router-dom";
 import {
     Options,
     WordlistWord,
@@ -51,6 +53,7 @@ import {
     OptionsAction,
     WordlistMode,
 } from "../types/dictionary-types";
+import UpgradePrices from "../components/UpgradePrices";
 
 const cleanupIcon = "broom";
 
@@ -81,11 +84,12 @@ function amountOfWords(number: number): string {
     return `${number} word${number !== 1 ? "s" : ""}`;
 }
 
-function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
+function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
     options: Options,
     wordlist: WordlistWord[],
     isolateEntry: (ts: number) => void,
     optionsDispatch: (action: OptionsAction) => void,
+    user: AT.LingdocsUser | undefined,
 }) {
     // @ts-ignore
     const [wordOpen, setWordOpen] = useState<string | undefined>(undefined);
@@ -252,6 +256,31 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch }: {
                 guide={showGuide}
             />}
         </div>
+    }
+    if (!(user?.level === "student")) {
+        return <div className="width-limiter" style={{ marginBottom: "120px" }}>
+            <Helmet>
+                <title>Wordlist - LingDocs Pashto Dictionary</title>
+            </Helmet>
+            <div className="d-flex flex-row justify-content-between mb-2">
+                <h4 className="mb-3">Wordlist</h4>
+            </div>
+            <div style={{ marginTop: "2rem" }}>
+                {!user
+                    ? <p className="lead"><Link to="/account">Sign in</Link> to upgrade and enable wordlist</p>
+                    : <div>
+                        <p className="lead">Upgrade to a <strong>student account</strong> to enable the wordlist</p>
+                        <p>Features:</p>
+                        <ul>
+                            <li>Save your wordlist and sync across devices</li>
+                            <li>Save text, audio, or visual context for words</li>
+                            <li>Review words with Anki-style spaced repetition</li>
+                        </ul>
+                        <UpgradePrices />
+                    </div>
+                }
+            </div>
+        </div>;
     }
     return <div className="width-limiter" style={{ marginBottom: "120px" }}>
             <Helmet>

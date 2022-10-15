@@ -7,11 +7,11 @@ import {
     upgradeAccount,
     signOut,
     publishDictionary,
-    upgradeToStudentRequest,
 } from "../lib/backend-calls";
 import LoadingElipses from "../components/LoadingElipses";
 import { Helmet } from "react-helmet";
 import * as AT from "../types/account-types";
+import UpgradePrices from "../components/UpgradePrices";
 
 const providers: ("google" | "twitter" | "github")[] = ["google", "twitter", "github"];
 
@@ -57,22 +57,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
         setShowingUpgradePrompt(false);
         setUpgradePassword("");
         setUpgradeError("");
-    }
-    async function handleUpgradeRequest() {
-        setUpgradeError("");
-        setWaiting(true);
-        upgradeToStudentRequest().then((res) => {
-            setWaiting(false);
-            if (res.ok) {
-                loadUser();
-                closeUpgrade();
-            } else {
-                setUpgradeError("Error requesting upgrade");
-            }
-        }).catch((err) => {
-            setWaiting(false);
-            setUpgradeError(err.message);
-        });
     }
     async function handleUpgrade() {
         setUpgradeError("");
@@ -161,9 +145,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                                 </div>
                             </div>
                         </li>}
-                        <li className="list-group-item">Account Level: {capitalize(user.level)} {user.upgradeToStudentRequest === "waiting"
-                            ? "(Upgrade Requested)"
-                            : ""}</li>
+                        <li className="list-group-item">Account Level: {capitalize(user.level)}</li>
                         <li className="list-group-item">Signs in with: 
                             {(user.password && user.email) && <span>
                                 <i className="fas fa-key ml-2"></i> <span className="small mr-1">Password</span>
@@ -206,9 +188,19 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                 <Modal.Header closeButton>
                     <Modal.Title>Upgrade to Student Account</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Enter the secret upgrade password to upgrade your account or <button className="btn btn-sm btn-outline-secondary my-2" onClick={handleUpgradeRequest}>request an upgrade</button></Modal.Body>
+                <Modal.Body>
+                    <p className="lead">Upgrade to a <strong>student account</strong> to enable the wordlist</p>
+                    <p>Features:</p>
+                    <ul>
+                        <li>Save your wordlist and sync across devices</li>
+                        <li>Save text, audio, or visual context for words</li>
+                        <li>Review words with Anki-style spaced repetition</li>
+                    </ul>
+                    <UpgradePrices />
+                    <p>Or enter upgrade password</p>
+                </Modal.Body>
                 <div className="form-group px-3">
-                    <label htmlFor="upgradePasswordForm">Upgrade password:</label>
+                    <label htmlFor="upgradePasswordForm">Upgrade token:</label>
                     <input
                         type="text"
                         className="form-control"

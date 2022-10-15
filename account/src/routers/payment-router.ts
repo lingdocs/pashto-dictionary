@@ -80,6 +80,10 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
       return next("not logged in");
     }
     try {
+        const source = req.query.source;
+        const returnUrl = source === "dictionary"
+          ? "https://dictionary.lingodcs.com/account"
+          : "https://account.lingdocs.com/user";
         const price = req.body.priceId;
         const session = await stripe.checkout.sessions.create({
             billing_address_collection: 'auto',
@@ -93,13 +97,13 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
               metadata: {
                 userId: req.user.userId,
                 startTime: Date.now(),
-                cycle: price === "price_1Lt0XdJnpCQCjf9pM9qqdyt6"
+                cycle: price === "price_1Lt8NqJnpCQCjf9pN7CQUjjO"
                   ? "monthly" : "yearly",
               },
             },
             mode: 'subscription',
-            success_url: `https://account.lingdocs.com/user`,
-            cancel_url: `https://account.lingdocs.com/user`,
+            success_url: returnUrl,
+            cancel_url: returnUrl,
         });
         if (!session.url) {
             return next("error creating session url");
@@ -109,10 +113,6 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
         console.error(err);
         return next("error connection to Stripe");
     }
-});
-
-paymentRouter.get("/store", (req, res) => {
-  res.render("store");
 });
 
 paymentRouter.post('/create-portal-session', async (req, res, next) => {

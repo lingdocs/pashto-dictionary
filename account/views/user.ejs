@@ -53,22 +53,17 @@
       </form>
       <h5>Account Level: <%= user.level.charAt(0).toUpperCase() + user.level.slice(1) %></h5>
       <% if (user.level === "basic") { %>
-        <% if (user.upgradeToStudentRequest === "waiting") { %>
-          <p>Wating for upgrade approval</p>
-        <% } %>
-        <% if (user.tester) { %>
-          <p>Upgrade to Student account for Wordlist features</p>
-          <div class="d-flex flex-row" style="gap: 1rem;">
-            <form action="/payment/create-checkout-session" method="POST">
-              <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pM9qqdyt6" />
-              <button class="btn btn-sm btn-outline-secondary" type="submit">$1/month</button>
-            </form>
-            <form action="/payment/create-checkout-session" method="POST">
-              <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pHk1MQqCC" />
-              <button class="btn btn-sm btn-outline-secondary" type="submit">$10/year</button>
-            </form>
-          </div>
-        <% } %>
+        <p>Upgrade to Student account for Wordlist features</p>
+        <div class="d-flex flex-row" style="gap: 1rem;">
+          <form action="/payment/create-checkout-session" method="POST">
+            <input type="hidden" name="priceId" value="price_1Lt8NqJnpCQCjf9pN7CQUjjO" />
+            <button class="btn btn-sm btn-outline-secondary" type="submit">$1/month</button>
+          </form>
+          <form action="/payment/create-checkout-session" method="POST">
+            <input type="hidden" name="priceId" value="price_1Lt8NqJnpCQCjf9p4FAEIOMw" />
+            <button class="btn btn-sm btn-outline-secondary" type="submit">$10/year</button>
+          </form>
+        </div>
       <% } %>
       <% if (user.tester && user.level === "student" && user.subscription) { %>
         <p>Current subscription: <% if (user.subscription.metadata.cycle === "monthly") { %>$1/month<% } else { %>$10/year<% } %></p>

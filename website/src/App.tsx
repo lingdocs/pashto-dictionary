@@ -25,8 +25,7 @@ import EntryEditor from "./screens/EntryEditor";
 import IsolatedEntry from "./screens/IsolatedEntry";
 import PrivacyPolicy from "./screens/PrivacyPolicy";
 import Wordlist from "./screens/Wordlist";
-import { wordlistEnabled } from "./lib/level-management";
-import { 
+import {
     saveOptions,
     readOptions,
     saveUser,
@@ -585,14 +584,15 @@ class App extends Component<RouteComponentProps, State> {
                                 isolateEntry={this.handleIsolateEntry}
                             />
                         </Route>
-                        {wordlistEnabled(this.state.user) && <Route path="/wordlist">
+                        <Route path="/wordlist">
                             <Wordlist
                                 options={this.state.options}
                                 wordlist={this.state.wordlist}
                                 isolateEntry={this.handleIsolateEntry}
                                 optionsDispatch={this.handleOptionsUpdate}
+                                user={this.state.user}
                             />
-                        </Route>}
+                        </Route>
                         {this.state.user?.level === "editor" && <Route path="/edit">
                             <EntryEditor
                                 isolatedEntry={this.state.isolatedEntry}
@@ -619,13 +619,11 @@ class App extends Component<RouteComponentProps, State> {
                         <BottomNavItem label="About" icon="info-circle" page="/about" />
                         <BottomNavItem label="Settings" icon="cog" page="/settings" />
                         <BottomNavItem label={this.state.user ? "Account" : "Sign In"} icon="user" page="/account" />
-                        {wordlistEnabled(this.state.user) &&
-                            <BottomNavItem
-                                label={`Wordlist ${this.state.options.wordlistReviewBadge ? textBadge(forReview(this.state.wordlist).length) : ""}`}
-                                icon="list"
-                                page="/wordlist"
-                            />
-                        }
+                        <BottomNavItem
+                            label={`Wordlist ${this.state.options.wordlistReviewBadge ? textBadge(forReview(this.state.wordlist).length) : ""}`}
+                            icon="list"
+                            page="/wordlist"
+                        />
                         {this.state.user?.level === "editor" &&
                             <BottomNavItem
                                 label={`Tasks ${textBadge(this.state.reviewTasks.length)}`}
