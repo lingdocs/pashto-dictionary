@@ -81,8 +81,7 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
     }
     try {
         const prices = await stripe.prices.list({
-            lookup_keys: [req.body.productId],
-            expand: ['data.product'],
+          expand: ['data.product'],
         });
         const session = await stripe.checkout.sessions.create({
             billing_address_collection: 'auto',
