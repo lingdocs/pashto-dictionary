@@ -85,14 +85,16 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
             billing_address_collection: 'auto',
             line_items: [
                 {
-                    price,
-                    quantity: 1,
+                  price,
+                  quantity: 1,
                 },
             ],
             subscription_data: {
               metadata: {
                 userId: req.user.userId,
                 startTime: Date.now(),
+                cycle: price === "price_1Lt0XdJnpCQCjf9pM9qqdyt6"
+                  ? "monthly" : "yearly",
               },
             },
             mode: 'subscription',
