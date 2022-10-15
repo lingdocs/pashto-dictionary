@@ -65,7 +65,7 @@
           </form>
         </div>
       <% } %>
-      <% if (user.tester && user.level === "student" && user.subscription) { %>
+      <% if (user.level === "student" && user.subscription) { %>
         <p>Current subscription: <% if (user.subscription.metadata.cycle === "monthly") { %>$1/month<% } else { %>$10/year<% } %></p>
         <p><a href="#" onclick="handleDowngrade()">Downgrade</a> to cancel your subscription</p>
       <% } %>
