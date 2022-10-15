@@ -8,15 +8,15 @@ const prices = [
         priceId: "price_1Lt8NqJnpCQCjf9p4FAEIOMw",
     },
 ];
-const checkoutPortalUrl = "https://account.lingdocs.com/payment/create-checkout-session/?source=dictionary";
+const checkoutPortalUrl = "https://account.lingdocs.com/payment/create-checkout-session/";
 
-function UpgradePrices() {
+function UpgradePrices({ source }: { source: "account" | "wordlist" }) {
     return <div className="my-4">
         <h5>Subscription options</h5>
         <div className="d-flex flex-row flex-wrap my-3" style={{ gap: "1.5rem" }}>
             {prices.map(({ priceId, label }) => <div key={priceId}>
                 <form
-                    action={checkoutPortalUrl}
+                    action={`${checkoutPortalUrl}?source=${source}`}
                     method="POST"
                 >
                     <input type="hidden" name="priceId" value={priceId} />

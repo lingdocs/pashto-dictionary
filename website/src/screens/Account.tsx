@@ -191,7 +191,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                         <li>Save text, audio, or visual context for words</li>
                         <li>Review words with Anki-style spaced repetition</li>
                     </ul>
-                    <UpgradePrices />
+                    <UpgradePrices source="account" />
                 </Modal.Body>
                 <div className="form-group px-3">
                     <label htmlFor="upgradePasswordForm">Or enter upgrade password:</label>

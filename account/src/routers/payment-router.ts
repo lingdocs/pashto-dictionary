@@ -37,23 +37,17 @@ paymentRouter.post(
       }
     }
     let subscription: Stripe.Subscription;
-    let status: Stripe.Subscription.Status;
     // Handle the event
     const userId = event.data.object.metadata.userId as T.UUID;
     switch (event.type) {
       case 'customer.subscription.deleted':
         subscription = event.data.object;
-        status = subscription.status;
-        console.log(`Subscription status is ${status}.`);
-        console.log(`Downgrading user ${userId}.`);
         await downgradeUser(userId);
         // Then define and call a method to handle the subscription deleted.
         // handleSubscriptionDeleted(subscriptionDeleted);
         break;
       case 'customer.subscription.created':
         subscription = event.data.object;
-        status = subscription.status;
-        console.log(`Upgrading user ${userId}.`);
         await upgradeUser(userId, subscription);
         // TODO: save subscription to db
         break;
@@ -81,8 +75,10 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
     }
     try {
         const source = req.query.source;
-        const returnUrl = source === "dictionary"
+        const returnUrl = source === "account"
           ? "https://dictionary.lingdocs.com/account"
+          : source === "wordlist"
+          ? "https://dictionary.lingdocs.com"
           : "https://account.lingdocs.com/user";
         const price = req.body.priceId;
         const session = await stripe.checkout.sessions.create({
