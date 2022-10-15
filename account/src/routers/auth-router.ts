@@ -194,14 +194,16 @@ const authRouter = (passport: PassportStatic) => {
   router.post("/downgradeToBasic", async (req, res, next) => {
     try {
       if (!req.user) {
-        return res.redirect("/");
+        return res.send({ ok: false, error: "user not logged in" });
       }
-      // @ts-ignore;
-      console.log("will downgrade user with subscription id", req.user?.subscription?.id)
-      await downgradeUser(req.user.userId, "subscription" in req.user
-        ? req.user.subscription?.id
+      const subscription = "subscription" in req.user ? req.user.subscription : undefined;
+      await downgradeUser(req.user.userId, subscription
+        ? subscription.id
         : undefined);
-      res.redirect("/");
+      res.send({
+        ok: true,
+        message: `account downgraded to basic${subscription ? " and subscription cancelled" : ""}`,
+      });
     } catch (e) {
       next(e);
     }

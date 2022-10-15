@@ -231,7 +231,11 @@
       const answer = confirm("Are you sure you want to downgrade your account? Your wordlist will be deleted forever. (Export it to CSV from the dictionary first if you want to keep it.)");
       if (answer) {
         fetch("/downgradeToBasic", { method: "POST" }).then((res) => res.json()).then((res) => {
-          window.location = "/";
+          if (res.ok) {
+            window.location = "/";
+          } else {
+            alert("Error downgrading account");
+          }
         }).catch((err) => {
           alert("Error downgrading account - check your connection");
           console.error(err);
