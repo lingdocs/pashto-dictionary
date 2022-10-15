@@ -177,10 +177,7 @@ apiRouter.delete("/user", async (req, res, next) => {
  * signs out the user signed in
  */
 apiRouter.post("/sign-out", (req, res) => {
-    req.logOut((err) => {
-        console.error("error logging out");
-        console.error(err);
-    });
+    req.logOut();
     sendResponse(res, { ok: true, message: "signed out" });
 });
 

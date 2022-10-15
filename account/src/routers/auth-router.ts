@@ -31,6 +31,7 @@ import * as T from "../../../website/src/types/account-types";
 
 const authRouter = (passport: PassportStatic) => {
   const router = Router();
+
   router.get("/", (req, res) => {
     if (req.isAuthenticated()) {
       return res.redirect("/user");
@@ -46,7 +47,6 @@ const authRouter = (passport: PassportStatic) => {
       user: req.user,
       error: null,
       removeProviderOption: canRemoveOneOutsideProvider(req.user),
-      upgrade: req.query.upgrade,
     });
   });
 
@@ -166,7 +166,7 @@ const authRouter = (passport: PassportStatic) => {
     }
   });
 
-  router.get("/privacy", async (req, res, next) => {
+  router.get("/privacy", (req, res) => {
     res.render("privacy");
   });
 
@@ -323,10 +323,7 @@ const authRouter = (passport: PassportStatic) => {
   });
 
   router.post("/sign-out", (req, res) => {
-    req.logOut((err) => {
-      console.error("error logging out");
-      console.error(err);
-    });
+    req.logOut();
     res.redirect("/");
   });
   

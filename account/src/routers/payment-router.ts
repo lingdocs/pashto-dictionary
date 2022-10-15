@@ -98,7 +98,7 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
               },
             },
             mode: 'subscription',
-            success_url: `https://account.lingdocs.com/user?upgrade=success`,
+            success_url: `https://account.lingdocs.com/user`,
             cancel_url: `https://account.lingdocs.com/user`,
         });
         if (!session.url) {
@@ -109,6 +109,10 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
         console.error(err);
         return next("error connection to Stripe");
     }
+});
+
+paymentRouter.get("/store", (req, res) => {
+  res.render("store");
 });
 
 paymentRouter.post('/create-portal-session', async (req, res, next) => {

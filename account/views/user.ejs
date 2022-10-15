@@ -52,10 +52,6 @@
         </div>
       </form>
       <h5>Account Level: <%= user.level.charAt(0).toUpperCase() + user.level.slice(1) %></h5>
-      <% if (upgrade === "success" && user.level === "student") { %>
-        <p>🎉 Account upgraded to student 🎉</p>
-        <p>Thank you for your purchase!</p>
-      <% } %>
       <% if (user.level === "basic") { %>
         <% if (user.upgradeToStudentRequest === "waiting") { %>
           <p>Wating for upgrade approval</p>
@@ -188,6 +184,11 @@
       }
       try {
         w.postMessage("signed in", "https://grammar.lingdocs.com");
+      } catch (e) {
+        console.error(e);
+      }
+      try {
+        w.postMessage("upgraded", "https://dictionary.lingodocs.com");
       } catch (e) {
         console.error(e);
       }
