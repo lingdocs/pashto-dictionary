@@ -7,10 +7,15 @@ import * as T from "../../../website/src/types/account-types";
 const nano = Nano(env.couchDbURL);
 const usersDb = nano.db.use("lingdocs-users");
 const feedbackDb = nano.db.use("feedback");
+const paymentsDb = nano.db.use("payments");
 const userDbPrefix = "userdb-";
 
 export async function addFeedback(feedback: any) {
   await feedbackDb.insert(feedback);
+}
+
+export async function addToPaymentsDb(payment: any) {
+  await paymentsDb.insert(payment);
 }
 
 export function updateLastLogin(user: T.LingdocsUser): T.LingdocsUser {

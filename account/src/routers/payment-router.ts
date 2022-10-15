@@ -3,6 +3,7 @@ import * as T from "../../../website/src/types/account-types";
 import env from "../lib/env-vars";
 import Stripe from "stripe";
 import { downgradeUser, upgradeUser } from "../lib/user-utils";
+import { addToPaymentsDb } from "../lib/couch-db";
 
 const stripe = new Stripe(env.stripeSecretKey, {
     apiVersion: "2022-08-01",
@@ -42,12 +43,20 @@ paymentRouter.post(
     switch (event.type) {
       case 'customer.subscription.deleted':
         subscription = event.data.object;
+        addToPaymentsDb({
+          action: "deleted",
+          subscription,
+        });
         await downgradeUser(userId);
         // Then define and call a method to handle the subscription deleted.
         // handleSubscriptionDeleted(subscriptionDeleted);
         break;
       case 'customer.subscription.created':
         subscription = event.data.object;
+        addToPaymentsDb({
+          action: "created",
+          subscription,
+        });
         await upgradeUser(userId, subscription);
         // TODO: save subscription to db
         break;
