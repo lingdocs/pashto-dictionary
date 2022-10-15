@@ -81,7 +81,7 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
     }
     try {
         const prices = await stripe.prices.list({
-            lookup_keys: [req.body.lookup_key],
+            lookup_keys: [req.body.productId],
             expand: ['data.product'],
         });
         const session = await stripe.checkout.sessions.create({
@@ -89,6 +89,11 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
             line_items: [
                 {
                     price: prices.data[0].id,
+                    // For metered billing, do not pass quantity
+                    quantity: 1,
+                },
+                {
+                    price: prices.data[1].id,
                     // For metered billing, do not pass quantity
                     quantity: 1,
                 },
