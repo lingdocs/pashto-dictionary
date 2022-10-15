@@ -80,20 +80,12 @@ paymentRouter.post("/create-checkout-session", async (req, res, next) => {
       return next("not logged in");
     }
     try {
-        const prices = await stripe.prices.list({
-          expand: ['data.product'],
-        });
+        const price = req.body.priceId;
         const session = await stripe.checkout.sessions.create({
             billing_address_collection: 'auto',
             line_items: [
                 {
-                    price: prices.data[0].id,
-                    // For metered billing, do not pass quantity
-                    quantity: 1,
-                },
-                {
-                    price: prices.data[1].id,
-                    // For metered billing, do not pass quantity
+                    price,
                     quantity: 1,
                 },
             ],
