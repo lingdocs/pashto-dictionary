@@ -113,6 +113,7 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
     wordlistDbName: undefined,
     couchDbPassword: undefined,
     upgradeToStudentRequest: undefined,
+    subscription: undefined,
   } |
   { upgradeToStudentRequest: "waiting" } | 
   { upgradeToStudentRequest: "denied" } |

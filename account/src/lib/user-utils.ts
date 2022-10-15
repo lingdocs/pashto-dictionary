@@ -89,6 +89,7 @@ export async function downgradeUser(userId: T.UUID, subscriptionId?: string): Pr
         wordlistDbName: undefined,
         couchDbPassword: undefined,
         upgradeToStudentRequest: undefined,
+        subscription: undefined,
     });
     if (user.email) {
         // TODO
