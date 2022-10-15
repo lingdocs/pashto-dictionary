@@ -183,8 +183,9 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                     <button
                         type="button"
                         className="btn btn-outline-secondary"
-                        // onClick={() => setShowingUpgradePrompt(true)}
-                        onClick={handleOpenUpgrade}
+                        onClick={"tester" in user
+                            ? handleOpenUpgrade
+                            : () => setShowingUpgradePrompt(true)}
                         data-testid="upgradeButton"
                     >
                         <i className="fa fa-level-up-alt"></i> Upgrade Account
