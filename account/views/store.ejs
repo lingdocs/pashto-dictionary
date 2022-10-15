@@ -17,7 +17,7 @@
             console.error(e);
           }
         } else {
-          alert("close window or go back to cancel");
+          history.back();
         }
       }
     </script>
@@ -79,7 +79,7 @@
             </div>
           </div>
           <div class="row justify-content-center">
-            <div class="col-2">
+            <div class="col-4">
               <button onclick="handleCancel()" type="button" class="w-100 btn btn-lg btn-outline-secondary">Cancel</button>
             </div>
         </div>
