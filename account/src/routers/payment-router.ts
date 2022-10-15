@@ -14,7 +14,6 @@ paymentRouter.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
   async (request, response) => {
-    console.log("in webhook");
     let event = request.body;
     // Replace this endpoint secret with your endpoint's unique secret
     // If you are testing with the CLI, find the secret by running 'stripe listen'
@@ -24,10 +23,8 @@ paymentRouter.post(
     // Otherwise use the basic event deserialized with JSON.parse
     const endpointSecret = env.stripeWebhookSecret;
     if (endpointSecret) {
-      console.log("endoint Secret", endpointSecret);
       // Get the signature sent by Stripe
       const signature = request.headers['stripe-signature'] || "";
-      console.log("signature", signature);
       try {
         event = stripe.webhooks.constructEvent(
           request.body,

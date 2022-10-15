@@ -192,10 +192,9 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                         <li>Review words with Anki-style spaced repetition</li>
                     </ul>
                     <UpgradePrices />
-                    <p>Or enter upgrade password</p>
                 </Modal.Body>
                 <div className="form-group px-3">
-                    <label htmlFor="upgradePasswordForm">Upgrade token:</label>
+                    <label htmlFor="upgradePasswordForm">Or enter upgrade password:</label>
                     <input
                         type="text"
                         className="form-control"
@@ -216,7 +215,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={handleUpgrade}>
-                        Upgrade my account
+                        Upgrade with password
                     </Button>
                 </Modal.Footer>
             </Modal>

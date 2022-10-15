@@ -82,6 +82,7 @@ export async function upgradeUser(userId: T.UUID, subscription?: T.StripeSubscri
 export async function downgradeUser(userId: T.UUID, subscriptionId?: string): Promise<T.DowngradeUserResponse> {
     await deleteCouchDbAuthUser(userId);
     if (subscriptionId) {
+        console.log("deleting sub id", subscriptionId);
         stripe.subscriptions.del(subscriptionId);
     }
     const user = await updateLingdocsUser(userId, {
