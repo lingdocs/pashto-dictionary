@@ -268,17 +268,16 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
             <div style={{ marginTop: "2rem" }}>
                 {!user
                     ? <p className="lead"><Link to="/account">Sign in</Link> to upgrade and enable wordlist</p>
-                    : <div>
-                        <p className="lead">Upgrade to a <strong>student account</strong> to enable the wordlist</p>
-                        <p>Features:</p>
-                        <ul>
-                            <li>Save your wordlist and sync across devices</li>
-                            <li>Save text, audio, or visual context for words</li>
-                            <li>Review words with Anki-style spaced repetition</li>
-                        </ul>
-                        <UpgradePrices />
-                    </div>
-                }
+                    : <p className="lead">Upgrade to a <strong>student account</strong> to enable the wordlist</p>}
+                <div>
+                    <p>Features:</p>
+                    <ul>
+                        <li>Save your wordlist and sync across devices</li>
+                        <li>Save text, audio, or visual context for words</li>
+                        <li>Review words with Anki-style spaced repetition</li>
+                    </ul>
+                    {user ? <UpgradePrices /> : <Link to="/account">Sign In</Link>}
+                </div>
             </div>
         </div>;
     }

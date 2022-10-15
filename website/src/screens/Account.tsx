@@ -42,7 +42,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
     function handleIncomingMessage(event: MessageEvent<any>) {
         if (
             event.origin === "https://account.lingdocs.com"
-            && (event.data === "signed in" || event.data === "upgraded" || event.data === "cancelled")
+            && (event.data === "signed in")
             && popupRef
         ) {
             loadUser();
@@ -76,9 +76,6 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
     }
     function handleOpenSignup() {
         popupRef = window.open("https://account.lingdocs.com", "account", "height=800,width=500,top=50,left=400");
-    }
-    function handleOpenUpgrade() {
-        popupRef = window.open("https://account.lingdocs.com/payment/store", "store", "height=800,width=500,top=50,left=400");
     }
     function handlePublish() {
         setPublishingStatus("publishing");
@@ -165,9 +162,7 @@ const Account = ({ user, loadUser }: { user: AT.LingdocsUser | undefined, loadUs
                     <button
                         type="button"
                         className="btn btn-outline-secondary"
-                        onClick={"tester" in user
-                            ? handleOpenUpgrade
-                            : () => setShowingUpgradePrompt(true)}
+                        onClick={() => setShowingUpgradePrompt(true)}
                         data-testid="upgradeButton"
                     >
                         <i className="fa fa-level-up-alt"></i> Upgrade Account
