@@ -63,8 +63,12 @@
         <% if (user.tester) { %>
           <p>Upgrade to Student account for Wordlist features</p>
           <form action="/payment/create-checkout-session" method="POST">
-            <input type="hidden" name="lookup_key" value="price_1Lt0XdJnpCQCjf9pM9qqdyt6" />
-            <button class="btn btn-sm btn-secondary" id="checkout-and-portal-button" type="submit">$1/month</button>
+            <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pM9qqdyt6" />
+            <button class="btn btn-sm btn-secondary" type="submit">$1/month</button>
+          </form>
+          <form action="/payment/create-checkout-session" method="POST">
+            <input type="hidden" name="priceId" value="price_1Lt0XdJnpCQCjf9pHk1MQqCC" />
+            <button class="btn btn-sm btn-secondary mt-2" type="submit">$10/year</button>
           </form>
         <% } %>
       <% } %>
