@@ -257,7 +257,7 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
             />}
         </div>
     }
-    if (!user || user.level !== "student") {
+    if (!user || user.level === "basic") {
         return <div className="width-limiter" style={{ marginBottom: "120px" }}>
             <Helmet>
                 <title>Wordlist - LingDocs Pashto Dictionary</title>
