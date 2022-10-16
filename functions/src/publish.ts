@@ -1,4 +1,4 @@
-import { GoogleSpreadsheet } from "google-spreadsheet";
+import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
 import * as functions from "firebase-functions";
 import {
     Types as T,
@@ -95,25 +95,19 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
-    async function deleteRow(r: number) {
-        await rows[r].delete();
-    }
-    return await makeEntries(rows, deleteRow);
+    return await makeEntries(rows);
 }
 
-async function makeEntries(rows: any[], deleteRow: (r: number) => Promise<void>): Promise<T.DictionaryEntry[]> {
+async function makeEntries(rows: GoogleSpreadsheetRow[]): Promise<T.DictionaryEntry[]> {
     const entries: T.DictionaryEntry[] = [];
-    let sheetIndex = 0;
     for (let i = 0; i < rows.length; i++) {
-        sheetIndex++;
         const row = rows[i];
         const nextRow = rows[i+1] || undefined;
         if (row.ts === nextRow?.ts) {
             if (row.p !== nextRow.p) throw new Error(`ts ${row.ts} is a duplicate of a different entry`);
             // this looks like a duplicate entry made by the sheets api
             // delete it and keep going
-            await deleteRow(sheetIndex);
-            sheetIndex--;
+            await row.delete();
             continue;
         }
         const e: T.DictionaryEntry = {
