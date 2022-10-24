@@ -55,6 +55,8 @@ const About = ({ state } : { state: State }) => (
             <li>Email: dev234 AT lingdocs DOT com</li>
         </ul>
         <h3>License and Legal Info</h3>
+        <h4>Source Code</h4>
+        <p>This dictionary app is open sounce. The code is available <a href="https://github.com/lingdocs/pashto-dictionary">here on GitHub</a> and is licensed under an MIT License.</p>
         <h4>Dictionary Content</h4>
         <p>The contents of this dictionary are licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, with the added stipulation that this material cannot be used or re-distributed by any people or groups involved with military, violence, or government intelligence work.</p>
         {/* <h4>Dictionary Software/Code</h4>

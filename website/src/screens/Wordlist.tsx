@@ -276,7 +276,7 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
                         <li>Save text, audio, or visual context for words</li>
                         <li>Review words with Anki-style spaced repetition</li>
                     </ul>
-                    {user ? <UpgradePrices source="wordlist" /> : <Link to="/account">Sign In</Link>}
+                    {user && <UpgradePrices source="wordlist" />}
                 </div>
             </div>
         </div>;
