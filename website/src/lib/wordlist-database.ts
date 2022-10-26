@@ -82,7 +82,7 @@ export async function getWordlist(limit?: number): Promise<WordlistWord[]> {
 export async function getWordlistCsv(sortType: "alphabetical" | "time"): Promise<Blob> {
     const words = await getWordlist();
     const forCsv = words.map((w) => (
-        [w.entry.p, w.entry.f, w.entry.c, w.entry.e]
+        [w.entry.p, w.entry.f, w.entry.c, w.entry.e, w.entry.ts]
     ));
     if (sortType === "alphabetical") {
         // @ts-ignore
