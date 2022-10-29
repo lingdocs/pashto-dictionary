@@ -349,7 +349,6 @@ class App extends Component<RouteComponentProps, State> {
         dictionary.update(() => {
             // this.setState({ dictionaryStatus: "updating" });
         }).then(({ dictionaryInfo }) => {
-            console.log({ dictionaryInfo, old: this.state.dictionaryInfo })
             //if (this.state.dictionaryInfo?.release !== dictionaryInfo?.release) {
                 // to avoid unnecessary re-rendering that breaks things
                 this.setState({
