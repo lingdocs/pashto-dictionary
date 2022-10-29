@@ -345,16 +345,18 @@ class App extends Component<RouteComponentProps, State> {
     }
 
     private handleDictionaryUpdate() {
+        // TODO: fix - what the heck happened and what's going on here
         dictionary.update(() => {
-            this.setState({ dictionaryStatus: "updating" });
+            // this.setState({ dictionaryStatus: "updating" });
         }).then(({ dictionaryInfo }) => {
-            if (this.state.dictionaryInfo?.release !== dictionaryInfo?.release) {
+            console.log({ dictionaryInfo, old: this.state.dictionaryInfo })
+            //if (this.state.dictionaryInfo?.release !== dictionaryInfo?.release) {
                 // to avoid unnecessary re-rendering that breaks things
                 this.setState({
                     dictionaryStatus: "ready",
                     dictionaryInfo,
                 });
-            }
+            //}
         }).catch(() => {
             this.setState({ dictionaryStatus: "error loading" });
         });
@@ -439,7 +441,7 @@ class App extends Component<RouteComponentProps, State> {
     
     // TODO: right now not checking user very often cause it messes with the state?
     // causes the verb quizzer to reset?
-    private cronJob = new CronJob("* * * * *", () => {
+    private cronJob = new CronJob("1/10 * * * *", () => {
         this.handleDictionaryUpdate();
         this.handleLoadUser();
     })
