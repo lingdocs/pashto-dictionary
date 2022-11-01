@@ -18,7 +18,6 @@ const lokidb = new loki("", {
 export let dictionary: T.Dictionary | undefined = undefined;
 
 // TODO: Abstract dictionary fetch
-
 export function updateDictionary() {
     fetch(process.env.LINGDOCS_DICTIONARY_URL || "").then(res => res.arrayBuffer()).then(buffer => {
         const dict = readDictionary(buffer as Uint8Array);
