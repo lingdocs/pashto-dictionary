@@ -20,6 +20,7 @@
   "author": "lingdocs.com",
   "license": "MIT",
   "dependencies": {
+    "@lingdocs/inflect": "^5.1.8",
     "lokijs": "^1.5.12",
     "nano": "^9.0.5",
     "passport-github2": "^0.1.12",

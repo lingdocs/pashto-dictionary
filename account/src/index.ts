@@ -8,6 +8,7 @@ import apiRouter from "./routers/api-router";
 import inProd from "./lib/inProd";
 import feedbackRouter from "./routers/feedback-router";
 import paymentRouter from "./routers/payment-router";
+import dictionaryRouter from "./routers/dictionary-router";
 
 const app = express();
 
@@ -33,6 +34,8 @@ app.use("/", authRouter(passport));
 app.use("/api", apiRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/payment", paymentRouter);
+ // Dictionary API
+app.use("/dictionary", dictionaryRouter)
 
 // START 💨 //
 app.listen(4000, () => console.log("Server Has Started on 4000"));
