@@ -13,7 +13,7 @@ dictionaryRouter.post("/update", async (req, res, next) => {
     res.send({ ok: true, result });
 });
 
-dictionaryRouter.post("/entry", async (req, res, next) => {
+dictionaryRouter.post("/entries", async (req, res, next) => {
     if (!collection) {
         return res.send({ ok: false, message: "dictionary not ready" });
     }
@@ -25,7 +25,7 @@ dictionaryRouter.post("/entry", async (req, res, next) => {
     return res.send(results);
 });
 
-dictionaryRouter.get("/entry/:id", async (req, res, next) => {
+dictionaryRouter.get("/entries/:id", async (req, res, next) => {
     if (!collection) {
         return res.send({ ok: false, message: "dictionary not ready" });
     }
