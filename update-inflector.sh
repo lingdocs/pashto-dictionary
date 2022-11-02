@@ -9,8 +9,6 @@ if [ $# -eq 0 ]
     version=$(npm show @lingdocs/ps-react version)
 fi
 
-
-
 # update all instances of @lingdocs/inflect and @lingdocs/ps-react in various package.json files
 # in website
 tmp=$(mktemp)
@@ -19,10 +17,15 @@ jq --arg version "$version" '.dependencies."@lingdocs/ps-react"=$version' "websi
 # in functions
 tmp=$(mktemp)
 jq --arg version "$version" '.dependencies."@lingdocs/inflect"=$version' "functions/package.json" > "$tmp" && mv "$tmp" "functions/package.json"
+# in account
+tmp=$(mktemp)
+jq --arg version "$version" '.dependencies."@lingdocs/inflect"=$version' "account/package.json" > "$tmp" && mv "$tmp" "account/package.json"
 
 # install to update .lock files
 cd website &&
 yarn install --legacy-peer-deps &&
 cd ../functions &&
+npm install &&
+cd ../account &&
 npm install
 

@@ -1,55 +1,37 @@
-import express, { Response } from "express";
+import express from "express";
 import {
     collection,
-    dictionary,
+    getEntries,
     updateDictionary,    
 } from "../lib/dictionary";
 import { unary } from "froebel";
 
 const dictionaryRouter = express.Router();
 
-// Guard all api with authentication
-dictionaryRouter.get("/", async (req, res, next) => {
-    if (!dictionary) {
-        return res.send({ ok: false, message: "dictionary not ready" });
-    }
-    res.send(dictionary);
-})
-
-dictionaryRouter.get("/info", async (req, res, next) => {
-    if (!dictionary) {
-        return res.send({ ok: false, message: "dictionary not ready" });
-    }
-    res.send({ info: dictionary.info })
-});
-
 dictionaryRouter.post("/update", async (req, res, next) => {
-    updateDictionary();
-    res.send({ ok: true });
+    const result = await updateDictionary();
+    res.send({ ok: true, result });
 });
 
-dictionaryRouter.get("/entry/:id", async (req, res, next) => {
-    const id = req.params.id.includes(",")
-        ? req.params.id.split(",").map(unary(parseInt))
-        : parseInt(req.params.id);
+dictionaryRouter.post("/entry", async (req, res, next) => {
     if (!collection) {
         return res.send({ ok: false, message: "dictionary not ready" });
     }
-    if (Array.isArray(id)) {
-        const results = collection.find({
-            "ts": {
-                "$in": id,
-            },
-        });
-        return res.send({ results });
+    const ids = req.body.ids as number[];
+    if (!Array.isArray(ids)) {
+        return res.status(400).send({ ok: false, error: "invalid query" });
     }
-    const r = collection.by("ts", id);
-    if (!r) {
-        return res.send({ result: [] });
+    const results = await getEntries(ids);
+    return res.send(results);
+});
+
+dictionaryRouter.get("/entry/:id", async (req, res, next) => {
+    if (!collection) {
+        return res.send({ ok: false, message: "dictionary not ready" });
     }
-    // remove $loki and meta
-    const { $loki, meta, ...word } = r;
-    return res.send({ result: word });
+    const ids = req.params.id.split(",").map(unary(parseInt));
+    const results = await getEntries(ids);
+    return res.send(results);
 });
 
 export default dictionaryRouter;
