@@ -88,7 +88,7 @@ function initializeLocalDb(type: LocalDbType, refresh: () => void, user: AT.Ling
                 db,
                 refresh,
                 sync: db.sync(
-                    `https://${user.userId}:${password}@couch.lingdocs.com/${name}`, 
+                    `https://${user.userId}:${password}@couchdb.lingdocs.com/${name}`, 
                     { live: true, retry: true },
                 ).on("change", (info) => {
                     if (info.direction === "pull") {

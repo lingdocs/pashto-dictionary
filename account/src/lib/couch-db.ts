@@ -9,11 +9,6 @@ const usersDb = nano.db.use("lingdocs-users");
 const feedbackDb = nano.db.use("feedback");
 const paymentsDb = nano.db.use("payments");
 const userDbPrefix = "userdb-";
-console.log("url========")
-console.log(env.couchDbURL);
-nano.db.list().then((res) => {
-  console.log(res);
-});
 
 export async function addFeedback(feedback: any) {
   await feedbackDb.insert(feedback);
