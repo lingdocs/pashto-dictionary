@@ -1,5 +1,6 @@
 # LingDocs Dictionary Monorepo
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/65b633a2-f123-4fcd-91bc-5e6acda43256/deploy-status)](https://app.netlify.com/sites/lingdocs-dictionary/deploys)
 ![Website CI](https://github.com/lingdocs/lingdocs-main/actions/workflows/website-ci.yml/badge.svg)
 ![Functions CI](https://github.com/lingdocs/lingdocs-main/actions/workflows/functions-ci.yml/badge.svg)

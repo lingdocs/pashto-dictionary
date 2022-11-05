@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2021 lingdocs.com
  *
- * This source code is licensed under the MIT license found in the
+ * This source code is licensed under the GPL3 license found in the
  * LICENSE file in the root directory of this source tree.
  *
  */
@@ -56,13 +56,9 @@ const About = ({ state } : { state: State }) => (
         </ul>
         <h3>License and Legal Info</h3>
         <h4>Source Code</h4>
-        <p>This dictionary app is open sounce. The code is available <a href="https://github.com/lingdocs/pashto-dictionary">here on GitHub</a> and is licensed under an MIT License.</p>
+        <p>This dictionary app is open sounce. The code is available <a href="https://github.com/lingdocs/pashto-dictionary">here on GitHub</a> and is licensed under a GPLv3 License.</p>
         <h4>Dictionary Content</h4>
         <p>The contents of this dictionary are licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, with the added stipulation that this material cannot be used or re-distributed by any people or groups involved with military, violence, or government intelligence work.</p>
-        {/* <h4>Dictionary Software/Code</h4>
-        <p>The <a href="https://github.com/openpashto/dictionary">source code</a> of the
-        dictionary web app is licensed under an <a rel="license" href="https://github.com/openpashto/pdictionary-app/blob/master/LICENSE">MIT License</a>.</p>
-    <hr /> */}
         <p>The LingDocs Pashto Dictionary assumes no responsibility or liability for any errors or omissions in
         the content of this site. The information contained in this site is provided on an “as is” basis with
         no guarantees of completeness, accuracy, usefulness or timeliness.</p>
