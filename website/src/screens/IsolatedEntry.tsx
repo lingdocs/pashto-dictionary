@@ -53,11 +53,18 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
     const [comment, setComment] = useState<string>("");
     const [editSubmitted, setEditSubmitted] = useState<boolean>(false);
     const [showingDeleteWarning, setShowingDeleteWarning] = useState<boolean>(false);
+    const [showClipped, setShowClipped] = useState<string>("");
     useEffect(() => {
         setEditing(false);
         setComment("");
         setEditSubmitted(false);
     }, [state]);
+    function flashClippedMessage(m: string) {
+        setShowClipped(m);
+        setTimeout(() => {
+            setShowClipped("");
+        }, 1250);
+    }
     const wordlistWord = state.wordlist.find((w) => w.entry.ts === state.isolatedEntry?.ts);
     const textOptions = getTextOptions(state);
     function submitEdit() {
@@ -128,6 +135,16 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
             return null;
         }
     }
+    function handleClipId() {
+        if (!entry) return
+        navigator.clipboard.writeText(entry.ts.toString());
+        flashClippedMessage("word id copied to clipboard");
+    }
+    function handleClipEntry() {
+        if (!entry) return
+        navigator.clipboard.writeText(JSON.stringify(entry));
+        flashClippedMessage("entry data copied to clipboard");
+    }
     return <div className="wide-width-limiter">
         <Helmet>
             <title>{entry.p} - LingDocs Pashto Dictionary</title>
@@ -149,11 +166,11 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                     >
                         <i className={`fas fa-${exploded ? "compress" : "expand"}-alt`} />
                     </div>
+                    <div className="clickable mr-3" onClick={handleClipId}>
+                        <i className="fas fa-tag"></i>
+                    </div>
                     {state.user && state.user.level === "editor" && <>
-                        <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(entry.ts.toString())}>
-                            <i className="fas fa-tag"></i>
-                        </div>
-                        <div className="clickable mr-3" onClick={() => navigator.clipboard.writeText(JSON.stringify(entry))}>
+                        <div className="clickable mr-3" onClick={handleClipEntry}>
                             <i className="fas fa-code"></i>
                         </div>
                         <Link to={`/edit?id=${entry.ts}`} className="plain-link">
@@ -250,6 +267,15 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
         </>}
         {isVerbEntry && <div className="pb-4">
             <DisplayVPExplorer entry={entry} complement={complement} />
+        </div>}
+        {showClipped && <div className="alert alert-primary text-center" role="alert" style={{
+            position: "fixed",
+            top: "30%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999999999999,
+        }}>
+            {showClipped}
         </div>}
 
         {!!(relatedEntries && relatedEntries.length) ? <>
