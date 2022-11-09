@@ -18,6 +18,7 @@ dictionaryRouter.post("/entries", async (req, res, next) => {
         return res.send({ ok: false, message: "dictionary not ready" });
     }
     const ids = req.body.ids as (number | string)[];
+    console.log({ ids });
     if (!Array.isArray(ids)) {
         return res.status(400).send({ ok: false, error: "invalid query" });
     }

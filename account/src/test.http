@@ -1,6 +1,0 @@
-POST http://localhost:4000/dictionary/entries
-content-type: application/json
-
-{
-    "ids": ["کور", 1527815306]
-}
