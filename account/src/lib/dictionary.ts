@@ -7,6 +7,7 @@ import {
     readDictionaryInfo,
     Types as T,
     typePredicates as tp,
+    entryOfFull,
 } from "@lingdocs/inflect"
 
 export let collection: Collection<any> | undefined = undefined;
@@ -56,15 +57,18 @@ function getOneByTs(ts: number): T.DictionaryEntry {
     return entry;
 }
 
-export async function getEntries(ids: number[]): Promise<{
+export async function getEntries(ids: (number | string)[]): Promise<{
     results: (T.DictionaryEntry | T.VerbEntry)[],
-    notFound: number[],
+    notFound: (number | string)[],
 }> {
     if (!collection) {
         throw new Error("dictionary not initialized");
     }
     const results: (T.DictionaryEntry | T.VerbEntry)[] = collection.find({
-        "ts": { "$in": ids },
+        "$or": [
+            { "ts": { "$in": ids }}, 
+            { "p": { "$in": ids }},
+        ],
     }).map(x => {
         const { $loki, meta, ...entry } = x;
         return entry;
@@ -85,9 +89,10 @@ export async function getEntries(ids: number[]): Promise<{
     });
     return {
         results,
-        notFound: ids.filter(id => !results.find(x => (
-            "entry" in x ? x.entry.ts === id : x.ts === id
-        ))),
+        notFound: ids.filter(id => !results.find(x => {
+            const entry = entryOfFull(x);
+            return entry.p === id || entry.ts === id;
+        })),
     };
 }
 

@@ -17,7 +17,7 @@ dictionaryRouter.post("/entries", async (req, res, next) => {
     if (!collection) {
         return res.send({ ok: false, message: "dictionary not ready" });
     }
-    const ids = req.body.ids as number[];
+    const ids = req.body.ids as (number | string)[];
     if (!Array.isArray(ids)) {
         return res.status(400).send({ ok: false, error: "invalid query" });
     }
@@ -29,7 +29,10 @@ dictionaryRouter.get("/entries/:id", async (req, res, next) => {
     if (!collection) {
         return res.send({ ok: false, message: "dictionary not ready" });
     }
-    const ids = req.params.id.split(",").map(unary(parseInt));
+    const ids = req.params.id.split(",").map(x => {
+        const n = parseInt(x);
+        return Number.isNaN(n) ? x : n;
+    });
     const results = await getEntries(ids);
     return res.send(results);
 });

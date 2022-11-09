@@ -105,10 +105,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/inflect@^5.1.8":
-  "integrity" "sha512-jk9qlJvDMFpw6FIQ6XCun3zfv679aG9uoM17P7rIeNDrjOxH00brRbBD3amaVC6UvpU0mxSC9n9dnubncrd9lg=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2finflect/-/inflect-5.1.8.tgz"
-  "version" "5.1.8"
+"@lingdocs/inflect@5.1.10":
+  "integrity" "sha512-LPJqXSnb2zLWLfMXMTCs/1NOGYQnzPHbKu5h/SdvFYobCxnk2tgngtSWcCmeqYbNXKqQvbDwqmseLlcnUZKysA=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2finflect/-/inflect-5.1.10.tgz"
+  "version" "5.1.10"
   dependencies:
     "pbf" "^3.2.1"
     "rambda" "^7.3.0"
