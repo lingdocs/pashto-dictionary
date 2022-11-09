@@ -755,11 +755,6 @@
   "resolved" "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz"
   "version" "0.5.2"
 
-"froebel@^0.22.0":
-  "integrity" "sha512-BF0Qm4qq860UAr57wfgFqoy1Df+5VyuenDC/ZTJEcIqwsSBBTrsP0bFEhuIMNOB/+JYcfIpDG+lHFC595Eqonw=="
-  "resolved" "https://registry.npmjs.org/froebel/-/froebel-0.22.0.tgz"
-  "version" "0.22.0"
-
 "fs-extra@^8.0.1":
   "integrity" "sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g=="
   "resolved" "https://registry.npmjs.org/fs-extra/-/fs-extra-8.1.0.tgz"

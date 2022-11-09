@@ -8,6 +8,7 @@ import {
     Types as T,
     typePredicates as tp,
     entryOfFull,
+    standardizePashto,
 } from "@lingdocs/inflect"
 
 export let collection: Collection<any> | undefined = undefined;
@@ -64,10 +65,11 @@ export async function getEntries(ids: (number | string)[]): Promise<{
     if (!collection) {
         throw new Error("dictionary not initialized");
     }
+    const idsP = ids.map(x => typeof x === "number" ? x : standardizePashto(x))
     const results: (T.DictionaryEntry | T.VerbEntry)[] = collection.find({
         "$or": [
-            { "ts": { "$in": ids }}, 
-            { "p": { "$in": ids }},
+            { "ts": { "$in": idsP }}, 
+            { "p": { "$in": idsP }},
         ],
     }).map(x => {
         const { $loki, meta, ...entry } = x;
