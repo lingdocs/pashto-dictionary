@@ -84,12 +84,15 @@ function amountOfWords(number: number): string {
     return `${number} word${number !== 1 ? "s" : ""}`;
 }
 
-function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
+let popupRef: Window | null = null;
+
+function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user, loadUser }: {
     options: Options,
     wordlist: WordlistWord[],
     isolateEntry: (ts: number) => void,
     optionsDispatch: (action: OptionsAction) => void,
     user: AT.LingdocsUser | undefined,
+    loadUser: () => void,
 }) {
     // @ts-ignore
     const [wordOpen, setWordOpen] = useState<string | undefined>(undefined);
@@ -104,6 +107,24 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
     const [monthsBackToKeep, setMonthsBackToKeep] = useState<number>(6);
     const [wordsToDelete, setWordsToDelete] = useState<string[]>([]);
     const [startedWithWordsToReview] = useState<boolean>(forReview(wordlist).length !== 0);
+    useEffect(() => {
+        window.addEventListener("message", handleIncomingMessage);
+        return () => {
+            window.removeEventListener("message", handleIncomingMessage);
+        };
+        // eslint-disable-next-line
+    }, []);
+    // TODO put the account url in an imported constant
+    function handleIncomingMessage(event: MessageEvent<any>) {
+        if (
+            event.origin === "https://account.lingdocs.com"
+            && (event.data === "signed in")
+            && popupRef
+        ) {
+            loadUser();
+            popupRef.close();
+        }
+    }
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
@@ -163,6 +184,9 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
         const toDelete = calculateWordsToDelete(wordlist, monthsBackToKeep);
         deleteWordFromWordlist(toDelete);
         setShowingCleanup(false);
+    }
+    function handleOpenSignup() {
+        popupRef = window.open("https://account.lingdocs.com", "account", "height=800,width=500,top=50,left=400");
     }
     function WordlistBrowsingWord({ word } : { word: WordlistWord }) {
         const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
@@ -282,7 +306,7 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
                             <li>$1/month or $10/year - cancel any time</li>
                         </ul>
                     </> : <UpgradePrices source="wordlist" />}
-                    {!user && <button className="btn btn-primary btn-lg mt-4" type="submit">Sign In</button>}
+                    {!user && <button className="btn btn-lg btn-primary my-4" onClick={handleOpenSignup}><i className="fas fa-sign-in-alt mr-2" /> Sign In</button>}
                 </div>
             </div>
         </div>;

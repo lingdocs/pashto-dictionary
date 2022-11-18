@@ -592,6 +592,7 @@ class App extends Component<RouteComponentProps, State> {
                                 isolateEntry={this.handleIsolateEntry}
                                 optionsDispatch={this.handleOptionsUpdate}
                                 user={this.state.user}
+                                loadUser={this.handleLoadUser}
                             />
                         </Route>
                         {this.state.user?.level === "editor" && <Route path="/edit">
