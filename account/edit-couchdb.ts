@@ -26,8 +26,7 @@ async function main() {
             await insertLingdocsUser({
                 ...user,
                 tests: removeRedundant(user.tests),
-            })
-            console.log("updated", user.name);
+            });
         }
     })
     return "done";

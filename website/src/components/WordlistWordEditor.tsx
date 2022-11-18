@@ -74,7 +74,6 @@ function WordlistWordEditor({ word }: {
             console.error("no audio file input");
             return;
         }
-        console.log(file);
         const wordWAudio = addAudioToWordlistWord(word, file);
         updateWordlistWord(wordWAudio);
         clearAudioFileInput();

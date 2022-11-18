@@ -34,7 +34,6 @@ export async function sendSubmissions() {
         }));
         const res = await postSubmissions(revRemoved);
         // delete the submissions that were received from the local submissions db
-        console.log(res);
         if (res.submissions) {
             res.submissions.forEach((submission) => {
                 deleteFromLocalDb("submissions", submission._id);

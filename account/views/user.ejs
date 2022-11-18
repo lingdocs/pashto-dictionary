@@ -312,7 +312,6 @@
       bc.innerHTML = "Sending …";
       fetch("/api/email-verification", { method: "PUT" }).then((res) => res.json())
         .then((res) => {
-          console.log(res);
           if (res.ok) {
             bc.innerHTML = "Sent ✔";
           } else {

@@ -151,8 +151,6 @@ export class DictionaryDb {
                             dictionaryInfo: dictionary.info,
                         });
                     } catch (e) {
-                        // console.log("bad error");
-                        // console.log(e);
                         console.error("error loading dictionary for the first time");
                         console.error(e);
                         reject();
