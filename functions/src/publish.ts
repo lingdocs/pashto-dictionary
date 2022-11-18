@@ -96,6 +96,7 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
     async function deleteRow(i: number) {
+        console.log("WILL DELETE ROW", rows[i].p, rows[i].ts, rows[i].f);
         await rows[i].delete();
     }
     return await makeEntries(rows, deleteRow);
@@ -104,17 +105,25 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
 async function makeEntries(rows: GoogleSpreadsheetRow[], deleteRow: (i: number) => Promise<void>): Promise<T.DictionaryEntry[]> {
     const entries: T.DictionaryEntry[] = [];
     let sheetIndex = 0;
+    // get the rows in order of ts for easy detection of duplicate entries
+    rows.sort((a, b) => a.ts > b.ts ? -1 : a.ts < b.ts ? 1 : 0);
     for (let i = 0; i < rows.length; i++) {
+        function sameEntry(a: any, b: any): boolean {
+            return a.p === b.p && a.f === b.f && a.e === b.e;
+        }
         sheetIndex++;
         const row = rows[i];
         const nextRow = rows[i+1] || undefined;
         if (row.ts === nextRow?.ts) {
-            if (row.p !== nextRow.p) throw new Error(`ts ${row.ts} is a duplicate of a different entry`);
-            // this looks like a duplicate entry made by the sheets api
-            // delete it and keep going
-            await deleteRow(sheetIndex);
-            sheetIndex--;
-            continue;
+            if (sameEntry(row, nextRow)) {
+                // this looks like a duplicate entry made by the sheets api
+                // delete it and keep going
+                await deleteRow(sheetIndex);
+                sheetIndex--;
+                continue;
+            } else {
+                throw new Error(`ts ${row.ts} is a duplicate ts of a different entry`);
+            }
         }
         const e: T.DictionaryEntry = {
             i: 1,
