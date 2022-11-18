@@ -276,7 +276,13 @@ function Wordlist({ options, wordlist, isolateEntry, optionsDispatch, user }: {
                         <li>Save text, audio, or visual context for words</li>
                         <li>Review words with Anki-style spaced repetition</li>
                     </ul>
-                    {user && <UpgradePrices source="wordlist" />}
+                    {!user ? <>
+                        <p>Cost:</p>
+                        <ul>
+                            <li>$1/month or $10/year - cancel any time</li>
+                        </ul>
+                    </> : <UpgradePrices source="wordlist" />}
+                    {!user && <button className="btn btn-primary btn-lg mt-4" type="submit">Sign In</button>}
                 </div>
             </div>
         </div>;
