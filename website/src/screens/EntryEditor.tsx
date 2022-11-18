@@ -355,17 +355,24 @@ function EntryEditor({ isolatedEntry, dictionary, searchParams, textOptions, use
                 />
             </div>}
             {typePredicates.isVerbEntry({ entry, complement }) && <div className="pb-4">
-                <VPExplorer
-                    verb={{
-                        // TODO: CLEAN THIS UP!
-                        // @ts-ignore
-                        entry,
-                        complement,
-                    }}
-                    opts={textOptions}
-                    entryFeeder={entryFeeder}
-                    handleLinkClick={"none"}
-                />
+                {(() => {
+                    try {
+                        return <VPExplorer
+                            verb={{
+                                // TODO: CLEAN THIS UP!
+                                // @ts-ignore
+                                entry,
+                                complement,
+                            }}
+                            opts={textOptions}
+                            entryFeeder={entryFeeder}
+                            handleLinkClick={"none"}
+                        />
+                    } catch(e) {
+                        console.error(e);
+                        return <h5>Error conjugating verb</h5>
+                    }
+                })()}
             </div>}
         </div>}
     </div>;
