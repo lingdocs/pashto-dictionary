@@ -151,7 +151,10 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
     page: number,
     tpFilter?: (e: T.DictionaryEntry) => e is S,
 }): S[] {
-    let resultsGiven: number[] = [];;
+    function sortByR(a: T.DictionaryEntry, b: T.DictionaryEntry) {
+        return (b.r || 3) - (a.r || 3);
+    };
+    let resultsGiven: number[] = [];
     // get exact results
     const exactQuery = { 
         e: {
@@ -164,6 +167,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(exactResultsLimit)
                           .simplesort("i")
                           .data();
+    exactResults.sort(sortByR);
     resultsGiven = exactResults.map((mpd: any) => mpd.$loki);
     // get results with full word match at beginning of string
     const startingQuery = { 
@@ -178,6 +182,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(startingResultsLimit)
                           .simplesort("i")
                           .data();
+    startingResults.sort(sortByR);
     resultsGiven = [...resultsGiven, ...startingResults.map((mpd: any) => mpd.$loki)];
     // get results with full word match anywhere
     const fullWordQuery = {
@@ -192,6 +197,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(fullWordResultsLimit)
                           .simplesort("i")
                           .data();
+    fullWordResults.sort(sortByR);
     resultsGiven = [...resultsGiven, ...fullWordResults.map((mpd: any) => mpd.$loki)]
     // get results with partial match anywhere
     const partialMatchQuery = {
@@ -202,11 +208,12 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
     };
     const partialMatchLimit = (pageSize * page) - resultsGiven.length;
     const partialMatchResults = dictDb.collection.chain()
-    .where(tpFilter ? tpFilter : () => true)
-        .find(partialMatchQuery)
-        .limit(partialMatchLimit)
-        .simplesort("i")
-        .data();
+        .where(tpFilter ? tpFilter : () => true)
+            .find(partialMatchQuery)
+            .limit(partialMatchLimit)
+            .simplesort("i")
+            .data();
+    partialMatchResults.sort(sortByR);
     const results = [
         ...exactResults,
         ...startingResults,
@@ -216,6 +223,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
     if (tpFilter) {
         return results.filter(tpFilter);
     }
+    console.log({ results });
     return results;
 }
 

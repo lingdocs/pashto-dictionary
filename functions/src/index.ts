@@ -8,12 +8,12 @@ export const publishDictionary = functions.runWith({
     timeoutSeconds: 60,
     memory: "2GB"
 }).https.onRequest(
-    // lingdocsAuth(
+    lingdocsAuth(
         async (req, res: functions.Response<FT.PublishDictionaryResponse | FT.FunctionError>) => {
-            // if (req.user.level !== "editor") {
-            //     res.status(403).send({ ok: false, error: "403 forbidden" });
-            //     return;
-            // }
+            if (req.user.level !== "editor") {
+                res.status(403).send({ ok: false, error: "403 forbidden" });
+                return;
+            }
             try {
                 const response = await publish();
                 res.send(response);
@@ -22,7 +22,7 @@ export const publishDictionary = functions.runWith({
                 res.status(500).send({ ok: false, error: e.message });
             }
         }
-    // )
+    )
 );
     
 export const submissions = functions.runWith({
