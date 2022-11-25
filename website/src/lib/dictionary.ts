@@ -27,8 +27,8 @@ import {
 } from "../types/dictionary-types";
 
 // const dictionaryBaseUrl = "https://storage.googleapis.com/lingdocs/";
-const dictionaryUrl = `https://storage.googleapis.com/lingdocs/dictionary`;
-const dictionaryInfoUrl = `https://storage.googleapis.com/lingdocs/dictionary-info`;
+const dictionaryUrl = `https://storage.googleapis.com/lingdocs/dict`;
+const dictionaryInfoUrl = `https://storage.googleapis.com/lingdocs/dict-info`;
 
 const dictionaryInfoLocalStorageKey = "dictionaryInfo5";
 const dictionaryCollectionName = "dictionary3";

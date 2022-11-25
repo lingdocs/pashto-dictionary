@@ -1,4 +1,4 @@
-import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 import * as functions from "firebase-functions";
 import {
     Types as T,
@@ -85,22 +85,23 @@ async function doHunspell(entries: T.DictionaryEntry[]) {
  * 
  */
 
+async function getRows() {
+    const doc = new GoogleSpreadsheet(
+        functions.config().sheet.id,
+    );
+    await doc.useServiceAccountAuth({
+        client_email: functions.config().serviceacct.email,
+        private_key: functions.config().serviceacct.key,
+    });
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    rows.sort((a, b) => a.ts > b.ts ? -1 : a.ts < b.ts ? 1 : 0);
+    return rows;
+}
+
 async function getRawEntries(): Promise<T.DictionaryEntry[]> {
-    let rows: GoogleSpreadsheetRow[] = []
-    async function getRows() {
-        const doc = new GoogleSpreadsheet(
-            functions.config().sheet.id,
-        );
-        await doc.useServiceAccountAuth({
-            client_email: functions.config().serviceacct.email,
-            private_key: functions.config().serviceacct.key,
-        });
-        await doc.loadInfo();
-        const sheet = doc.sheetsByIndex[0];
-        rows = await sheet.getRows();
-        rows.sort((a, b) => a.ts > b.ts ? -1 : a.ts < b.ts ? 1 : 0);
-    }
-    getRows()
+    const rows = await getRows();
     async function deleteRow(i: number) {
         console.log("WILL DELETE ROW", rows[i].p, rows[i].ts, rows[i].f);
         await rows[i].delete();
