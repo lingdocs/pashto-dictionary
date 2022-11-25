@@ -167,7 +167,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(exactResultsLimit)
                           .simplesort("i")
                           .data();
-    // exactResults.sort(sortByR);
+    exactResults.sort(sortByR);
     resultsGiven = exactResults.map((mpd: any) => mpd.$loki);
     // get results with full word match at beginning of string
     const startingQuery = { 
@@ -182,7 +182,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(startingResultsLimit)
                           .simplesort("i")
                           .data();
-    // startingResults.sort(sortByR);
+    startingResults.sort(sortByR);
     resultsGiven = [...resultsGiven, ...startingResults.map((mpd: any) => mpd.$loki)];
     // get results with full word match anywhere
     const fullWordQuery = {
@@ -197,7 +197,7 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
                           .limit(fullWordResultsLimit)
                           .simplesort("i")
                           .data();
-    // fullWordResults.sort(sortByR);
+    fullWordResults.sort(sortByR);
     resultsGiven = [...resultsGiven, ...fullWordResults.map((mpd: any) => mpd.$loki)]
     // get results with partial match anywhere
     const partialMatchQuery = {
@@ -214,14 +214,10 @@ function englishLookup<S extends T.DictionaryEntry>({ searchString, page, tpFilt
             .simplesort("i")
             .data();
     partialMatchResults.sort(sortByR);
-    const wordResults = [
+    const results = [
         ...exactResults,
         ...startingResults,
         ...fullWordResults,
-    ];
-    wordResults.sort(sortByR);
-    const results = [
-        ...wordResults,
         ...partialMatchResults,
     ];
     if (tpFilter) {
