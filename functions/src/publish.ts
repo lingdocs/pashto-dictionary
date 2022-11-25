@@ -26,8 +26,8 @@ const title = "LingDocs Pashto Dictionary"
 const license = "Copyright © 2021 lingdocs.com All Rights Reserved - Licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - https://creativecommons.org/licenses/by-nc-sa/4.0/";
 const bucketName = "lingdocs";
 const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
-const dictionaryFilename = "dictionary";
-const dictionaryInfoFilename = "dictionary-info";
+const dictionaryFilename = "dict";
+const dictionaryInfoFilename = "dict-info";
 const hunspellAffFileFilename = "ps_AFF.aff";
 const hunspellDicFileFilename = "ps_AFF.dic";
 const url = `${baseUrl}${dictionaryFilename}`;
@@ -84,29 +84,30 @@ async function doHunspell(entries: T.DictionaryEntry[]) {
  * @returns 
  * 
  */
+
 async function getRawEntries(): Promise<T.DictionaryEntry[]> {
-    const doc = new GoogleSpreadsheet(
-        functions.config().sheet.id,
-    );
-    await doc.useServiceAccountAuth({
-        client_email: functions.config().serviceacct.email,
-        private_key: functions.config().serviceacct.key,
-    });
-    await doc.loadInfo();
-    const sheet = doc.sheetsByIndex[0];
-    const rows = await sheet.getRows();
+    let rows: GoogleSpreadsheetRow[] = []
+    async function getRows() {
+        const doc = new GoogleSpreadsheet(
+            functions.config().sheet.id,
+        );
+        await doc.useServiceAccountAuth({
+            client_email: functions.config().serviceacct.email,
+            private_key: functions.config().serviceacct.key,
+        });
+        await doc.loadInfo();
+        const sheet = doc.sheetsByIndex[0];
+        rows = await sheet.getRows();
+        rows.sort((a, b) => a.ts > b.ts ? -1 : a.ts < b.ts ? 1 : 0);
+    }
+    getRows()
     async function deleteRow(i: number) {
         console.log("WILL DELETE ROW", rows[i].p, rows[i].ts, rows[i].f);
         await rows[i].delete();
     }
-    return await makeEntries(rows, deleteRow);
-}
-
-async function makeEntries(rows: GoogleSpreadsheetRow[], deleteRow: (i: number) => Promise<void>): Promise<T.DictionaryEntry[]> {
     const entries: T.DictionaryEntry[] = [];
     let sheetIndex = 0;
     // get the rows in order of ts for easy detection of duplicate entries
-    rows.sort((a, b) => a.ts > b.ts ? -1 : a.ts < b.ts ? 1 : 0);
     for (let i = 0; i < rows.length; i++) {
         function sameEntry(a: any, b: any): boolean {
             return a.p === b.p && a.f === b.f && a.e === b.e;
