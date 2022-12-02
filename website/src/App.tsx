@@ -395,12 +395,16 @@ class App extends Component<RouteComponentProps, State> {
     }
 
     private handleSearchValueChange(searchValue: string) {
-        if (searchValue === " ") return;
+        if (searchValue === " ") {
+            return;
+        }
         const lastChar = searchValue[searchValue.length-1];
         if (lastChar >= '0' && lastChar <= '9') {
             return;
         }
-        if (this.state.dictionaryStatus !== "ready") return;
+        if (this.state.dictionaryStatus !== "ready") {
+            return;
+        }
         if (searchValue === "") {
             this.setState({
                 searchValue: "",
@@ -510,12 +514,16 @@ class App extends Component<RouteComponentProps, State> {
                     <DictionaryStatusDisplay status={this.state.dictionaryStatus} />
                 :
                     <>
-                        <Route path="/" exact>
+                        <Route path="/" exact={true}>
                             <div className="text-center mt-4">
                                 <h4 className="font-weight-light p-3 mb-4">LingDocs Pashto Dictionary</h4>
-                                {this.state.options.searchType === "alphabetical" && <div className="mt-4 font-weight-light">
-                                    <div className="mb-3"><span className="fa fa-book mr-2" ></span> Alphabetical browsing mode</div>
-                                </div>}
+                                <div className="mt-4 font-weight-light">
+                                    <div className="mb-4 small">
+                                        {this.state.options.searchType === "alphabetical"
+                                            ? <><span className="fa fa-book mr-2" /> Alphabetical browsing mode</>
+                                            : <><span className="fa fa-bolt mr-2" /> Approximate search mode</>}
+                                    </div>
+                                </div>
                                 {this.state.user?.level === "editor" && <div className="mt-4 font-weight-light">
                                     <div className="mb-3">Editor privileges active</div>
                                     <Link to="/edit">
@@ -529,7 +537,7 @@ class App extends Component<RouteComponentProps, State> {
                                     <Link to="/phrase-builder" className="plain-link h5 font-weight-light">
                                         Phrase Builder
                                     </Link>
-                                    <span className="mx-1">{` • `}</span>
+                                    <span className="mx-1"> • </span>
                                     <a href="https://grammar.lingdocs.com" className="plain-link h5 font-weight-light">
                                         Grammar
                                     </a>
@@ -616,7 +624,7 @@ class App extends Component<RouteComponentProps, State> {
                 { "footer-thick": this.state.options.searchBarPosition === "bottom" && !["/search", "/word"].includes(this.props.location.pathname) },
                 { "wee-less-footer": this.state.options.searchBarPosition === "bottom" && ["/search", "/word"].includes(this.props.location.pathname) },
             )}>
-                <Route path="/" exact>
+                <Route path="/" exact={true}>
                     <div className="buttons-footer">
                         <BottomNavItem label="About" icon="info-circle" page="/about" />
                         <BottomNavItem label="Settings" icon="cog" page="/settings" />

@@ -26,7 +26,9 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
     window.addEventListener("focus", onFocus);
     Mousetrap.bind(["shift+space"], (e) => {
       e.preventDefault();
-      if (e.repeat) return;
+      if (e.repeat) {
+        return;
+      }
       inputRef.current?.focus();
     });
     return () => {
