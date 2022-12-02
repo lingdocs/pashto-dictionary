@@ -105,4 +105,5 @@ export function displayFormResult(res: string[]): string {
         .replace("ArabicPlural", "Arabic Plural")
         .replace("Fem", "Fem.")
         .replace("Masc", "Masc.")
+        .replace("BundledPlural", "Bundled Plural");
 }

@@ -260,6 +260,10 @@ function IsolatedEntry({ state, dictionary, isolateEntry }: {
                 <h5>Plural</h5>
                 <InflectionsTable inf={inf.plural} textOptions={textOptions} />
             </div>}
+            {"bundledPlural" in inf && inf.bundledPlural !== undefined && <div>
+                <h5>Bundled Plural</h5>
+                <InflectionsTable inf={inf.bundledPlural} textOptions={textOptions} />
+            </div>}
             {"arabicPlural" in inf && inf.arabicPlural !== undefined && <div>
                 <h5>Arabic Plural</h5>
                 <InflectionsTable inf={inf.arabicPlural} textOptions={textOptions} />
