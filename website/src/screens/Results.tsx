@@ -88,31 +88,36 @@ function Results({ state, isolateEntry, handleInflectionSearch }: {
         {inflectionResults === "searching" && <div>
             <p className="lead mt-1">Searching conjugations/inflections... <i className="fas fa-hourglass-half" /></p>
         </div>}
-        {Array.isArray(inflectionResults) && <div>
+        {inflectionResults && inflectionResults !== "searching" && <div>
             <h4 className="mt-1 mb-3">Conjugation/Inflection Results</h4>
-            {inflectionResults.length === 0 && <div className="mt-4">
+            {inflectionResults.exact.length === 0 && inflectionResults.fuzzy.length === 0 && <div className="mt-4">
                 <div>No conjugation/inflection matches found for <strong>{state.searchValue}</strong></div>
             </div>}
-            {inflectionResults.map((p) => (
-                <div key={p.entry.ts}>
-                    <Entry
-                        key={p.entry.i}
-                        entry={p.entry}
-                        textOptions={textOptions}
-                        isolateEntry={isolateEntry}
-                    />
-                    <div className="mb-3 ml-2">
-                        {p.forms.map((form, i) => (
-                            <InflectionFormMatchDisplay
-                                key={"inf-form" + i}
-                                textOptions={textOptions}
-                                form={form}
+            {(["exact", "fuzzy"] as ("exact" | "fuzzy")[]).map((t) => {
+                return (inflectionResults[t].length !== 0) ? <>
+                    <h5 className="mb-3">{t === "exact" ? "Exact" : "Approximate"} Matches</h5>
+                    {inflectionResults[t].map((p) => (
+                        <div key={p.entry.ts}>
+                            <Entry
+                                key={p.entry.i}
                                 entry={p.entry}
+                                textOptions={textOptions}
+                                isolateEntry={isolateEntry}
                             />
-                        ))}
-                    </div>
-                </div>
-            ))}
+                            <div className="mb-3 ml-2">
+                                {p.forms.map((form, i) => (
+                                    <InflectionFormMatchDisplay
+                                        key={`inf-form${i}`}
+                                        textOptions={textOptions}
+                                        form={form}
+                                        entry={p.entry}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </> : null;
+            })}
         </div>}
         {inflectionResults === undefined && suggestionState === "none" && state.results.map((entry) => (
             <Entry

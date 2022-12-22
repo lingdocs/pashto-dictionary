@@ -51,7 +51,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
         data-testid="languageToggle"
       >
         <div aria-label={`language-choice-${language === "Pashto" ? "ps-to-en" : "en-to-ps"}`}>
-          Ps <span className={`fa fa-arrow-${arrowDirection}`} ></span> En
+          Ps <span className={`fa fa-arrow-${arrowDirection}`} /> En
         </div>
       </button>
     );
@@ -64,7 +64,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
             onClick={() => optionsDispatch({ type: "toggleSearchType" })}
             data-testid="searchTypeToggle"
         >
-            <span className={`fa fa-${icon}`} ></span>
+            <span className={`fa fa-${icon}`} />
         </button>
     );
   };
@@ -73,7 +73,7 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
     ? "Browse alphabetically"
     : `Search ${state.options.language === "Pashto" ? "Pashto" : "English"}`;
   return (
-    <nav className={`navbar bg-light${!onBottom ? " fixed-top" : ""}`} style={{ zIndex: 50, width: "100%" }}>
+    <nav className={`navbar bg-light${onBottom ? "" : " fixed-top"}`} style={{ zIndex: 50, width: "100%" }}>
       <div className="form-inline my-1 my-lg-1">
         <div className="input-group">
           <input

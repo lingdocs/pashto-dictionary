@@ -46,7 +46,7 @@ function InflectionFormMatchDisplay(
         <div className="mb-2"><strong>{displayFormResult(form.path)}</strong></div>
         {form.matches.map((match, i) => <div className="ml-2" key={i}>
             <InlinePs opts={textOptions}>{match.ps}</InlinePs>
-            <div className="ml-3 my-2">
+            <div className="ml-4 my-2">
                 <em>
                     {(transitivity === "grammatically transitive" && isPast)
                         ? "Always 3rd pers. masc. plur."

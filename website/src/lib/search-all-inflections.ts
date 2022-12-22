@@ -1,6 +1,6 @@
 import { searchPile } from "../lib/search-pile";
 import { 
-    isNounAdjOrVerb, removeAccents,
+    isNounAdjOrVerb, removeAccents, standardizePashto,
 } from "@lingdocs/ps-react";
 import { dictionary } from "../lib/dictionary";
 import {
@@ -26,7 +26,65 @@ const relevancySorter = new relevancy.Sorter();
 //    That's so much better I'm removing the option of skipping compounds
 // ~4th iteration:~ ignore perfective or imperfective if wasn't present in verb info (not worth it - scrapped)
 
-export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): InflectionSearchResult[] {
+export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: string): {
+    exact: InflectionSearchResult[],
+    fuzzy: InflectionSearchResult[],
+} {
+    // pretty ugly function to seperate the exact and fuzzy inflection result matches
+    function getEntryMatchIndex(r: InflectionSearchResult[], entry: T.DictionaryEntry): number {
+        return r.findIndex(rs => rs.entry.ts === entry.ts);
+    }
+    function getFormIndex(r: InflectionSearchResult, path: string[]): number {
+        const joinedPath = path.join("");
+        return r.forms.findIndex(rs => rs.path.join("") === joinedPath);
+    }
+    const v = standardizePashto(searchValue);
+    const allResults = searchAllInflectionsCore(allDocs, searchValue);
+    const results: { exact: InflectionSearchResult[], fuzzy: InflectionSearchResult[] } = {
+        exact: [],
+        fuzzy: [],
+    };
+    allResults.forEach((result) => {
+        const entryMatches: { exact: InflectionSearchResult[], fuzzy: InflectionSearchResult[] } = {
+            exact: [],
+            fuzzy: [],
+        };
+        result.forms.forEach((form) => {
+            form.matches.forEach((match) => {
+                if (match.ps.p === v || match.ps.f === v) {
+                    addToEntryMatches("exact");
+                } else {
+                    addToEntryMatches("fuzzy");
+                }
+                function addToEntryMatches(t: "exact" | "fuzzy") {
+                    let entryMatchIndex = getEntryMatchIndex(entryMatches[t], result.entry);
+                    if (entryMatchIndex === -1) {
+                        entryMatches[t].push({
+                            entry: result.entry,
+                            forms: [],
+                        });
+                        entryMatchIndex = entryMatches[t].length - 1;
+                    }
+                    let formIndex = getFormIndex(entryMatches[t][entryMatchIndex], form.path);
+                    if (formIndex === -1) {
+                        entryMatches[t][entryMatchIndex].forms.push({
+                            path: form.path,
+                            matches: [match],
+                        });
+                        formIndex = entryMatches[t][entryMatchIndex].forms.length - 1;
+                    } else {
+                        entryMatches[t][entryMatchIndex].forms[formIndex].matches.push(match);
+                    }
+                }
+            })
+        });
+        results.exact.push(...entryMatches.exact);
+        results.fuzzy.push(...entryMatches.fuzzy);
+    });
+    return results;
+}
+
+export function searchAllInflectionsCore(allDocs: T.DictionaryEntry[], searchValue: string): InflectionSearchResult[] {
     const index = isPashtoScript(searchValue) ? "p" : "f"
     function sortResultsByRelevancy(arr: InflectionSearchResult[]): InflectionSearchResult[] {
         return relevancySorter.sort(arr, searchValue, (obj: InflectionSearchResult, calc: any) => (
@@ -65,7 +123,7 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
     );
     const preSearchFun = (ps: T.PsString) => !!ps[script].match(begRegex);
     const searchRegex = new RegExp(
-        makeAWeeBitFuzzy(searchValue, script, true) + "$",
+        `${makeAWeeBitFuzzy(searchValue, script, true)}$`,
         "i",
     );
     // add little bit fuzzy
@@ -110,21 +168,18 @@ export function searchAllInflections(allDocs: T.DictionaryEntry[], searchValue: 
     }, []);
     // console.timeEnd(timerLabel);
     // TODO!!: Sorting on this as well
-    if (["را", "ور", "در"].includes(searchValue.slice(0, 2))) {
-        return [
+    const allResults = (["را", "ور", "در"].includes(searchValue.slice(0, 2)))
+        ? [
             ...results,
-            // also search without the directionary pronoun
-            ...searchAllInflections(allDocs, searchValue.slice(2)),
-        ];
-    }
-    if (["raa", "war", "dar", "wăr", "dăr"].includes(searchValue.slice(0, 3))) {
-        return [
+            // also search without the directional pronoun
+            ...searchAllInflectionsCore(allDocs, searchValue.slice(2)),
+        ] : (["raa", "war", "dar", "wăr", "dăr"].includes(searchValue.slice(0, 3)))
+        ? [
             ...results,
-            // also search without the directionary pronoun
-            ...searchAllInflections(allDocs, searchValue.slice(3)),
-        ];
-    }
+            // also search without the directional pronoun
+            ...searchAllInflectionsCore(allDocs, searchValue.slice(3)),
+        ] : results;
     // because we used a bit of a fuzzy search, sort the results by relevancy
     // this is a bit complicated...
-    return sortResultsByRelevancy(results.map(sortMatchesByRelevancy));
+    return sortResultsByRelevancy(allResults.map(sortMatchesByRelevancy));
 }

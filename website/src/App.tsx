@@ -115,8 +115,7 @@ class App extends Component<RouteComponentProps, State> {
               language: "Pashto",
               searchType: "fuzzy",
               searchBarStickyFocus: false,
-              theme: /* istanbul ignore next */ (window.matchMedia &&
-                window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light",
+              theme: (window.matchMedia?.("(prefers-color-scheme: dark)").matches) ? "dark" : "light",
               textOptionsRecord: {
                 lastModified: Date.now() as AT.TimeStamp,
                 textOptions: defaultTextOptions,
@@ -224,32 +223,50 @@ class App extends Component<RouteComponentProps, State> {
         // shortcuts to isolote word in search results
         Mousetrap.bind(["1", "2", "3", "4", "5", "6", "7", "8", "9"], (e) => {
             e.preventDefault();
-            if (e.repeat) return;
-            if (this.props.location.pathname !== "/search") return;
+            if (e.repeat) {
+                return;
+            }
+            if (this.props.location.pathname !== "/search") {
+                return;
+            }
             const toIsolate = this.state.results[Number(e.key) - 1];
-            if (!toIsolate) return;
+            if (!toIsolate) {
+                return;
+            }
             this.handleIsolateEntry(toIsolate.ts);
         })
         Mousetrap.bind(["ctrl+down", "ctrl+up", "command+down", "command+up"], (e) => {
             e.preventDefault();
-            if (e.repeat) return;
+            if (e.repeat) {
+                return;
+            }
             this.handleOptionsUpdate({ type: "toggleLanguage" });
         });
         Mousetrap.bind(["ctrl+b", "command+b"], (e) => {
             e.preventDefault();
-            if (e.repeat) return;
+            if (e.repeat) {
+                return;
+            }
             this.handleSearchValueChange("");
         });
         Mousetrap.bind(["ctrl+i", "command+i"], (e) => {
             e.preventDefault();
-            if (e.repeat) return;
-            if (!this.state.searchValue) return;
+            if (e.repeat) {
+                return;
+            }
+            if (!this.state.searchValue) {
+                return;
+            }
             this.handleInflectionSearch();
         });
         Mousetrap.bind(["ctrl+s", "command+s"], (e) => {
-            if (this.state.user?.level === "basic") return;
+            if (this.state.user?.level === "basic") {
+                return;
+            }
             e.preventDefault();
-            if (!this.state.isolatedEntry) return;
+            if (!this.state.isolatedEntry) {
+                return;
+            }
             const toAdd = {
                 entry: this.state.isolatedEntry,
                 notes: "",
@@ -258,8 +275,12 @@ class App extends Component<RouteComponentProps, State> {
         });
         Mousetrap.bind(["ctrl+\\", "command+\\"], (e) => {
             e.preventDefault();
-            if (e.repeat) return;
-            if (this.state.user?.level === "basic") return;
+            if (e.repeat) {
+                return;
+            }
+            if (this.state.user?.level === "basic") {
+                return;
+            }
             if (this.props.location.pathname !== "/wordlist") {
                 this.props.history.push("/wordlist");
             } else {
@@ -319,8 +340,12 @@ class App extends Component<RouteComponentProps, State> {
         try {
             const prevUser = this.state.user;
             const user = await getUser();
-            if (user === "offline") return;
-            if (user) sendSubmissions();
+            if (user === "offline") {
+                return;
+            }
+            if (user) {
+                sendSubmissions();
+            }
             if (!user) {
                 if (this.state.user) {
                     console.log("setting state user because user is newly undefined");
@@ -652,7 +677,7 @@ class App extends Component<RouteComponentProps, State> {
                     state={this.state}
                     optionsDispatch={this.handleOptionsUpdate}
                     handleSearchValueChange={this.handleSearchValueChange}
-                    onBottom
+                    onBottom={true}
                 />}
             </footer>
         </div>;

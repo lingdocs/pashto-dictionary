@@ -11,7 +11,10 @@ export type State = {
     reviewTasks: import("./functions-types").ReviewTask[],
     dictionaryInfo: import("@lingdocs/ps-react").Types.DictionaryInfo | undefined,
     user: undefined | import("./account-types").LingdocsUser,
-    inflectionSearchResults: undefined | "searching" | InflectionSearchResult[],
+    inflectionSearchResults: undefined | "searching" | {
+        exact: InflectionSearchResult[],
+        fuzzy: InflectionSearchResult[],
+    },
 }
 
 export type DictionaryAPI = {
