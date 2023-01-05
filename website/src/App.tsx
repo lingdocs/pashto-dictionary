@@ -124,6 +124,7 @@ class App extends Component<RouteComponentProps, State> {
               wordlistReviewLanguage: "Pashto",
               wordlistReviewBadge: true,
               searchBarPosition: "top",
+              showPlayStoreButton: false,
             },
             searchValue: "",
             page: 1,
@@ -132,7 +133,7 @@ class App extends Component<RouteComponentProps, State> {
             wordlist: [],
             reviewTasks: [],
             user: readUser(),
-            inflectionSearchResults: undefined,
+            inflectionSearchResults: undefined
         };
         this.handleOptionsUpdate = this.handleOptionsUpdate.bind(this);
         this.handleTextOptionsUpdate = this.handleTextOptionsUpdate.bind(this);
@@ -145,9 +146,24 @@ class App extends Component<RouteComponentProps, State> {
         this.handleRefreshReviewTasks = this.handleRefreshReviewTasks.bind(this);
         this.handleDictionaryUpdate = this.handleDictionaryUpdate.bind(this);
         this.handleInflectionSearch = this.handleInflectionSearch.bind(this);
+        this.handlePlayStoreClick = this.handlePlayStoreClick.bind(this);
     }
 
     public componentDidMount() {
+        window.addEventListener('DOMContentLoaded', () => {
+            let displayMode = 'browser tab';
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+              displayMode = 'standalone';
+            }
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isAndroid = userAgent.indexOf("android") > -1;
+            if (isAndroid && displayMode !== "standalone") {
+                saveOptions(optionsReducer(this.state.options, {
+                    type: "setShowPlayStoreButton",
+                    payload: true,
+                }));
+            }
+        });
         window.addEventListener("scroll", this.handleScroll);
         if (!possibleLandingPages.includes(this.props.location.pathname)) {
             this.props.history.replace("/");
@@ -386,6 +402,13 @@ class App extends Component<RouteComponentProps, State> {
         });
     }
 
+    private handlePlayStoreClick() {
+        saveOptions(optionsReducer(this.state.options, {
+            type: "setShowPlayStoreButton",
+            payload: false,
+        }));
+    }
+
     private handleOptionsUpdate(action: OptionsAction) {
         if (action.type === "changeTheme") {
             document.documentElement.setAttribute("data-theme", action.payload);
@@ -567,6 +590,11 @@ class App extends Component<RouteComponentProps, State> {
                                         Grammar
                                     </a>
                                 </div>
+                                {this.state.options.showPlayStoreButton && <div className="mt-4" onClick={this.handlePlayStoreClick}>
+                                    <a href='https://play.google.com/store/apps/details?id=com.lingdocs.pashto.dictionary&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                                        <img style={{ maxWidth: "8rem" }} alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>
+                                    </a>
+                                </div>}
                             </div>
                         </Route>
                         <Route path="/about">

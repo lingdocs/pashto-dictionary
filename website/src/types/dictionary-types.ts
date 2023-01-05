@@ -65,6 +65,7 @@ export type Options = {
     wordlistReviewBadge: boolean,
     searchBarPosition: SearchBarPosition,
     searchBarStickyFocus: boolean,
+    showPlayStoreButton: boolean,
 }
 
 export type Language = "Pashto" | "English";
@@ -109,7 +110,10 @@ export type OptionsAction = {
 } | {
     type: "changeSearchBarStickyFocus",
     payload: boolean,
-}
+} | {
+    type: "setShowPlayStoreButton",
+    payload: boolean,
+};
 
 export type TextOptionsAction = {
     type: "changePTextSize",

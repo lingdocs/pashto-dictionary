@@ -60,6 +60,12 @@ export function optionsReducer(options: Options, action: OptionsAction): Options
         searchBarStickyFocus: action.payload,
       }
     }
+    if (action.type === "setShowPlayStoreButton") {
+      return {
+        ...options,
+        showPlayStoreButton: action.payload,
+      }
+    }
     throw new Error("action type not recognized in options reducer");
 }
 
