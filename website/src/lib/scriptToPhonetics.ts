@@ -19,7 +19,7 @@ export function scriptToPhonetics(p: string): string {
     const words = splitWords(p);
     const entries = allEntries();
     const f = (w: string) => wordToPhonetics(w, entries);
-    return words.map(f).join(" ");
+    return words.map(f).join("");
 }
 
 
