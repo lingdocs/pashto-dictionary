@@ -81,6 +81,7 @@ import { searchAllInflections } from "./lib/search-all-inflections";
 import {
     addToWordlist,
 } from "./lib/wordlist-database";
+import ScriptToPhonetics from "./screens/ScriptToPhonetics";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -97,7 +98,7 @@ if (prod) {
 
 const possibleLandingPages = [
     "/", "/about", "/settings", "/word", "/account", "/new-entries", "/share-target", "/phrase-builder",
-    "/privacy",
+    "/privacy", "/script-to-phonetics"
 ];
 const editorOnlyPages = [
     "/edit", "/review-tasks",
@@ -655,6 +656,9 @@ class App extends Component<RouteComponentProps, State> {
                                 user={this.state.user}
                                 loadUser={this.handleLoadUser}
                             />
+                        </Route>
+                        <Route path="/script-to-phonetics">
+                            <ScriptToPhonetics />
                         </Route>
                         {this.state.user?.level === "editor" && <Route path="/edit">
                             <EntryEditor
