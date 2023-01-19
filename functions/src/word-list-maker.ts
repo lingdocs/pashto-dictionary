@@ -2,50 +2,67 @@ import {
     inflectWord,
     conjugateVerb,
     Types as T,
+    removeFVarients,
 } from "@lingdocs/inflect";
+import { isNounOrAdjEntry } from "@lingdocs/inflect/dist/lib/src/type-predicates";
+import {
+    uniqWith,
+    isEqual,
+} from "lodash";
 
 
-function search(key: string, object: any): string[] {
+// will return { p: "", f: "", s: "" }
+function search(object: any): T.PsString[] {
     // adapted from
     // https://www.mikedoesweb.com/2016/es6-depth-first-object-tree-search/
-    function inside(needle: string, haystack: any, found: Set<string> = new Set()): Set<string> {
+    function inside(haystack: any, found: T.PsString[]): T.PsString[] {
+        // use uniqueObjects = _.uniqWith(objects, _.isEqual)
+        // instead of set
         if (haystack === null) {
             return found;
         }
         Object.keys(haystack).forEach((key: string) => {
-            if(key === needle && typeof haystack[key] === "string") {
-                haystack[key].split(" ").forEach((word: string) => {
-                    found.add(word);
-                });
+            if(key === "p" && typeof haystack[key] === "string") {
+                // todo: rather get the p and f
+                // TODO: split words into individual words
+                // haystack[key].split(" ").forEach((word: string) => {
+                //     found.(word);
+                // });
+                found.push(haystack as T.PsString)
                 return;
             }
             if(typeof haystack[key] === 'object') {
-                inside(needle, haystack[key], found);
+                inside(haystack[key], found);
             }
             return;
         });
         return found;
     };
-    return Array.from(inside(key, object));
+    return uniqWith(inside(object, []), isEqual);
 }
 
 export function getWordList(entries: T.DictionaryEntry[]): {
     ok: true,
-    wordlist: string[],
+    wordlist: T.PsString[],
 } | {
     ok: false,
     errors: T.DictionaryEntryError[],
 } {
-    const allInflections: Set<string> = new Set();
+    let allInflections: T.PsString[] = [];
+    function addPs(ps: T.PsString) {
+        if (!allInflections.find(x => !(x.p === ps.p && x.f === ps.f))) {
+            allInflections.push(ps);
+        };
+    }
     const errors: T.DictionaryEntryError[] = [];
     function getNounAdjInflections(entry: T.DictionaryEntry) {
         const infs = inflectWord(entry);
         if (infs) {
-            search("p", infs).forEach(w => allInflections.add(w));
+            search(infs).forEach(addPs);
         }
     }
     function getVerbConjugations(word: T.DictionaryEntry, linked?: T.DictionaryEntry) {
-        search("p", conjugateVerb(word, linked)).forEach(w => allInflections.add(w));
+        search(conjugateVerb(word, linked)).forEach(addPs);
     }
     // got the entries, make a wordList of all the possible inflections
     entries.forEach((entry) => {
@@ -53,8 +70,11 @@ export function getWordList(entries: T.DictionaryEntry[]): {
             if (entry.c?.startsWith("v. ")) {
                 const linked = entry.l ? entries.find((e) => e.ts === entry.l) : undefined;
                 getVerbConjugations(entry, linked);
+            } else if (isNounOrAdjEntry(entry as T.Entry)) {
+                getNounAdjInflections(entry);
+            } else {
+                addPs(removeFVarients({ p: entry.p, f: entry.f }));
             }
-            getNounAdjInflections(entry);
         } catch (error) {
             errors.push({
                 ts: entry.ts,
@@ -84,11 +104,11 @@ export function getWordList(entries: T.DictionaryEntry[]): {
     //     //     allInflections.add(word.slice(0, -1) + "ي");
     //     // }
     // });
-    const wordlist = Array.from(allInflections).filter((s) => !(s.includes(".") || s.includes("?")));
-    wordlist.sort((a, b) => a.localeCompare(b, "ps"));
+    // const wordlist = Array.from(allInflections).filter((s) => !(s.includes(".") || s.includes("?")));
+    // wordlist.sort((a, b) => a.localeCompare(b, "ps"));
     return {
         ok: true,
-        wordlist,
+        wordlist: allInflections,
     };
 }
 

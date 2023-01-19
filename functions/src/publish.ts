@@ -28,8 +28,8 @@ const bucketName = "lingdocs";
 const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
 const dictionaryFilename = "dict";
 const dictionaryInfoFilename = "dict-info";
-const hunspellAffFileFilename = "ps_AFF.aff";
-const hunspellDicFileFilename = "ps_AFF.dic";
+// const hunspellAffFileFilename = "ps_AFF.aff";
+// const hunspellDicFileFilename = "ps_AFF.dic";
 const allWordsJsonFilename = "all-words.json";
 const url = `${baseUrl}${dictionaryFilename}`;
 const infoUrl = `${baseUrl}${dictionaryInfoFilename}`;
@@ -73,8 +73,8 @@ async function doHunspellEtc(entries: T.DictionaryEntry[]) {
     if (!wordlistResponse.ok) {
         throw new Error(JSON.stringify(wordlistResponse.errors));
     }
-    const hunspell = makeHunspell(wordlistResponse.wordlist);
-    await uploadHunspellToStorage(hunspell);
+    // const hunspell = makeHunspell(wordlistResponse.wordlist);
+    // await uploadHunspellToStorage(hunspell);
     await uploadAllWordsToStoarage(wordlistResponse.wordlist)
 }
 
@@ -224,18 +224,18 @@ async function upload(content: Buffer | string, filename: string) {
     });
 }
 
-async function uploadHunspellToStorage(wordlist: {
-    affContent: string,
-    dicContent: string,
-}) {
-    await Promise.all([
-        upload(wordlist.affContent, hunspellAffFileFilename),
-        upload(wordlist.dicContent, hunspellDicFileFilename),
-    ]);
-}
+// async function uploadHunspellToStorage(wordlist: {
+//     affContent: string,
+//     dicContent: string,
+// }) {
+//     await Promise.all([
+//         upload(wordlist.affContent, hunspellAffFileFilename),
+//         upload(wordlist.dicContent, hunspellDicFileFilename),
+//     ]);
+// }
 
-async function uploadAllWordsToStoarage(words: string[]) {
-    await upload(JSON.stringify({words}), allWordsJsonFilename)
+async function uploadAllWordsToStoarage(words: T.PsString[]) {
+    await upload(JSON.stringify(words), allWordsJsonFilename)
 }
 
 async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
@@ -249,9 +249,9 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
     ]);
 }
 
-function makeHunspell(wordlist: string[]) {
-    return {
-        dicContent: wordlist.reduce((acc, word) => acc + word + "\n", wordlist.length + "\n"),
-        affContent: "SET UTF-8\nCOMPLEXPREFIXES\nIGNORE ۱۲۳۴۵۶۷۸۹۰-=ًٌٍَُِّْ؛:؟.،,،؟\n",
-    };
-}
+// function makeHunspell(wordlist: string[]) {
+//     return {
+//         dicContent: wordlist.reduce((acc, word) => acc + word + "\n", wordlist.length + "\n"),
+//         affContent: "SET UTF-8\nCOMPLEXPREFIXES\nIGNORE ۱۲۳۴۵۶۷۸۹۰-=ًٌٍَُِّْ؛:؟.،,،؟\n",
+//     };
+// }
