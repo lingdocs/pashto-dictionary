@@ -44,6 +44,7 @@ const ScriptToPhonetics = () => {
                     rows={4}
                     value={text}
                     onChange={e => setText(e.target.value)}
+                    dir="rtl"
                 />
             </div>
             <div>
