@@ -31,6 +31,7 @@ const dictionaryInfoFilename = "dict-info";
 // const hunspellAffFileFilename = "ps_AFF.aff";
 // const hunspellDicFileFilename = "ps_AFF.dic";
 const allWordsJsonFilename = "all-words.json";
+const allWordsInfoFilename = "all-words-info.json";
 const url = `${baseUrl}${dictionaryFilename}`;
 const infoUrl = `${baseUrl}${dictionaryInfoFilename}`;
 
@@ -61,23 +62,21 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
     }
     uploadDictionaryToStorage(dictionary).catch(console.error);
     // TODO: make this async and run after publish response
-    doHunspellEtc(entries).catch(console.error);
+    doHunspellEtc(dictionary.info, entries).catch(console.error);
     return {
         ok: true,
         info: dictionary.info
     };
 }
 
-async function doHunspellEtc(entries: T.DictionaryEntry[]) {
-    console.log("getting word list");
+async function doHunspellEtc(info: T.DictionaryInfo, entries: T.DictionaryEntry[]) {
     const wordlistResponse = getWordList(entries);
-    console.log("got word list length", wordlistResponse.ok && wordlistResponse.wordlist.length);
     if (!wordlistResponse.ok) {
         throw new Error(JSON.stringify(wordlistResponse.errors));
     }
     // const hunspell = makeHunspell(wordlistResponse.wordlist);
     // await uploadHunspellToStorage(hunspell);
-    await uploadAllWordsToStoarage(wordlistResponse.wordlist)
+    await uploadAllWordsToStoarage(info, wordlistResponse.wordlist)
 }
 
 /**
@@ -236,8 +235,9 @@ async function upload(content: Buffer | string, filename: string) {
 //     ]);
 // }
 
-async function uploadAllWordsToStoarage(words: T.PsString[]) {
-    await upload(JSON.stringify(words), allWordsJsonFilename)
+async function uploadAllWordsToStoarage(info: T.DictionaryInfo, words: T.PsString[]) {
+    await upload(JSON.stringify({ info, words }), allWordsJsonFilename);
+    await upload(JSON.stringify(info), allWordsInfoFilename);
 }
 
 async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
