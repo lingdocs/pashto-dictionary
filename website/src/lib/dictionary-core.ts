@@ -13,7 +13,7 @@ export class DictionaryDb {
     // config variables
     private dictionaryInfoLocalStorageKey: string;
     private dictionaryCollectionName: string;
-    private dictionaryUrl: string;;
+    private dictionaryUrl: string;
     private dictionaryInfoUrl: string;
     private lokidb: loki;
 
