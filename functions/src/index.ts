@@ -5,7 +5,7 @@ import lingdocsAuth from "./middleware/lingdocs-auth";
 import publish from "./publish";
 
 export const publishDictionary = functions.runWith({
-    timeoutSeconds: 60,
+    timeoutSeconds: 500,
     memory: "2GB"
 }).https.onRequest(
     lingdocsAuth(
@@ -26,7 +26,7 @@ export const publishDictionary = functions.runWith({
 );
     
 export const submissions = functions.runWith({
-    timeoutSeconds: 30,
+    timeoutSeconds: 60,
     memory: "1GB",
 }).https.onRequest(lingdocsAuth(
     async (req, res: functions.Response<FT.SubmissionsResponse | FT.FunctionError>) => {
