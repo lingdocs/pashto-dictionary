@@ -69,7 +69,9 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
 }
 
 async function doHunspellEtc(entries: T.DictionaryEntry[]) {
+    console.log("getting word list");
     const wordlistResponse = getWordList(entries);
+    console.log("got word list length", wordlistResponse.ok && wordlistResponse.wordlist.length);
     if (!wordlistResponse.ok) {
         throw new Error(JSON.stringify(wordlistResponse.errors));
     }
