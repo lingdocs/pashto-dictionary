@@ -6,10 +6,10 @@ import {
 } from "@lingdocs/inflect";
 import { isNounOrAdjEntry } from "@lingdocs/inflect/dist/lib/src/type-predicates";
 
-type PSHash = string & { ___brand: "a hash of PSString" };
+type PSHash = `${string}X${string}`;
 
 function makeHash(o: T.PsString): PSHash {
-    return `${o.p}X${o.f}` as PSHash;
+    return `${o.p}X${o.f}`;
 }
 
 export function splitWords(o: T.PsString): T.PsString[] {
