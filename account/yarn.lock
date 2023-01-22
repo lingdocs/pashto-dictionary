@@ -45,10 +45,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/inflect@5.4.2":
-  "integrity" "sha512-AV/RwKPRtWJ+eRL7r/50LvfZJyjK0H425j5IBkObYsr9wCHNHiEewZtSm+T4NWME3YEYZVt7O58dqQBxlumefw=="
-  "resolved" "https://npm.lingdocs.com/@lingdocs%2finflect/-/inflect-5.4.2.tgz"
-  "version" "5.4.2"
+"@lingdocs/inflect@5.4.3":
+  "integrity" "sha512-6k8gYCED/x5bv/U+gUgDXZGqBIkjChmDsUlQpnJiE4ToRupj05ci1QT95TU9GhXs0ohlE/3QXK/lmbddJv9E9w=="
+  "resolved" "https://npm.lingdocs.com/@lingdocs%2finflect/-/inflect-5.4.3.tgz"
+  "version" "5.4.3"
   dependencies:
     "pbf" "^3.2.1"
     "rambda" "^7.3.0"

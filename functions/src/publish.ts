@@ -31,7 +31,6 @@ const dictionaryInfoFilename = "dict-info";
 // const hunspellAffFileFilename = "ps_AFF.aff";
 // const hunspellDicFileFilename = "ps_AFF.dic";
 const allWordsJsonFilename = "all-words.json";
-const allWordsInfoFilename = "all-words-info.json";
 const url = `${baseUrl}${dictionaryFilename}`;
 const infoUrl = `${baseUrl}${dictionaryInfoFilename}`;
 
@@ -236,8 +235,7 @@ async function upload(content: Buffer | string, filename: string) {
 // }
 
 async function uploadAllWordsToStoarage(info: T.DictionaryInfo, words: T.PsString[]) {
-    await upload(JSON.stringify({ info, words }), allWordsJsonFilename);
-    await upload(JSON.stringify(info), allWordsInfoFilename);
+    await upload(JSON.stringify({ info, words } as T.AllWordsWithInflections), allWordsJsonFilename);
 }
 
 async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
