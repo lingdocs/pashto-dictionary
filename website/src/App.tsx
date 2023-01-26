@@ -448,7 +448,9 @@ class App extends Component<RouteComponentProps, State> {
             return;
         }
         const lastChar = searchValue[searchValue.length-1];
-        if (lastChar >= '0' && lastChar <= '9') {
+        // don't let people type in a single digit (to allow for number shortcuts)
+        // but do allow the whole thing to be numbers (to allow for pasting and searching for ts)
+        if (lastChar >= '0' && lastChar <= '9' && !(/^\d+$/.test(searchValue))) {
             return;
         }
         if (this.state.dictionaryStatus !== "ready") {

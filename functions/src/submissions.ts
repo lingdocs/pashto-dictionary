@@ -121,14 +121,16 @@ export function sortSubmissions(submissions: FT.Submission[]): SortedSubmissions
         edits: [],
         reviewTasks: [],
     };
-    return submissions.reduce((acc, s): SortedSubmissions => ({
-        ...acc,
-        ...(s.type === "edit suggestion" || s.type === "issue" || s.type === "entry suggestion") ? {
-            reviewTasks: [...acc.reviewTasks, s],
-        } : {
-            edits: [...acc.edits, s],
-        },
-    }), base);
+    return submissions.reduce((acc, s): SortedSubmissions => {
+        return {
+            ...acc,
+            ...(s.type === "edit suggestion" || s.type === "issue" || s.type === "entry suggestion") ? {
+                reviewTasks: [...acc.reviewTasks, s],
+            } : {
+                edits: [...acc.edits, s],
+            },
+        };
+    }, base);
 }
 
 type SortedEdits = {

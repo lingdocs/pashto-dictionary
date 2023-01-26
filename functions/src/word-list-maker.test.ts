@@ -1,36 +1,50 @@
-import { splitWords } from "./word-list-maker";
+import {
+    psHash,
+    dePsHash,
+    PsHash,
+} from "./word-list-maker";
+import {
+    Types as T,
+} from "@lingdocs/inflect";
 
-// const entries = [
-//     { "ts": 0, p:"???", f: "abc", e: "oeu", g: "coeuch", i: 0 },
-//     {"ts":1581189430959,"p":"پېش","f":"pesh","e":"ahead, in front; earlier, first, before","c":"adv.","g":"pesh","i":2574},
-//     {"i":4424,"g":"cherta","ts":1527812531,"p":"چېرته","f":"cherta","e":"where (also used for if, when)"},
-//     {"i":5389,"g":"daase","ts":1527812321,"p":"داسې","f":"daase","e":"such, like this, like that, like","c":"adv."},
-// ];
-// const expectedInflections = [
-//     "پیش",
-//     "پېش",
-//     "چیرته",
-//     "چېرته",
-//     "داسي",
-//     "داسې",
-// ];
+const toTest: {
+    plain: T.PsWord,
+    hash: PsHash,
+}[] = [
+    {
+        plain: { p: "کور", f: "kor" },
+        hash: "کورXkor",
+    },
+    {
+        plain: {
+            p: "کنار", f: "kanaar",
+            hyphen: [
+                { type: "unwritten", f: "e" },
+                { type: "written", f: "daryaab", p: "دریاب" },
+            ],
+        },
+        hash: "کنارXkanaar-Xe-دریابXdaryaab",
+    },
+    {
+        plain: {
+            p: "کار", f: "kaar",
+            hyphen: [
+                { type: "written", f: "U", p: "و" },
+                { type: "written", f: "baar", p: "بار" },
+            ],
+        },
+        hash: "کارXkaar-وXU-بارXbaar",
+    },
+];
 
-// describe('Make Wordlist', () => {
-//   it("should return all inflections that can be generated from given entries", () => {
-//     const response = getWordList(entries);
-//     expect(response.ok).toBe(true);
-//     expect("wordlist" in response).toBe(true);
-//     if ("wordlist" in response) {
-//       expect(response.wordlist).toEqual(expectedInflections);
-//     }
-//   });
-// });
+test("psHash should work", () => {
+    toTest.forEach((t) => {
+        expect(psHash(t.plain)).toEqual(t.hash);
+    });
+});
 
-describe("aux function", () => {
-  it("should split words", () => {
-    expect(splitWords({ p: "غټ کور", f: "ghuT kor" }))
-      .toEqual([{ p: "غټ", f: "ghuT" }, { p: "کور", f: "kor" }]);
-    expect(splitWords({ p: "بې طرفه پاتې کېدل", f: "betarafa paate kedul"}))
-      .toEqual([{ p: "بې طرفه", f: "betarafa"}, { p: "پاتې", f: "paate" }, { p: "کېدل", f: "kedul" }]);
-  })
-})
+test("dePsHash should work", () => {
+    toTest.forEach((t) => {
+        expect(dePsHash(t.hash)).toEqual(t.plain);
+    });
+});
