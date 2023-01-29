@@ -10,6 +10,14 @@ import feedbackRouter from "./routers/feedback-router";
 import paymentRouter from "./routers/payment-router";
 import dictionaryRouter from "./routers/dictionary-router";
 
+const sameOriginCorsOpts = {
+    origin: inProd ? /\.lingdocs\.com$/ : "*",
+    credentials: true,
+};
+const openCorsOpts = {
+    origin: "*",
+    credentials: false,
+};
 const app = express();
 
 // MIDDLEWARE AND SETUP 🔧 //
@@ -26,21 +34,14 @@ app.use(passport.session());
 setupPassport(passport);
 
  // Web Interface - returning html (mostly)
-app.use(cors({
-    origin: inProd ? /\.lingdocs\.com$/ : "*",
-    credentials: true,
-}));
-app.use("/", authRouter(passport));
+app.use("/", cors(sameOriginCorsOpts), authRouter(passport));
  // REST API - returning json
-app.use("/api", apiRouter);
-app.use("/feedback", feedbackRouter);
-app.use("/payment", paymentRouter);
-app.use(cors({
-    origin: "*", // inProd ? /\.lingdocs\.com$/ : "*",
-    credentials: false,
-}));
+app.use("/api", cors(sameOriginCorsOpts), apiRouter);
+app.use("/feedback", cors(sameOriginCorsOpts), feedbackRouter);
+// TODO: check - does this work with the cors ?
+app.use("/payment", cors(sameOriginCorsOpts), paymentRouter);
 // Dictionary API
-app.use("/dictionary", dictionaryRouter)
+app.use("/dictionary", cors(openCorsOpts), dictionaryRouter);
 
 // START 💨 //
 app.listen(4000, () => console.log("Server Has Started on 4000"));

@@ -1,6 +1,7 @@
-POST https://account.lingdocs.com/dictionary/all-words HTTP/1.1
+POST https://account.lingdocs.com/dictionary/script-to-phonetics HTTP/1.1
 content-type: application/json
 
 {
-    "word": "کور"
+    "text": "کور ته ځم",
+    "accents": false
 }
