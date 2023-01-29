@@ -41,6 +41,7 @@ app.use("/feedback", cors(sameOriginCorsOpts), feedbackRouter);
 // TODO: check - does this work with the cors ?
 app.use("/payment", cors(sameOriginCorsOpts), paymentRouter);
 // Dictionary API
+app.options("/dictionary", cors());
 app.use("/dictionary", cors(), dictionaryRouter);
 
 // START 💨 //
