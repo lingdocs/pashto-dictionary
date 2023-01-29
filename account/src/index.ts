@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors({
-    origin: inProd ? /\.lingdocs\.com$/ : "*",
+    origin: "*",// inProd ? /\.lingdocs\.com$/ : "*",
     credentials: true,
 }));
 if (inProd) app.set('trust proxy', 1);
