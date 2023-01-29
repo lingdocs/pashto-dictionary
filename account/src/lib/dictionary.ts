@@ -33,6 +33,7 @@ async function fetchDictionary(): Promise<T.Dictionary> {
 }
 
 async function fetchAllWords(): Promise<T.AllWordsWithInflections> {
+    // TODO: this is really ugly
     const res = await fetch(process.env.LINGDOCS_DICTIONARY_URL?.slice(0, -4) + "all-words.json");
     return await res.json();
 }

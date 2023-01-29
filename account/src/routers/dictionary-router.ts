@@ -6,6 +6,7 @@ import {
     getEntries,
     updateDictionary,    
 } from "../lib/dictionary";
+import { scriptToPhonetics } from "../lib/scriptToPhonetics";
 
 const dictionaryRouter = express.Router();
 
@@ -14,15 +15,16 @@ dictionaryRouter.post("/update", async (req, res, next) => {
     res.send({ ok: true, result });
 });
 
-dictionaryRouter.post("/all-words", async (req, res, next) => {
+dictionaryRouter.post("/script-to-phonetics", async (req, res, next) => {
     if (!allWordsCollection) {
         return res.send({ ok: false, message: "allWords not ready" });
     }
-    const word = req.body.word as string;
-    if (!word) {
+    const text = req.body.text as unknown;
+    const accents = req.body.accents as unknown;
+    if (!text || typeof text !== "string" || typeof accents !== "boolean") {
         return res.status(400).send({ ok: false, error: "invalid query" });
     }
-    const results = await findInAllWords(word);
+    const results = await scriptToPhonetics(text, accents);
     res.send(results);
 })
 

@@ -1,6 +1,6 @@
-POST https://account.lingdocs.com/dictionary/entries HTTP/1.1
+POST https://account.lingdocs.com/dictionary/all-words HTTP/1.1
 content-type: application/json
 
 {
-    "ids": ["لیدل", 1527815306]
+    "word": "کور"
 }
