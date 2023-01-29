@@ -18,10 +18,7 @@ app.use("/payment/webhook", express.raw({type: "*/*"}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(cors({
-    origin: inProd ? /\.lingdocs\.com$/ : "*",
-    credentials: true,
-}));
+
 if (inProd) app.set('trust proxy', 1);
 setupSession(app);
 app.use(passport.initialize());
@@ -29,12 +26,20 @@ app.use(passport.session());
 setupPassport(passport);
 
  // Web Interface - returning html (mostly)
+app.use(cors({
+    origin: inProd ? /\.lingdocs\.com$/ : "*",
+    credentials: true,
+}));
 app.use("/", authRouter(passport));
  // REST API - returning json
 app.use("/api", apiRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/payment", paymentRouter);
- // Dictionary API
+app.use(cors({
+    origin: "*", // inProd ? /\.lingdocs\.com$/ : "*",
+    credentials: false,
+}));
+// Dictionary API
 app.use("/dictionary", dictionaryRouter)
 
 // START 💨 //

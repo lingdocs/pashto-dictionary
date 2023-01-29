@@ -54,6 +54,10 @@ export async function updateDictionary(): Promise<"no update" | "updated"> {
     collection?.clear();
     lokidb.removeCollection(collectionName);
     collection?.insert(dictionary.entries);
+    const allWords = await fetchAllWords();
+    allWordsCollection?.clear();
+    lokidb.removeCollection(allWordsCollectionName);
+    allWordsCollection?.insert(allWords.words);
     return "updated";
 }
 
