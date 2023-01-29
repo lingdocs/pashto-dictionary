@@ -2,6 +2,7 @@ import loki, { Collection, LokiMemoryAdapter } from "lokijs";
 import fetch from "node-fetch";
 import { CronJob } from "cron";
 const collectionName = "ps-dictionary";
+const allWordsCollectionName = "all-words";
 import {
     readDictionary,
     readDictionaryInfo,
@@ -11,7 +12,8 @@ import {
     standardizePashto,
 } from "@lingdocs/inflect"
 
-export let collection: Collection<any> | undefined = undefined;
+export let collection: Collection<T.DictionaryEntry> | undefined = undefined;
+export let allWordsCollection: Collection<T.PsString> | undefined = undefined;
 const adapter = new LokiMemoryAdapter();
 const lokidb = new loki("", {
     adapter,
@@ -28,6 +30,11 @@ async function fetchDictionary(): Promise<T.Dictionary> {
     const res = await fetch(process.env.LINGDOCS_DICTIONARY_URL || "");
     const buffer = await res.arrayBuffer();
     return readDictionary(buffer as Uint8Array);
+}
+
+async function fetchAllWords(): Promise<T.AllWordsWithInflections> {
+    const res = await fetch(process.env.LINGDOCS_DICTIONARY_URL?.slice(0, -4) + "all-words.json");
+    return await res.json();
 }
 
 async function fetchDictionaryInfo(): Promise<T.DictionaryInfo> {
@@ -54,8 +61,20 @@ function getOneByTs(ts: number): T.DictionaryEntry {
         throw new Error("dictionary not initialized");
     }
     const r = collection.by("ts", ts);
+    // @ts-ignore
     const { $loki, meta, ...entry } = r;
     return entry;
+}
+
+export function findInAllWords(p: string | RegExp): T.PsWord[] | undefined {
+    if (!allWordsCollection) {
+        throw new Error("allWords not initialized");
+    }
+    return allWordsCollection.find({
+        p: typeof p === "string"
+            ? p
+            : { $regex: p },
+    });
 }
 
 export async function getEntries(ids: (number | string)[]): Promise<{
@@ -100,15 +119,20 @@ export async function getEntries(ids: (number | string)[]): Promise<{
 
 lokidb.loadDatabase({}, (err: Error) => {
     lokidb.removeCollection(collectionName);
-    collection = lokidb.addCollection(collectionName, {
-        // TODO: THIS ISN'T WORKING!
-        disableMeta: true,
-        indices: ["i", "p"],
-        unique: ["ts"],
-    });
+    lokidb.removeCollection(allWordsCollectionName);
     fetchDictionary().then((dictionary) => {
+        collection = lokidb.addCollection(collectionName, {
+            indices: ["i", "p"],
+            unique: ["ts"],
+        });
         version = dictionary.info.release;
         collection?.insert(dictionary.entries);
         updateJob.start();
     }).catch(console.error);
+    fetchAllWords().then((allWords) => {
+        allWordsCollection = lokidb.addCollection(allWordsCollectionName, {
+            indices: ["p"],
+        });
+        allWordsCollection?.insert(allWords.words);
+    });
 });
