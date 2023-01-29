@@ -14,10 +14,10 @@ const sameOriginCorsOpts = {
     origin: inProd ? /\.lingdocs\.com$/ : "*",
     credentials: true,
 };
-const openCorsOpts = {
-    origin: "*",
-    credentials: false,
-};
+// const openCorsOpts = {
+//     origin: "*",
+//     credentials: false,
+// };
 const app = express();
 
 // MIDDLEWARE AND SETUP 🔧 //
@@ -41,7 +41,7 @@ app.use("/feedback", cors(sameOriginCorsOpts), feedbackRouter);
 // TODO: check - does this work with the cors ?
 app.use("/payment", cors(sameOriginCorsOpts), paymentRouter);
 // Dictionary API
-app.use("/dictionary", cors(openCorsOpts), dictionaryRouter);
+app.use("/dictionary", cors(), dictionaryRouter);
 
 // START 💨 //
 app.listen(4000, () => console.log("Server Has Started on 4000"));
