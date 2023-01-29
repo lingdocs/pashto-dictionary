@@ -25,7 +25,7 @@ dictionaryRouter.post("/script-to-phonetics", async (req, res, next) => {
         return res.status(400).send({ ok: false, error: "invalid query" });
     }
     const results = await scriptToPhonetics(text, accents);
-    res.send(results);
+    res.send({ ok: true, results });
 })
 
 dictionaryRouter.post("/entries", async (req, res, next) => {
