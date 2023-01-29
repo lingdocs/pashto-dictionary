@@ -48,6 +48,7 @@ export function dePsHash(h: PsHash): T.PsWord {
 }
 
 function search(object: any): Set<PsHash> {
+    const fieldsToIgnore = ["info", "type", "perfectiveSplit"];
     let splitError: any = false;
     // adapted from
     // https://www.mikedoesweb.com/2016/es6-depth-first-object-tree-search/
@@ -56,6 +57,9 @@ function search(object: any): Set<PsHash> {
             return found;
         }
         Object.keys(haystack).forEach((key: string) => {
+            if (fieldsToIgnore.includes(key)) {
+                return;
+            }
             if(key === "p" && typeof haystack[key] === "string") {
                 try {
                     splitPsString(haystack).forEach(word => {
