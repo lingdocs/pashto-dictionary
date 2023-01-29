@@ -14,10 +14,6 @@ const sameOriginCorsOpts = {
     origin: inProd ? /\.lingdocs\.com$/ : "*",
     credentials: true,
 };
-// const openCorsOpts = {
-//     origin: "*",
-//     credentials: false,
-// };
 const app = express();
 
 // MIDDLEWARE AND SETUP 🔧 //
@@ -32,6 +28,10 @@ setupSession(app);
 app.use(passport.initialize());
 app.use(passport.session());
 setupPassport(passport);
+
+app.get("/test", cors(), (req, res) => {
+    res.send({ ok: true });
+});
 
  // Web Interface - returning html (mostly)
 app.use("/", cors(sameOriginCorsOpts), authRouter(passport));
