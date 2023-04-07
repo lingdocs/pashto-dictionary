@@ -42,6 +42,7 @@ const fillerWords = [
     "make",
     "etc.",
     "see",
+    "pertaining",
     "",
 ];
 
