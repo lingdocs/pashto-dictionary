@@ -27,9 +27,6 @@ export const readOptions = (): undefined | Options => {
       // compatibility with legacy options
       options.searchBarStickyFocus = false;
     }
-    if (!("showPlayStoreButton" in options)) {
-      options.showPlayStoreButton = false;
-    }
     return options;
   } catch (e) {
     console.error("error parsing saved state JSON", e);

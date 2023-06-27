@@ -65,7 +65,6 @@ export type Options = {
     wordlistReviewBadge: boolean,
     searchBarPosition: SearchBarPosition,
     searchBarStickyFocus: boolean,
-    showPlayStoreButton: boolean,
 }
 
 export type Language = "Pashto" | "English";
