@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lingdocs/inflect": "5.7.11",
+    "@lingdocs/inflect": "5.10.1",
     "base64url": "^3.0.1",
     "bcryptjs": "^2.4.3",
     "connect-redis": "^6.0.0",
