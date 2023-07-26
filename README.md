@@ -7,6 +7,8 @@
 ![Account Deploy](https://github.com/lingdocs/lingdocs-main/actions/workflows/deploy-account.yml/badge.svg)
 ![Functions Deploy](https://github.com/lingdocs/lingdocs-main/actions/workflows/deploy-functions.yml/badge.svg)
 
+![LingDocs Logo](./website/public/icons/icon-w-name.png)
+
 ## Contents
 
 This monorepo contains:
