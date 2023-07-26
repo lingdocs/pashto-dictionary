@@ -12,7 +12,7 @@ import dictionaryRouter from "./routers/dictionary-router";
 
 const sameOriginCorsOpts = {
   origin: inProd ? /\.lingdocs\.com$/ : "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   credentials: true,
 };
 const app = express();

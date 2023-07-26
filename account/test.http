@@ -5,3 +5,13 @@ content-type: application/json
     "text": "کور ته ځم",
     "accents": false
 }
+
+###
+
+PUT https://account.lingdocs.com/feedback HTTP/1.1
+content-type: application/json
+
+{
+    "anonymous": true,
+    "apple": "is blue"
+}
