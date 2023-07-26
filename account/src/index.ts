@@ -15,6 +15,7 @@ const sameOriginCorsOpts = {
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 };
+console.log({ inProd });
 const app = express();
 
 // MIDDLEWARE AND SETUP 🔧 //
