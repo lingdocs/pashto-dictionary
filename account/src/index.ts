@@ -11,26 +11,27 @@ import paymentRouter from "./routers/payment-router";
 import dictionaryRouter from "./routers/dictionary-router";
 
 const sameOriginCorsOpts = {
-    origin: inProd ? /\.lingdocs\.com$/ : "*",
-    credentials: true,
+  origin: inProd ? /\.lingdocs\.com$/ : "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
 };
 const app = express();
 
 // MIDDLEWARE AND SETUP 🔧 //
 app.set("view engine", "ejs");
-app.use("/payment/webhook", express.raw({type: "*/*"}));
+app.use("/payment/webhook", express.raw({ type: "*/*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-if (inProd) app.set('trust proxy', 1);
+if (inProd) app.set("trust proxy", 1);
 setupSession(app);
 app.use(passport.initialize());
 app.use(passport.session());
 setupPassport(passport);
 
 app.get("/test", cors(), (req, res) => {
-    res.send({ ok: true });
+  res.send({ ok: true });
 });
 
 // Dictionary API
@@ -39,12 +40,11 @@ app.use("/dictionary", cors(), dictionaryRouter);
 
 // Web Interface - returning html (mostly)
 app.use("/", cors(sameOriginCorsOpts), authRouter(passport));
- // REST API - returning json
+// REST API - returning json
 app.use("/api", cors(sameOriginCorsOpts), apiRouter);
 app.use("/feedback", cors(sameOriginCorsOpts), feedbackRouter);
 // TODO: check - does this work with the cors ?
 app.use("/payment", cors(sameOriginCorsOpts), paymentRouter);
-
 
 // START 💨 //
 app.listen(4000, () => console.log("Server Has Started on 4000"));
