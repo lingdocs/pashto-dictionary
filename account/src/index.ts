@@ -11,7 +11,7 @@ import paymentRouter from "./routers/payment-router";
 import dictionaryRouter from "./routers/dictionary-router";
 
 const sameOriginCorsOpts = {
-  origin: "*", // inProd ? /\.lingdocs\.com$/ : "*",
+  origin: inProd ? /\.lingdocs\.com$/ : "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 };
