@@ -14,7 +14,7 @@ export const userLocalStorageName = "user1";
 
 export function saveOptions(options: Options): void {
   localStorage.setItem(optionsLocalStorageName, JSON.stringify(options));
-};
+}
 
 export const readOptions = (): undefined | Options => {
   const optionsRaw = localStorage.getItem(optionsLocalStorageName);
@@ -23,10 +23,6 @@ export const readOptions = (): undefined | Options => {
   }
   try {
     const options = JSON.parse(optionsRaw) as Options;
-    if (!("searchBarStickyFocus" in options)) {
-      // compatibility with legacy options
-      options.searchBarStickyFocus = false;
-    }
     return options;
   } catch (e) {
     console.error("error parsing saved state JSON", e);
@@ -40,18 +36,18 @@ export function saveUser(user: AT.LingdocsUser | undefined): void {
   } else {
     localStorage.removeItem(userLocalStorageName);
   }
-};
+}
 
 export const readUser = (): AT.LingdocsUser | undefined => {
-    const userRaw = localStorage.getItem(userLocalStorageName);
-    if (!userRaw) {
-        return undefined;
-    }
-    try {
-        const user = JSON.parse(userRaw) as AT.LingdocsUser;
-        return user;
-    } catch (e) {
-        console.error("error parsing saved user JSON", e);
-        return undefined;
-    }
+  const userRaw = localStorage.getItem(userLocalStorageName);
+  if (!userRaw) {
+    return undefined;
+  }
+  try {
+    const user = JSON.parse(userRaw) as AT.LingdocsUser;
+    return user;
+  } catch (e) {
+    console.error("error parsing saved user JSON", e);
+    return undefined;
+  }
 };

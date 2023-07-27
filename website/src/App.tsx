@@ -72,6 +72,7 @@ import PhraseBuilder from "./screens/PhraseBuilder";
 import { searchAllInflections } from "./lib/search-all-inflections";
 import { addToWordlist } from "./lib/wordlist-database";
 import ScriptToPhonetics from "./screens/ScriptToPhonetics";
+import { Modal, Button } from "react-bootstrap";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -107,6 +108,7 @@ class App extends Component<RouteComponentProps, State> {
     this.state = {
       dictionaryStatus: "loading",
       dictionaryInfo: undefined,
+      showModal: false,
       // TODO: Choose between the saved options and the options in the saved user
       options: savedOptions
         ? savedOptions
@@ -146,6 +148,8 @@ class App extends Component<RouteComponentProps, State> {
     this.handleRefreshReviewTasks = this.handleRefreshReviewTasks.bind(this);
     this.handleDictionaryUpdate = this.handleDictionaryUpdate.bind(this);
     this.handleInflectionSearch = this.handleInflectionSearch.bind(this);
+    this.handleShowModal = this.handleShowModal.bind(this);
+    this.handleCloseModal = this.handleCloseModal.bind(this);
   }
 
   public componentDidMount() {
@@ -583,6 +587,14 @@ class App extends Component<RouteComponentProps, State> {
     });
   }
 
+  private handleCloseModal() {
+    this.setState({ showModal: false });
+  }
+
+  private handleShowModal() {
+    this.setState({ showModal: true });
+  }
+
   render() {
     return (
       <div
@@ -641,7 +653,7 @@ class App extends Component<RouteComponentProps, State> {
                   >
                     <div className="my-4">New words this month</div>
                   </Link>
-                  <div className="mt-4 pt-3">
+                  <div className="my-4 pt-3">
                     <Link
                       to="/phrase-builder"
                       className="plain-link h5 font-weight-light"
@@ -656,6 +668,12 @@ class App extends Component<RouteComponentProps, State> {
                       Grammar
                     </a>
                   </div>
+                  <button
+                    onClick={this.handleShowModal}
+                    className="mt-2 btn btn-lg btn-secondary"
+                  >
+                    ✨ New Phonetics for ی's!! 👀
+                  </button>
                 </div>
               </Route>
               <Route path="/about">
@@ -816,6 +834,87 @@ class App extends Component<RouteComponentProps, State> {
             />
           )}
         </footer>
+        <Modal
+          show={this.state.showModal}
+          onHide={this.handleCloseModal}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Phonetics Update! 📰</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              The phonetics for{" "}
+              <span style={{ backgroundColor: "rgba(255,255,0,0.4)" }}>
+                two of the five ی's have been updated
+              </span>{" "}
+              to something much more logical and helpful for pronunciation.
+            </p>
+            <h5>Pure Vowels (mouth stays still)</h5>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Letter</th>
+                  <th scope="col">Phonetics</th>
+                  <th scope="col">Sound</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ي</td>
+                  <td>ee</td>
+                  <td>long "ee" like "bee"</td>
+                </tr>
+                <tr>
+                  <td>ې</td>
+                  <td>e</td>
+                  <td>
+                    <div>
+                      like "ee" but <em>with a slightly more open mouth</em>
+                    </div>
+                    <div className="small">
+                      This is a special vowel <em>not found in English</em>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h5>Dipthongs (pure vowel + y)</h5>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Letter</th>
+                  <th scope="col">Phonetics</th>
+                  <th scope="col">Sound</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ backgroundColor: "rgba(255,255,0,0.4)" }}>
+                  <td>ی</td>
+                  <td>ay</td>
+                  <td>short 'a' + y</td>
+                </tr>
+                <tr>
+                  <td>ۍ</td>
+                  <td>uy</td>
+                  <td>'u' shwa (ə) + y</td>
+                </tr>
+                <tr style={{ backgroundColor: "rgba(255,255,0,0.4)" }}>
+                  <td>ئ</td>
+                  <td>ey</td>
+                  <td>
+                    <div>'e' (ې) + y</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }

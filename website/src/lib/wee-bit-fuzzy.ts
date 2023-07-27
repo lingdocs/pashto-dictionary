@@ -28,7 +28,7 @@
 //     R: "[r|R]",
 // };
 
-const fiveYeys = "[ئ|ۍ|ي|ې|ی]";
+const fiveYays = "[ئ|ۍ|ي|ې|ی]";
 const sSounds = "[س|ص|ث|څ]";
 const zSounds = "[ز|ژ|ض|ظ|ذ|ځ]";
 const tSounds = "[ت|ط|ټ]";
@@ -39,106 +39,115 @@ const hKhSounds = "[خ|ح|ښ|ه]";
 const alef = "[آ|ا]";
 
 const pReplacer = {
-    "ی": fiveYeys,
-    "ي": fiveYeys,
-    "ۍ": fiveYeys,
-    "ئ": fiveYeys,
-    "ې": fiveYeys,
+  ی: fiveYays,
+  ي: fiveYays,
+  ۍ: fiveYays,
+  ئ: fiveYays,
+  ې: fiveYays,
 
-    "س": sSounds,
-    "ص": sSounds,
-    "ث": sSounds,
-    "څ": sSounds,
+  س: sSounds,
+  ص: sSounds,
+  ث: sSounds,
+  څ: sSounds,
 
-    "ز": zSounds,
-    "ظ": zSounds,
-    "ذ": zSounds,
-    "ض": zSounds,
-    "ژ": zSounds,
-    "ځ": zSounds,
+  ز: zSounds,
+  ظ: zSounds,
+  ذ: zSounds,
+  ض: zSounds,
+  ژ: zSounds,
+  ځ: zSounds,
 
-    "ت": tSounds,
-    "ط": tSounds,
-    "ټ": tSounds,
+  ت: tSounds,
+  ط: tSounds,
+  ټ: tSounds,
 
-    "د": dSounds,
-    "ډ": dSounds,
+  د: dSounds,
+  ډ: dSounds,
 
-    "ر": rSounds,
-    "ړ": rSounds,
+  ر: rSounds,
+  ړ: rSounds,
 
-    "ن": nSounds,
-    "ڼ": nSounds,
+  ن: nSounds,
+  ڼ: nSounds,
 
-    "خ": hKhSounds,
-    "ح": hKhSounds,
-    "ښ": hKhSounds,
-    "ه": hKhSounds,
+  خ: hKhSounds,
+  ح: hKhSounds,
+  ښ: hKhSounds,
+  ه: hKhSounds,
 
-    "ا": alef,
-    "آ": alef,
+  ا: alef,
+  آ: alef,
 };
 
-const fiveYeysF = "(?:eyy|ey|ee|é|e|uy)";
+const fiveYaysF = "(?:ey|ay|ee|é|e|uy)";
 const hKhF = "(?:kh|h|x)";
 const zSoundsF = "(?:z|dz)";
 const sSoundsF = "(?:ts|s)";
 
 const fReplacer = {
-    "eyy": fiveYeysF,
-    "ey": fiveYeysF,
-    "uy": fiveYeysF,
-    "ee": fiveYeysF,
-    "e": fiveYeysF,
+  ey: fiveYaysF,
+  ay: fiveYaysF,
+  uy: fiveYaysF,
+  ee: fiveYaysF,
+  e: fiveYaysF,
 
-    "z": zSoundsF,
-    "dz": zSoundsF,
-    "x": hKhF,
-    "h": hKhF,
-    "kh": hKhF,
-    "ts": sSoundsF,
-    "s": sSoundsF,
-    // only used if ignoring accents
-    "a": "[a|á]",
-    "á": "[a|á|u|ú]",
-    "u": "[u|ú|a|á]",
-    "ú": "[u|ú]",
-    "o": "[o|ó]",
-    "ó": "[o|ó]",
-    "i": "[i|í]",
-    "í": "[i|í]",
-    "U": "[U|Ú]",
-    "Ú": "[U|Ú]",
-    "éy": fiveYeysF,
-    "éyy": fiveYeysF,
-    "úy": fiveYeysF,
-    "ée": fiveYeysF,
-    "é": fiveYeysF,
+  z: zSoundsF,
+  dz: zSoundsF,
+  x: hKhF,
+  h: hKhF,
+  kh: hKhF,
+  ts: sSoundsF,
+  s: sSoundsF,
+  // only used if ignoring accents
+  a: "[a|á]",
+  á: "[a|á|u|ú]",
+  u: "[u|ú|a|á]",
+  ú: "[u|ú]",
+  o: "[o|ó]",
+  ó: "[o|ó]",
+  i: "[i|í]",
+  í: "[i|í]",
+  U: "[U|Ú]",
+  Ú: "[U|Ú]",
+  áy: fiveYaysF,
+  éy: fiveYaysF,
+  úy: fiveYaysF,
+  ée: fiveYaysF,
+  é: fiveYaysF,
 };
 
 const pRepRegex = new RegExp(Object.keys(pReplacer).join("|"), "g");
 
-const fRepRegex = /eyy|ey|uy|ee|e|z|dz|x|kh|h|ts|s/g;
+const fRepRegex = /ey|ay|uy|ee|e|z|dz|x|kh|h|ts|s/g;
 
-const fRepRegexWAccents = /eyy|éyy|ey|éy|uy|úy|ee|ée|e|é|z|dz|x|ts|s|kh|h|a|á|i|í|o|ó|u|ú|U|Ú/g;
+const fRepRegexWAccents =
+  /ey|éy|ay|áy|uy|úy|ee|ée|e|é|z|dz|x|ts|s|kh|h|a|á|i|í|o|ó|u|ú|U|Ú/g;
 
 function makePAWeeBitFuzzy(s: string): string {
-    // + s.replace(/ /g, "").split("").join(" *");
-    return "^" + s.replace(pRepRegex, mtch => {
-        // @ts-ignore
-        return `${pReplacer[mtch]}`;
-    });
+  // + s.replace(/ /g, "").split("").join(" *");
+  return (
+    "^" +
+    s.replace(pRepRegex, (mtch) => {
+      // @ts-ignore
+      return `${pReplacer[mtch]}`;
+    })
+  );
 }
 
 function makeFAWeeBitFuzzy(s: string, ignoreAccent?: boolean): string {
-    return "^" + s.replace((ignoreAccent ? fRepRegexWAccents : fRepRegex), mtch => {
-        // @ts-ignore
-        return fReplacer[mtch];
-    });
+  return (
+    "^" +
+    s.replace(ignoreAccent ? fRepRegexWAccents : fRepRegex, (mtch) => {
+      // @ts-ignore
+      return fReplacer[mtch];
+    })
+  );
 }
 
-export function makeAWeeBitFuzzy(s: string, i: "f" | "p", ignoreAccent?: boolean): string {
-    return i === "p"
-        ? makePAWeeBitFuzzy(s)
-        : makeFAWeeBitFuzzy(s, ignoreAccent);
+export function makeAWeeBitFuzzy(
+  s: string,
+  i: "f" | "p",
+  ignoreAccent?: boolean
+): string {
+  return i === "p" ? makePAWeeBitFuzzy(s) : makeFAWeeBitFuzzy(s, ignoreAccent);
 }

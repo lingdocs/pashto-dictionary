@@ -67,6 +67,10 @@ npm install
 #### Development
 
 ```sh
+firebase login
+# get envars locally
+firebase functions:config:get > .runtimeconfig.json
+# start functions emulator
 npm run serve
 ```
 
