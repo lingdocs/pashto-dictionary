@@ -647,12 +647,12 @@ class App extends Component<RouteComponentProps, State> {
                       </Link>
                     </div>
                   )}
-                  <Link
+                  {/* <Link
                     to="/new-entries"
                     className="plain-link font-weight-light"
                   >
                     <div className="my-4">New words this month</div>
-                  </Link>
+                  </Link> */}
                   <div className="my-4 pt-3">
                     <Link
                       to="/phrase-builder"
