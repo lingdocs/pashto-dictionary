@@ -670,7 +670,7 @@ class App extends Component<RouteComponentProps, State> {
                   </div>
                   <button
                     onClick={this.handleShowModal}
-                    className="mt-2 btn btn-lg btn-secondary"
+                    className="mt-2 btn btn-secondary"
                   >
                     ✨ New Phonetics for ی's!! 👀
                   </button>
