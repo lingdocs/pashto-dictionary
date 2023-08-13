@@ -15,10 +15,11 @@ import {
   typePredicates as tp,
   revertSpelling,
 } from "@lingdocs/ps-react";
+// TODO: or use and modify leven ??
+// @ts-ignore
+import { levenshtein } from "edit-distance";
 import { isPashtoScript } from "./is-pashto";
 import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
-// @ts-ignore
-import relevancy from "relevancy";
 import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 import { getTextOptions } from "./get-text-options";
 import { DictionaryAPI, State } from "../types/dictionary-types";
@@ -31,8 +32,6 @@ const dictionaryInfoLocalStorageKey = "dictionaryInfo5";
 const dictionaryCollectionName = "dictionary3";
 // const dictionaryDatabaseName = "dictdb.db";
 export const pageSize = 35;
-
-const relevancySorter = new relevancy.Sorter();
 
 const db = indexedDB.open("inPrivate");
 db.onerror = (e) => {
@@ -379,10 +378,43 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({
   );
 }
 
-function sortByRelevancy<T>(arr: T[], searchI: string, index: string): T[] {
-  return relevancySorter.sort(arr, searchI, (obj: any, calc: any) =>
-    calc(obj[index])
-  );
+function sortByRelevancy<T extends Record<"p" | "g", string>>(
+  arr: Readonly<T[]>,
+  searchI: string,
+  index: "p" | "g"
+): T[] {
+  // TODO: experiment with larger page sizes and not exact query,
+  // especially with phonetic searches like ghuT
+  //
+  // TODO: if result came from special query, mark it as special and
+  // then don't mess with the relevancy
+  // now instead of an extra pass for exact, we can just use this!
+  const similars = {
+    p: ["دډتټ", "زذضظځ", "صسث", "رړڼ", "ڼن", "یيېۍ", "قک", "ګږ", "ښخحه"],
+    g: ["tdTD", "rRN", "nN", "ei", "xkg"],
+  };
+  function insert() {
+    return 1;
+  }
+  // check if it's removing dz etc
+  function remove() {
+    return 1;
+  }
+  function update(a: string, b: string) {
+    return a !== b
+      ? 1
+      : similars[index].find((x) => x.includes(a) && x.includes(b))
+      ? 0.5
+      : 0;
+  }
+
+  const toSort = [...arr];
+  toSort.sort((a, b) => {
+    const aDist = levenshtein(a[index], searchI, insert, remove, update);
+    const bDist = levenshtein(b[index], searchI, insert, remove, update);
+    return aDist.distance - bDist.distance;
+  });
+  return toSort;
 }
 
 function relatedWordsLookup(word: T.DictionaryEntry): T.DictionaryEntry[] {

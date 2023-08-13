@@ -2349,10 +2349,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/ps-react@6.0.0":
-  version "6.0.0"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fps-react/-/ps-react-6.0.0.tgz#dbdfd1a5afd19253679169eacbf1da5562db5dc3"
-  integrity sha512-+j6F65FtmPbeEjjHtE3JqKHtCcUM+cMAN2RMTd8yyacJ4sTJW/oWC+6rAQGQqc1da3lP7tuxt6p+esmFYI9fgQ==
+"@lingdocs/ps-react@6.0.3":
+  version "6.0.3"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fps-react/-/ps-react-6.0.3.tgz#15192647ba5d9176837e4fc03e40f8de92139c1c"
+  integrity sha512-ygEhjormLfzWK4PlZLljr+asBRHfNApVRe3hgmThiQvxm0CjDjXKHI4gWPm4ocCHM6DDwZEVvcmwyOc9ndGsDA==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.3"
     classnames "^2.2.6"
@@ -5858,6 +5858,11 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
+
+edit-distance@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/edit-distance/-/edit-distance-1.0.5.tgz#3eaad0417a9058736e48e090b268600080f7b4f4"
+  integrity sha512-kgJKxFAxa6PlpfVAiCfj8uCUyhs6PZWZDxW2EaX7ra1+WmLkoVjG9Z1BHfPDfhrJvWaOSm9qf/CmxqH44EVlcQ==
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -11778,7 +11783,7 @@ relateurl@^0.2.7:
 relevancy@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/relevancy/-/relevancy-0.2.0.tgz#230600b24b465f26055e23730a1378b6f329cedb"
-  integrity sha1-IwYAsktGXyYFXiNzChN4tvMpzts=
+  integrity sha512-82t+iJxDkkMQvGDmw9uttVedyXqyN2gQKXjHcMzG3HcKXomjYJD0lBLL/7fZ7O+CRmcjPPKPc4Ye8HuyZQWTEw==
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
