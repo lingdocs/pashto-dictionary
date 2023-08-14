@@ -98,11 +98,10 @@ const fReplacer = {
   kh: hKhF,
   ts: sSoundsF,
   s: sSoundsF,
-  // only used if ignoring accents
-  a: "[a|á]",
+  a: "[a|á|u|ú]",
   á: "[a|á|u|ú]",
   u: "[u|ú|a|á]",
-  ú: "[u|ú]",
+  ú: "[u|ú|a|á]",
   o: "[o|ó]",
   ó: "[o|ó]",
   i: "[i|í]",
@@ -118,7 +117,7 @@ const fReplacer = {
 
 const pRepRegex = new RegExp(Object.keys(pReplacer).join("|"), "g");
 
-const fRepRegex = /ey|ay|uy|ee|e|z|dz|x|kh|h|ts|s/g;
+const fRepRegex = /ey|ay|uy|ee|a|u|e|z|dz|x|kh|h|ts|s/g;
 
 const fRepRegexWAccents =
   /ey|éy|ay|áy|uy|úy|ee|ée|e|é|z|dz|x|ts|s|kh|h|a|á|i|í|o|ó|u|ú|U|Ú/g;

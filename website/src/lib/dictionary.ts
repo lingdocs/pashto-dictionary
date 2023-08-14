@@ -31,7 +31,7 @@ const dictionaryInfoUrl = `https://storage.googleapis.com/lingdocs/dictionary-in
 const dictionaryInfoLocalStorageKey = "dictionaryInfo5";
 const dictionaryCollectionName = "dictionary3";
 // const dictionaryDatabaseName = "dictdb.db";
-export const pageSize = 35;
+export const pageSize = 60;
 
 const db = indexedDB.open("inPrivate");
 db.onerror = (e) => {
@@ -364,18 +364,9 @@ function pashtoFuzzyLookup<S extends T.DictionaryEntry>({
     : [...exactResults, ...slightlyFuzzyResults, ...fuzzyResults];
   // sort out each chunk (based on limit used multiple times by infinite scroll)
   // so that when infinite scrolling, it doesn't re-sort the previous chunks given
-  const closeResultsLength = exactResults.length + slightlyFuzzyResults.length;
+  // const closeResultsLength = exactResults.length + slightlyFuzzyResults.length;
   const chunksToSort = chunkOutArray(results, pageSize);
-  return chunksToSort.reduce(
-    (acc, cur, i) =>
-      i === 0
-        ? [
-            ...sortByRelevancy(cur.slice(0, closeResultsLength), search, index),
-            ...sortByRelevancy(cur.slice(closeResultsLength), search, index),
-          ]
-        : [...acc, ...sortByRelevancy(cur, search, index)],
-    []
-  );
+  return chunksToSort.flatMap((c) => sortByRelevancy(c, search, index));
 }
 
 function sortByRelevancy<T extends Record<"p" | "g", string>>(
@@ -390,8 +381,8 @@ function sortByRelevancy<T extends Record<"p" | "g", string>>(
   // then don't mess with the relevancy
   // now instead of an extra pass for exact, we can just use this!
   const similars = {
-    p: ["دډتټ", "زذضظځ", "صسث", "رړڼ", "ڼن", "یيېۍ", "قک", "ګږ", "ښخحه"],
-    g: ["tdTD", "rRN", "nN", "ei", "xkg"],
+    p: ["دډتټ", "زذضظځ", "صسث", "رړڼ", "ڼن", "یيېۍ", "قک", "ګږ", "ښخحه", "پف"],
+    g: ["tdTD", "rRN", "nN", "ei", "xkg", "pf", "au"],
   };
   function insert() {
     return 1;
@@ -401,18 +392,25 @@ function sortByRelevancy<T extends Record<"p" | "g", string>>(
     return 1;
   }
   function update(a: string, b: string) {
-    return a !== b
-      ? 1
-      : similars[index].find((x) => x.includes(a) && x.includes(b))
+    return similars[index].find((x) => x.includes(a) && x.includes(b))
       ? 0.5
+      : a !== b
+      ? 1
       : 0;
+  }
+  function levenOverVars(g: string, s: string): number {
+    return Math.min(
+      ...g
+        .split(",")
+        .map((x) => levenshtein(x, s, insert, remove, update).distance)
+    );
   }
 
   const toSort = [...arr];
   toSort.sort((a, b) => {
-    const aDist = levenshtein(a[index], searchI, insert, remove, update);
-    const bDist = levenshtein(b[index], searchI, insert, remove, update);
-    return aDist.distance - bDist.distance;
+    const aDist = levenOverVars(a[index], searchI);
+    const bDist = levenOverVars(b[index], searchI);
+    return aDist - bDist;
   });
   return toSort;
 }
