@@ -2349,10 +2349,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/ps-react@6.0.5":
-  version "6.0.5"
-  resolved "https://npm.lingdocs.com/@lingdocs%2fps-react/-/ps-react-6.0.5.tgz#0a8d146700405e9405332dca46d75b046f79aa5e"
-  integrity sha512-xt0aSzAjr15CCp1Jds2LQG7x5DO1Lc6U3uhN8kdHcVXCuT5Vhm2rt1HFm1H9ATQVLHwxepPOfUON2YLGb/1qhQ==
+"@lingdocs/ps-react@6.0.6":
+  version "6.0.6"
+  resolved "https://npm.lingdocs.com/@lingdocs%2fps-react/-/ps-react-6.0.6.tgz#9be00aeeb7689ff3ccf6f26fe92a6f171accfc6a"
+  integrity sha512-27HkuKg8R3uzFLUkm3HOnl8i3WY5eGRIS8s7DO6YmibYHnwQ/hpA8ijfeXKVED6SMGhn9Y+h2CNWvyaHArxk/g==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.3"
     classnames "^2.2.6"
