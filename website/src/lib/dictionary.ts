@@ -399,6 +399,9 @@ function sortByRelevancy<T extends Record<"p" | "g", string>>(
       : 0;
   }
   function levenOverVars(g: string, s: string): number {
+    if (!g.includes(",")) {
+      return levenshtein(g, s, insert, remove, update).distance;
+    }
     return Math.min(
       ...g
         .split(",")
@@ -407,11 +410,31 @@ function sortByRelevancy<T extends Record<"p" | "g", string>>(
   }
 
   const toSort = [...arr];
-  toSort.sort((a, b) => {
-    const aDist = levenOverVars(a[index], searchI);
-    const bDist = levenOverVars(b[index], searchI);
-    return aDist - bDist;
-  });
+  if (index === "g") {
+    toSort.sort((a, b) => {
+      const aDist = levenOverVars(a[index], searchI);
+      const bDist = levenOverVars(b[index], searchI);
+      return aDist - bDist;
+    });
+  } else {
+    toSort.sort((a, b) => {
+      const aDist = levenshtein(
+        a[index],
+        searchI,
+        insert,
+        remove,
+        update
+      ).distance;
+      const bDist = levenshtein(
+        b[index],
+        searchI,
+        insert,
+        remove,
+        update
+      ).distance;
+      return aDist - bDist;
+    });
+  }
   return toSort;
 }
 
