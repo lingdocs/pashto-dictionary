@@ -82,7 +82,7 @@ const prod = document.location.hostname === "dictionary.lingdocs.com";
 
 if (prod) {
   // TODO: migrate to https://www.npmjs.com/package/react-ga4
-  ReactGA.initialize("386396674");
+  ReactGA.initialize("G-TPQY0GKDCW");
   ReactGA.set({ anonymizeIp: true });
 }
 
