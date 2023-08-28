@@ -59,7 +59,7 @@ export async function getLingdocsUser(
 
 export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
   const users = await usersDb.find({
-    selector: { feedback: { $exists: true } },
+    selector: { userId: { $exists: true } },
     limit: 5000,
   });
   return users.docs as T.LingdocsUser[];
@@ -67,7 +67,7 @@ export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
 
 export async function getAllFeedback(): Promise<any[]> {
   const res = await feedbackDb.find({
-    selector: { doc: { $exists: true } },
+    selector: { feedback: { $exists: true } },
   });
   console.log({ res });
   return res.docs as any[];
