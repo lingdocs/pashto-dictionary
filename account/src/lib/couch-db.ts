@@ -25,7 +25,10 @@ export function updateLastLogin(user: T.LingdocsUser): T.LingdocsUser {
   };
 }
 
-function processAPIResponse(user: T.LingdocsUser, response: DocumentInsertResponse): T.LingdocsUser | undefined {
+function processAPIResponse(
+  user: T.LingdocsUser,
+  response: DocumentInsertResponse
+): T.LingdocsUser | undefined {
   if (response.ok !== true) return undefined;
   return {
     ...user,
@@ -34,31 +37,44 @@ function processAPIResponse(user: T.LingdocsUser, response: DocumentInsertRespon
   };
 }
 
-export async function getLingdocsUser(field: "email" | "userId" | "githubId" | "googleId" | "twitterId", value: string): Promise<undefined | T.LingdocsUser> {
-    const user = await usersDb.find({
-      selector: field === "githubId"
-        ? { github: { id: value }}
+export async function getLingdocsUser(
+  field: "email" | "userId" | "githubId" | "googleId" | "twitterId",
+  value: string
+): Promise<undefined | T.LingdocsUser> {
+  const user = await usersDb.find({
+    selector:
+      field === "githubId"
+        ? { github: { id: value } }
         : field === "googleId"
-        ? { google: { id: value }}
+        ? { google: { id: value } }
         : field === "twitterId"
-        ? { twitter: { id: value }}
+        ? { twitter: { id: value } }
         : { [field]: value },
-    });
-    if (!user.docs.length) {
-      return undefined;
-    }
-    return user.docs[0] as T.LingdocsUser;
+  });
+  if (!user.docs.length) {
+    return undefined;
+  }
+  return user.docs[0] as T.LingdocsUser;
 }
 
 export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
   const users = await usersDb.find({
-    selector: { userId: { $exists: true }},
+    selector: { userId: { $exists: true } },
     limit: 5000,
   });
   return users.docs as T.LingdocsUser[];
 }
 
-export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.LingdocsUser> {
+export async function getAllFeedback(): Promise<any[]> {
+  const res = await feedbackDb.find({
+    selector: { doc: { $exists: true } },
+  });
+  return res.docs as any[];
+}
+
+export async function insertLingdocsUser(
+  user: T.LingdocsUser
+): Promise<T.LingdocsUser> {
   try {
     const res = await usersDb.insert(user);
     const newUser = processAPIResponse(user, res);
@@ -66,7 +82,7 @@ export async function insertLingdocsUser(user: T.LingdocsUser): Promise<T.Lingdo
       throw new Error("error inserting user");
     }
     return newUser;
-  } catch(e) {
+  } catch (e) {
     console.log("ERROR on insertLingdocsUser", user);
     throw new Error("error inserting user - on update");
   }
@@ -83,46 +99,47 @@ export async function deleteLingdocsUser(uuid: T.UUID): Promise<void> {
 
 export async function deleteCouchDbAuthUser(uuid: T.UUID): Promise<void> {
   const authUsers = nano.db.use("_users");
-  const user = await authUsers.find({ selector: { name: uuid }});
+  const user = await authUsers.find({ selector: { name: uuid } });
   if (!user.docs.length) return;
   const u = user.docs[0];
   await authUsers.destroy(u._id, u._rev);
 }
 
-export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
-  // TODO: OR USE REDUCER??
-  { name: string } |
-  { name?: string, email: string, emailVerified: T.Hash } |
-  { email: string, emailVerified: true } |
-  { emailVerified: T.Hash } |
-  { emailVerified: true } |
-  { password: T.Hash } |
-  { google: T.GoogleProfile | undefined } |
-  { github: T.GitHubProfile | undefined } |
-  { twitter: T.TwitterProfile | undefined } |
-  { 
-    passwordReset: {
-      tokenHash: T.Hash,
-      requestedOn: T.TimeStamp,
-    },
-  } |
-  {
-    level: "student",
-    wordlistDbName: T.WordlistDbName,
-    couchDbPassword: T.UserDbPassword,
-    upgradeToStudentRequest: undefined,
-    subscription?: T.StripeSubscription, 
-  } |
-  {
-    level: "basic",
-    wordlistDbName: undefined,
-    couchDbPassword: undefined,
-    upgradeToStudentRequest: undefined,
-    subscription: undefined,
-  } |
-  { upgradeToStudentRequest: "waiting" } | 
-  { upgradeToStudentRequest: "denied" } |
-  { tests: T.TestResult[] }
+export async function updateLingdocsUser(
+  uuid: T.UUID,
+  toUpdate: // TODO: OR USE REDUCER??
+  | { name: string }
+    | { name?: string; email: string; emailVerified: T.Hash }
+    | { email: string; emailVerified: true }
+    | { emailVerified: T.Hash }
+    | { emailVerified: true }
+    | { password: T.Hash }
+    | { google: T.GoogleProfile | undefined }
+    | { github: T.GitHubProfile | undefined }
+    | { twitter: T.TwitterProfile | undefined }
+    | {
+        passwordReset: {
+          tokenHash: T.Hash;
+          requestedOn: T.TimeStamp;
+        };
+      }
+    | {
+        level: "student";
+        wordlistDbName: T.WordlistDbName;
+        couchDbPassword: T.UserDbPassword;
+        upgradeToStudentRequest: undefined;
+        subscription?: T.StripeSubscription;
+      }
+    | {
+        level: "basic";
+        wordlistDbName: undefined;
+        couchDbPassword: undefined;
+        upgradeToStudentRequest: undefined;
+        subscription: undefined;
+      }
+    | { upgradeToStudentRequest: "waiting" }
+    | { upgradeToStudentRequest: "denied" }
+    | { tests: T.TestResult[] }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
@@ -145,7 +162,9 @@ export async function updateLingdocsUser(uuid: T.UUID, toUpdate:
   });
 }
 
-export async function addCouchDbAuthUser(uuid: T.UUID): Promise<{ password: T.UserDbPassword, userDbName: T.WordlistDbName }> {
+export async function addCouchDbAuthUser(
+  uuid: T.UUID
+): Promise<{ password: T.UserDbPassword; userDbName: T.WordlistDbName }> {
   const password = generateWordlistDbPassword();
   const userDbName = getWordlistDbName(uuid);
   const usersDb = nano.db.use("_users");
@@ -199,40 +218,44 @@ export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
 
 function generateWordlistDbPassword(): T.UserDbPassword {
   function makeChunk(): string {
-      return Math.random().toString(36).slice(2)
+    return Math.random().toString(36).slice(2);
   }
-  const password = new Array(4).fill(0).reduce((acc: string): string => (
-      acc + makeChunk()
-  ), "");
+  const password = new Array(4)
+    .fill(0)
+    .reduce((acc: string): string => acc + makeChunk(), "");
   return password as T.UserDbPassword;
 }
 
 function stringToHex(str: string) {
-	const arr1 = [];
-	for (let n = 0, l = str.length; n < l; n ++) {
-		const hex = Number(str.charCodeAt(n)).toString(16);
-		arr1.push(hex);
-	}
-	return arr1.join('');
+  const arr1 = [];
+  for (let n = 0, l = str.length; n < l; n++) {
+    const hex = Number(str.charCodeAt(n)).toString(16);
+    arr1.push(hex);
+  }
+  return arr1.join("");
 }
 
 /**
  * Adds new tests to a users record, only keeping up to amountToKeep records of the most
  * recent repeat passes/fails
- * 
+ *
  * @param existing - the existing tests in a users record
  * @param newResults - the tests to be added to a users record
  * @param amountToKeep - the amount of repeat tests to keep (defaults to 2)
  */
-function addNewTests(existing: Readonly<T.TestResult[]>, toAdd: T.TestResult[], amountToKeep = 2): T.TestResult[] {
+function addNewTests(
+  existing: Readonly<T.TestResult[]>,
+  toAdd: T.TestResult[],
+  amountToKeep = 2
+): T.TestResult[] {
   const tests = [...existing];
   // check to make sure that we're only adding test results that are not already added
-  const newTests = toAdd.filter((t) => !tests.some(x => x.time === t.time));
+  const newTests = toAdd.filter((t) => !tests.some((x) => x.time === t.time));
   newTests.forEach((nt) => {
-    const repeats = tests.filter(x => ((x.id === nt.id)) && (x.done === nt.done));
-    if (repeats.length > (amountToKeep - 1)) {
+    const repeats = tests.filter((x) => x.id === nt.id && x.done === nt.done);
+    if (repeats.length > amountToKeep - 1) {
       // already have enough repeat passes saved, remove the oldest one
-      const i = tests.findIndex(x => x.time === repeats[0].time);
+      const i = tests.findIndex((x) => x.time === repeats[0].time);
       if (i > -1) tests.splice(i, 1);
     }
     tests.push(nt);

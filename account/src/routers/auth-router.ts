@@ -2,25 +2,25 @@ import { Router } from "express";
 import { PassportStatic } from "passport";
 import {
   deleteLingdocsUser,
+  getAllFeedback,
   getAllLingdocsUsers,
   getLingdocsUser,
   updateLingdocsUser,
 } from "../lib/couch-db";
-import { createNewUser, canRemoveOneOutsideProvider, downgradeUser } from "../lib/user-utils";
+import {
+  createNewUser,
+  canRemoveOneOutsideProvider,
+  downgradeUser,
+} from "../lib/user-utils";
 import {
   getHash,
   getURLToken,
   compareToHash,
   getEmailTokenAndHash,
 } from "../lib/password-utils";
-import {
-  upgradeUser,
-  denyUserUpgradeRequest,
-} from "../lib/user-utils";
+import { upgradeUser, denyUserUpgradeRequest } from "../lib/user-utils";
 import { validateReCaptcha } from "../lib/recaptcha";
-import {
-  getTimestamp,
-} from "../lib/time-utils";
+import { getTimestamp } from "../lib/time-utils";
 import {
   sendPasswordResetEmail,
   sendVerificationEmail,
@@ -56,10 +56,16 @@ const authRouter = (passport: PassportStatic) => {
     const name = req.body.name as string;
     const email = req.body.email as string;
     if (email !== req.user.email) {
-      if (name !== req.user.name) await updateLingdocsUser(req.user.userId, { name });
-      const withSameEmail = (email !== "") && await getLingdocsUser("email", email);
+      if (name !== req.user.name)
+        await updateLingdocsUser(req.user.userId, { name });
+      const withSameEmail =
+        email !== "" && (await getLingdocsUser("email", email));
       if (withSameEmail) {
-        return res.render(page, { user: { ...req.user, email }, error: "email taken", removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+        return res.render(page, {
+          user: { ...req.user, email },
+          error: "email taken",
+          removeProviderOption: canRemoveOneOutsideProvider(req.user),
+        });
       }
       // TODO: ABSTRACT THE PROCESS OF GETTING A NEW EMAIL TOKEN AND MAILING!
       const { token, hash } = await getEmailTokenAndHash();
@@ -69,11 +75,19 @@ const authRouter = (passport: PassportStatic) => {
         emailVerified: hash,
       });
       sendVerificationEmail(updated, token).catch(console.error);
-      return res.render(page, { user: updated, error: null, removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+      return res.render(page, {
+        user: updated,
+        error: null,
+        removeProviderOption: canRemoveOneOutsideProvider(req.user),
+      });
     }
     const updated = await updateLingdocsUser(req.user.userId, { name });
     // need to do this because sometimes the update seems slow?
-    return res.render(page, { user: updated, error: null, removeProviderOption: canRemoveOneOutsideProvider(req.user) });
+    return res.render(page, {
+      user: updated,
+      error: null,
+      removeProviderOption: canRemoveOneOutsideProvider(req.user),
+    });
   });
 
   router.post("/login", async (req, res, next) => {
@@ -83,22 +97,26 @@ const authRouter = (passport: PassportStatic) => {
         return res.render("login", { recaptcha: "fail", inProd });
       }
     }
-    passport.authenticate("local", (err, user: T.LingdocsUser | undefined, info) => {
-      if (err) throw err;
-      if (!user && info.message === "email not found") {
-        return res.send({ ok: false, newSignup: true });
+    passport.authenticate(
+      "local",
+      (err, user: T.LingdocsUser | undefined, info) => {
+        if (err) throw err;
+        if (!user && info.message === "email not found") {
+          return res.send({ ok: false, newSignup: true });
+        }
+        if (!user)
+          res.send({
+            ok: false,
+            message: "Incorrect password",
+          });
+        else {
+          req.logIn(user, (err) => {
+            if (err) return next(err);
+            res.send({ ok: true, user });
+          });
+        }
       }
-      if (!user) res.send({
-        ok: false,
-        message: "Incorrect password",
-      });
-      else {
-        req.logIn(user, (err) => {
-          if (err) return next(err);
-          res.send({ ok: true, user });
-        });
-      }
-    })(req, res, next);
+    )(req, res, next);
   });
 
   router.get(
@@ -106,31 +124,42 @@ const authRouter = (passport: PassportStatic) => {
     passport.authenticate("google", {
       // @ts-ignore - needed for getting refreshToken]
       accessType: "offline",
-      scope: ["openid", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"],
+      scope: [
+        "openid",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+      ],
     })
   );
-  router.get('/github', passport.authenticate("github", {
-    scope: ["read:user", "user:email"],
-  }));
-  router.get('/twitter', passport.authenticate("twitter"));
+  router.get(
+    "/github",
+    passport.authenticate("github", {
+      scope: ["read:user", "user:email"],
+    })
+  );
+  router.get("/twitter", passport.authenticate("twitter"));
 
-  // all callback and remove routes/functions are the same for each provider 
+  // all callback and remove routes/functions are the same for each provider
   outsideProviders.forEach((provider) => {
     router.get(
       `/${provider}/callback`,
-      passport.authenticate(provider, { successRedirect: '/user', failureRedirect: '/' }),
+      passport.authenticate(provider, {
+        successRedirect: "/user",
+        failureRedirect: "/",
+      })
     );
     router.post(`/${provider}/remove`, async (req, res, next) => {
       try {
         if (!req.user) return next("user not found");
-        if (!canRemoveOneOutsideProvider(req.user)) return res.redirect("/user");
+        if (!canRemoveOneOutsideProvider(req.user))
+          return res.redirect("/user");
         await updateLingdocsUser(
           req.user.userId,
-          // @ts-ignore - shouldn't need this 
+          // @ts-ignore - shouldn't need this
           { [provider]: undefined }
         );
         return res.redirect("/user");
-      } catch(e) {
+      } catch (e) {
         next(e);
       }
     });
@@ -141,26 +170,45 @@ const authRouter = (passport: PassportStatic) => {
       const { email, password, name } = req.body;
       const existingUser = await getLingdocsUser("email", email);
       if (existingUser) return res.send("User Already Exists");
-      const user = await createNewUser({ strategy: "local", email, passwordPlainText: password, name });
+      const user = await createNewUser({
+        strategy: "local",
+        email,
+        passwordPlainText: password,
+        name,
+      });
       req.logIn(user, (err) => {
         if (err) return next(err);
         return res.send({ ok: true, user });
       });
-    } catch(e) {
+    } catch (e) {
       next(e);
     }
   });
-  
+
   router.get("/admin", async (req, res, next) => {
     try {
       if (!req.user || !req.user.admin) {
         return res.redirect("/");
       }
-      const users = (await getAllLingdocsUsers()).sort((a, b) => (
-        (a.accountCreated || 0) - (b.accountCreated || 0)
-      ));
-      const tests = getTestCompletionSummary(users)
+      const users = (await getAllLingdocsUsers()).sort(
+        (a, b) => (a.accountCreated || 0) - (b.accountCreated || 0)
+      );
+      const tests = getTestCompletionSummary(users);
       res.render("admin", { users, tests });
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.get("/grammar-feedback", async (req, res, next) => {
+    try {
+      if (!req.user || !req.user.admin) {
+        return res.redirect("/");
+      }
+      const docs = await getAllFeedback();
+      console.log("one doc");
+      console.log(docs[0]);
+      res.render("grammar-feedback", { docs });
     } catch (e) {
       next(e);
     }
@@ -173,42 +221,49 @@ const authRouter = (passport: PassportStatic) => {
   /**
    * Grant request for upgrade to student
    */
-  router.post("/admin/upgradeToStudent/:userId/:grantOrDeny", async (req, res, next) => {
-    try {
-      if (!req.user || !req.user.admin) {
-        return res.redirect("/");
+  router.post(
+    "/admin/upgradeToStudent/:userId/:grantOrDeny",
+    async (req, res, next) => {
+      try {
+        if (!req.user || !req.user.admin) {
+          return res.redirect("/");
+        }
+        const userId = req.params.userId as T.UUID;
+        const grantOrDeny = req.params.grantOrDeny as "grant" | "deny";
+        if (grantOrDeny === "grant") {
+          await upgradeUser(userId);
+        } else {
+          await denyUserUpgradeRequest(userId);
+        }
+        res.redirect("/admin");
+      } catch (e) {
+        next(e);
       }
-      const userId = req.params.userId as T.UUID;
-      const grantOrDeny = req.params.grantOrDeny as "grant" | "deny";
-      if (grantOrDeny === "grant") {
-        await upgradeUser(userId);
-      } else {
-        await denyUserUpgradeRequest(userId);
-      }
-      res.redirect("/admin");
-    } catch (e) {
-      next(e);
     }
-  });
+  );
 
   router.post("/downgradeToBasic", async (req, res, next) => {
     try {
       if (!req.user) {
         return res.send({ ok: false, error: "user not logged in" });
       }
-      const subscription = "subscription" in req.user ? req.user.subscription : undefined;
-      await downgradeUser(req.user.userId, subscription
-        ? subscription.id
-        : undefined);
+      const subscription =
+        "subscription" in req.user ? req.user.subscription : undefined;
+      await downgradeUser(
+        req.user.userId,
+        subscription ? subscription.id : undefined
+      );
       res.send({
         ok: true,
-        message: `account downgraded to basic${subscription ? " and subscription cancelled" : ""}`,
+        message: `account downgraded to basic${
+          subscription ? " and subscription cancelled" : ""
+        }`,
       });
     } catch (e) {
       next(e);
     }
   });
-  
+
   router.delete("/admin/:userId", async (req, res, next) => {
     try {
       // TODO: MAKE PROPER MIDDLEWARE WITH TYPING
@@ -250,11 +305,11 @@ const authRouter = (passport: PassportStatic) => {
   });
 
   router.get("/password-reset", (req, res) => {
-    const email = req.query.email || ""
+    const email = req.query.email || "";
     res.render("password-reset-request", { email, done: false });
   });
 
-  router.post("/password-reset", async(req, res, next) => {
+  router.post("/password-reset", async (req, res, next) => {
     const page = "password-reset-request";
     const email = req.body.email || "";
     try {
@@ -275,10 +330,9 @@ const authRouter = (passport: PassportStatic) => {
       }
       const token = getURLToken();
       const tokenHash = await getHash(token);
-      const u = await updateLingdocsUser(
-          user.userId,
-          { passwordReset: { tokenHash, requestedOn: getTimestamp() }},
-      );
+      const u = await updateLingdocsUser(user.userId, {
+        passwordReset: { tokenHash, requestedOn: getTimestamp() },
+      });
       await sendPasswordResetEmail(u, token);
       return res.render(page, { email, done: true });
     } catch (e) {
@@ -311,14 +365,23 @@ const authRouter = (passport: PassportStatic) => {
       return res.render(page, { ok: false, message: "not found" });
     }
     const result = await compareToHash(token, user.passwordReset.tokenHash);
-    if (!result) return res.render(page, { ok: false, user: null, message: "invalid token" });
+    if (!result)
+      return res.render(page, {
+        ok: false,
+        user: null,
+        message: "invalid token",
+      });
     const passwordsMatch = password === passwordConfirmed;
     if (passwordsMatch) {
       const hash = await getHash(password);
       await updateLingdocsUser(user.userId, { password: hash });
       return res.render(page, { ok: true, user, message: "password reset" });
     } else {
-      return res.render(page, { ok: false, user, message: "passwords don't match" });
+      return res.render(page, {
+        ok: false,
+        user,
+        message: "passwords don't match",
+      });
     }
   });
 
@@ -326,35 +389,37 @@ const authRouter = (passport: PassportStatic) => {
     req.logOut();
     res.redirect("/");
   });
-  
+
   return router;
-} 
+};
 
 function getTestCompletionSummary(users: T.LingdocsUser[]) {
-  const tests: { id: string, passes: number, fails: number }[] = [];
-  users.forEach(u => {
-    const usersTests = removeDuplicateTests(u.tests)
-    usersTests.forEach(ut => {
-      const ti = tests.findIndex(x => x.id === ut.id);
+  const tests: { id: string; passes: number; fails: number }[] = [];
+  users.forEach((u) => {
+    const usersTests = removeDuplicateTests(u.tests);
+    usersTests.forEach((ut) => {
+      const ti = tests.findIndex((x) => x.id === ut.id);
       if (ti === -1) {
         tests.push({
           id: ut.id,
-          ...ut.done ? { passes: 1, fails: 0 } : { passes: 0, fails: 1 },
+          ...(ut.done ? { passes: 1, fails: 0 } : { passes: 0, fails: 1 }),
         });
-      }
-      else tests[ti][ut.done ? "passes" : "fails"]++;
+      } else tests[ti][ut.done ? "passes" : "fails"]++;
     });
   });
   return tests;
 }
 
 function removeDuplicateTests(tests: T.TestResult[]): T.TestResult[] {
-  return tests.reduceRight((acc, curr) => {
-    const redundant = acc.filter(x => ((x.id === curr.id) && (x.done === curr.done)));
-    return redundant.length
-      ? acc
-      : [...acc, curr];
-  }, [...tests]);
+  return tests.reduceRight(
+    (acc, curr) => {
+      const redundant = acc.filter(
+        (x) => x.id === curr.id && x.done === curr.done
+      );
+      return redundant.length ? acc : [...acc, curr];
+    },
+    [...tests]
+  );
 }
 
 // function getTestCompletionSummary(users: T.LingdocsUser[]) {
