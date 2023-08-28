@@ -72,10 +72,9 @@ export async function getAllFeedback(): Promise<any[]> {
     },
     limit: 5000,
   });
-  console.log(res);
   const docs = res.docs;
   // @ts-ignore
-  docs.sort((a, b) => a.feedback.ts - b.feedback.ts);
+  docs.sort((a, b) => b.feedback.ts - a.feedback.ts);
   return docs as any[];
 }
 

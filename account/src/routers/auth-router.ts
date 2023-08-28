@@ -206,8 +206,6 @@ const authRouter = (passport: PassportStatic) => {
         return res.redirect("/");
       }
       const docs = await getAllFeedback();
-      console.log("one doc");
-      console.log(docs[0]);
       res.render("grammar-feedback", { docs });
     } catch (e) {
       next(e);
