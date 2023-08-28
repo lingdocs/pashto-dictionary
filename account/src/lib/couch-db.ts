@@ -66,13 +66,14 @@ export async function getAllLingdocsUsers(): Promise<T.LingdocsUser[]> {
 }
 
 export async function getAllFeedback(): Promise<any[]> {
-  const { docs } = await feedbackDb.find({
+  const res = await feedbackDb.find({
     selector: {
       feedback: { $exists: true },
       limit: 5000,
     },
   });
-  console.log({ docs });
+  console.log(res);
+  const docs = res.docs;
   // @ts-ignore
   docs.sort((a, b) => a.feedback.ts - b.feedback.ts);
   return docs as any[];
