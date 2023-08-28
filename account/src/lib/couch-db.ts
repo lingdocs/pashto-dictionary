@@ -69,6 +69,7 @@ export async function getAllFeedback(): Promise<any[]> {
   const res = await feedbackDb.find({
     selector: { doc: { $exists: true } },
   });
+  console.log({ res });
   return res.docs as any[];
 }
 
