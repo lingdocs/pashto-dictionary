@@ -69,8 +69,8 @@ export async function getAllFeedback(): Promise<any[]> {
   const res = await feedbackDb.find({
     selector: {
       feedback: { $exists: true },
-      limit: 5000,
     },
+    limit: 5000,
   });
   console.log(res);
   const docs = res.docs;
