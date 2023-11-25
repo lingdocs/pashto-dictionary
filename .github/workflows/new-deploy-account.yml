@@ -13,7 +13,24 @@ jobs:
   new-deploy-account:
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      LINGDOCS_NPM_TOKEN: ${{ secrets.LINGDOCS_NPM_TOKEN }}
     steps:
+      - uses: actions/checkout@v3
+      - run: |
+          cd account
+          npm install
+          cd ..
+          tar --exclude-vcs -czf account.tar.gz account
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.KEY }}
+          source: "account.tar.gz"
+          target: apps/live
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -21,4 +38,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          script: touch ciwuzhere.txt
+          script: touch ciwuzhere2.txt
