@@ -16,13 +16,14 @@ jobs:
     env:
       LINGDOCS_NPM_TOKEN: ${{ secrets.LINGDOCS_NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
-      - run: |
+      - name: create tarball of account files
+        uses: actions/checkout@v3
+        run: |
           cd account
           npm install
           cd ..
           tar --exclude-vcs -czf account.tar.gz account
-      - name: copy file via ssh key
+      - name: copy tarball to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
@@ -31,7 +32,7 @@ jobs:
           key: ${{ secrets.KEY }}
           source: "account.tar.gz"
           target: "."
-      - name: executing remote ssh commands using password
+      - name: unpack tarball and restart app
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
