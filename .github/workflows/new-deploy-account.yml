@@ -30,7 +30,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.KEY }}
           source: "account.tar.gz"
-          target: apps/live
+          target: "."
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -38,4 +38,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          script: touch ciwuzhere2.txt
+          script: |
+            rm -rf apps/live/account
+            tar -xzf account.tar.gz -C ~/apps/live
+            rm account.tar.gz
