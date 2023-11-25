@@ -18,11 +18,11 @@ jobs:
     steps:
       - name: create tarball of account files
         uses: actions/checkout@v3
-        run: |
-          cd account
-          npm install
-          cd ..
-          tar --exclude-vcs -czf account.tar.gz account
+          run: |
+            cd account
+            npm install
+            cd ..
+            tar --exclude-vcs -czf account.tar.gz account
       - name: copy tarball to server
         uses: appleboy/scp-action@v0.1.4
         with:
