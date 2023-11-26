@@ -49,3 +49,4 @@ jobs:
             rm -rf apps/live/account
             tar -xzf account.tar.gz -C ~/apps/live
             rm account.tar.gz
+            pm2 restart account
