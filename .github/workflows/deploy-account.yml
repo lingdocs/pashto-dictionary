@@ -22,9 +22,9 @@ jobs:
         with:
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           path: |
-            ~/node_modules
-            ~/website/node_modules
-            ~/account/node_modules
+            node_modules
+            website/node_modules
+            account/node_modules
       - run: |
           npm install
           # TODO: could save a bunch of install time by not requiring ps-react in the website/account-types
