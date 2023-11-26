@@ -6,7 +6,7 @@ on:
       - dev
     paths:
       - "account/**"
-      - ".github/workflows/new-deploy-account.yml"
+      - ".github/workflows/deploy-account.yml"
   workflow_dispatch:
 
 jobs:
