@@ -20,7 +20,7 @@ jobs:
       - run: |
           cd account
           npm install
-          npm build
+          npm run build
           npm prune --production
           cd ..
           tar --exclude-vcs -czf account.tar.gz account
