@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           npm install
+          # TODO: could save a bunch of install time by not requiring ps-react in the website/account-types
           cd website
           npm install
           cd ..
