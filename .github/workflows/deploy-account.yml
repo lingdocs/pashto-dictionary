@@ -20,11 +20,8 @@ jobs:
       - name: Cache NPM deps
         uses: actions/cache@v3
         with:
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          path: |
-            node_modules
-            website/node_modules
-            account/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm
       - run: |
           npm install
           # TODO: could save a bunch of install time by not requiring ps-react in the website/account-types
