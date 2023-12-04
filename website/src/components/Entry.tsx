@@ -8,6 +8,7 @@
 import ExtraEntryInfo from "../components/ExtraEntryInfo";
 import classNames from "classnames";
 import { Types as T, InlinePs } from "@lingdocs/ps-react";
+import playStorageAudio from "./PlayStorageAudio";
 
 function Entry({
   entry,
@@ -20,6 +21,12 @@ function Entry({
   nonClickable?: boolean;
   isolateEntry?: (ts: number) => void;
 }) {
+  function handlePlayStorageAudio(
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ) {
+    e.stopPropagation();
+    playStorageAudio(entry.ts, () => null);
+  }
   return (
     <div
       className={classNames("entry", { clickable: !nonClickable })}
@@ -34,7 +41,12 @@ function Entry({
         </strong>
         {` `}
         <em>{entry.c}</em>
-        {entry.a && !nonClickable && <i className="ml-2 fas fa-volume-down" />}
+        {entry.a && !nonClickable && (
+          <i
+            onClick={handlePlayStorageAudio}
+            className="clickable ml-2 fas fa-volume-down"
+          />
+        )}
       </div>
       <ExtraEntryInfo entry={entry} textOptions={textOptions} />
       <div className="entry-definition">{entry.e}</div>
