@@ -183,6 +183,21 @@ export async function addCouchDbAuthUser(
     password,
   };
   await usersDb.insert(authUser);
+  const userDb = nano.db.use(userDbName);
+  await userDb.insert(
+    {
+      // @ts-ignore
+      admins: {
+        names: [uuid],
+        roles: ["_admin"],
+      },
+      members: {
+        names: [uuid],
+        roles: ["_admin"],
+      },
+    },
+    "_security"
+  );
   return { password, userDbName };
 }
 
