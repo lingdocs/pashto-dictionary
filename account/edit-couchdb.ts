@@ -41,9 +41,6 @@ async function main() {
     }
     process.stdout.write(`Checking for db for ${user.name} - ${user.email}...`);
     const userDb = nano.db.use(user.wordlistDbName);
-    if (user.subscription) {
-      paidUsersEmails.push(user.email);
-    }
     try {
       // await userDb.insert(
       //   {
@@ -70,7 +67,7 @@ async function main() {
         console.log("RR");
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       console.log("❌");
       console.log(`needs ${user.wordlistDbName} - ${user.userId}`);
     }
@@ -89,8 +86,6 @@ async function main() {
   }, []);
   console.log("STRAY USERDBS");
   console.log(strayDbs);
-  console.log("PAID USERS EMAILS");
-  console.log(paidUsersEmails.join(","));
   return "done";
 }
 

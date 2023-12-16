@@ -184,6 +184,7 @@ export async function addCouchDbAuthUser(
   };
   await usersDb.insert(authUser);
   const userDb = nano.db.use(userDbName);
+  console.log("trying to add auth to the users db");
   await userDb.insert(
     {
       // @ts-ignore
