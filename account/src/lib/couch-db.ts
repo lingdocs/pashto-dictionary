@@ -146,6 +146,7 @@ export async function updateLingdocsUser(
     | { upgradeToStudentRequest: "waiting" }
     | { upgradeToStudentRequest: "denied" }
     | { tests: T.TestResult[] }
+    | { wordlistDbName: T.WordlistDbName; couchDbPassword: T.UserDbPassword }
 ): Promise<T.LingdocsUser> {
   const user = await getLingdocsUser("userId", uuid);
   if (!user) throw new Error("unable to update - user not found " + uuid);
@@ -238,7 +239,7 @@ export function getWordlistDbName(uid: T.UUID): T.WordlistDbName {
   return `${userDbPrefix}${stringToHex(uid)}` as T.WordlistDbName;
 }
 
-function generateWordlistDbPassword(): T.UserDbPassword {
+export function generateWordlistDbPassword(): T.UserDbPassword {
   function makeChunk(): string {
     return Math.random().toString(36).slice(2);
   }

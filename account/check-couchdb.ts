@@ -7,9 +7,12 @@ import { DocumentInsertResponse } from "nano";
 import env from "./src/lib/env-vars";
 import * as T from "../website/src/types/account-types";
 import {
+  addCouchDbAuthUser,
+  generateWordlistDbPassword,
   getAllLingdocsUsers,
   getLingdocsUser,
   insertLingdocsUser,
+  updateLingdocsUser,
 } from "./src/lib/couch-db";
 
 const nano = Nano(env.couchDbURL);
@@ -31,13 +34,28 @@ function processAPIResponse(
 async function main() {
   const users = await getAllLingdocsUsers();
   const usersWDbs = users.filter((x) => x.level !== "basic");
-  const paidUsersEmails: string[] = [];
   for (let user of usersWDbs) {
     // if (!user.docs.length) return;
     // const u = user.docs[0];
     // await authUsers.destroy(u._id, u._rev);
     if (user.level === "basic") {
       throw new Error("");
+    }
+    process.stdout.write(
+      `Checking for _user for ${user.name} - ${user.email}...`
+    );
+    const uzrs = nano.db.use("_users");
+    const r = await uzrs.find({
+      selector: { _id: `org.couchdb.user:${user.userId}` },
+    });
+    console.log(r.docs.length ? "✅" : "❌");
+    if (!r.docs.length) {
+      console.log(`Creating wordlist db for ${user.name} - ${user.email}...`);
+      const { password, userDbName } = await addCouchDbAuthUser(user.userId);
+      await updateLingdocsUser(user.userId, {
+        couchDbPassword: password,
+        wordlistDbName: userDbName,
+      });
     }
     process.stdout.write(`Checking for db for ${user.name} - ${user.email}...`);
     const userDb = nano.db.use(user.wordlistDbName);
@@ -88,16 +106,6 @@ async function main() {
   console.log(strayDbs);
   return "done";
 }
-
-// function removeRedundant(tests: T.TestResult[]): T.TestResult[] {
-//     if (tests.length === 0) return tests;
-//     const first = tests[0];
-//     const rest = tests.slice(1);
-//     const redundancies = rest.filter(x => ((x.id === first.id)) && (x.done === first.done));
-//     return redundancies.length < 2
-//         ? [first, ...removeRedundant(rest)]
-//         : removeRedundant(rest);
-// }
 
 main().then((res) => {
   console.log(res);
