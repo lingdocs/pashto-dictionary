@@ -98,6 +98,7 @@
           body: JSON.stringify({ email, password, name, token }),
       }).then((res) => res.json())
         .then((res) => {
+            console.log({ res });
             if (res.ok) {
               location.reload();
             }
