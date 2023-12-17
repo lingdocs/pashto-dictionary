@@ -44,7 +44,7 @@ function Entry({
         {entry.a && !nonClickable && (
           <i
             onClick={handlePlayStorageAudio}
-            className="clickable ml-2 fas fa-volume-down"
+            className="clickable ml-2 fas fa-volume-down px-1"
           />
         )}
       </div>
