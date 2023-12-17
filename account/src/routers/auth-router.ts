@@ -190,6 +190,7 @@ const authRouter = (passport: PassportStatic) => {
         });
       } catch (e) {
         console.error(e);
+        console.error("EMAIL DIDN'T WORK 2");
         return res.send("Invalid E-mail");
       }
     } catch (e) {

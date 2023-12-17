@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendEmail(to: Address, subject: string, text: string) {
-  await transporter.sendMail({
+  return await transporter.sendMail({
     from: adminAddress,
     to,
     subject,
