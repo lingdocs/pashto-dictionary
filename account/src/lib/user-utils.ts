@@ -157,14 +157,12 @@ export async function createNewUser(
       lastLogin: now,
       lastActive: now,
     };
-    console.log("SENDING VERIFICATION EMAIL FROM SIGNUP");
     await sendVerificationEmail({
       name: input.name,
       uid: userId,
       email: input.email || "",
       token: email.token,
     });
-    console.log("GOT THROUGH AFTER VERIFICATION");
     const user = await insertLingdocsUser(newUser);
     return user;
   }

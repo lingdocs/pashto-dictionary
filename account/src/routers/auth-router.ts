@@ -176,7 +176,8 @@ const authRouter = (passport: PassportStatic) => {
     try {
       const { email, password, name } = req.body;
       const existingUser = await getLingdocsUser("email", email);
-      if (existingUser) return res.send("User Already Exists");
+      if (existingUser)
+        return res.send({ ok: false, message: "User Already Exists" });
       try {
         const user = await createNewUser({
           strategy: "local",
@@ -190,8 +191,7 @@ const authRouter = (passport: PassportStatic) => {
         });
       } catch (e) {
         console.error(e);
-        console.error("EMAIL DIDN'T WORK 2");
-        return res.send("Invalid E-mail");
+        return res.send({ ok: false, message: "Invalid E-mail" });
       }
     } catch (e) {
       next(e);
