@@ -19,8 +19,7 @@ const storage = new Storage({
 });
 
 const title = "LingDocs Pashto Dictionary";
-const license =
-  "Copyright © 2021 lingdocs.com All Rights Reserved - Licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - https://creativecommons.org/licenses/by-nc-sa/4.0/";
+const license = `Copyright © ${new Date().getFullYear()} lingdocs.com All Rights Reserved - Licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - https://creativecommons.org/licenses/by-nc-sa/4.0/`;
 const bucketName = "lingdocs";
 const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
 const dictionaryFilename = "dictionary";
