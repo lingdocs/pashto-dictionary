@@ -22,6 +22,7 @@ import { upgradeUser, denyUserUpgradeRequest } from "../lib/user-utils";
 import { validateReCaptcha } from "../lib/recaptcha";
 import { getTimestamp } from "../lib/time-utils";
 import {
+  getAddress,
   sendPasswordResetEmail,
   sendVerificationEmail,
 } from "../lib/mail-utils";
@@ -74,7 +75,13 @@ const authRouter = (passport: PassportStatic) => {
         email,
         emailVerified: hash,
       });
-      sendVerificationEmail(updated, token).catch(console.error);
+      // TODO: AWAIT THE E-MAIL SEND TO MAKE SURE THE E-MAIL WORKS!
+      sendVerificationEmail({
+        name: updated.name,
+        uid: updated.userId,
+        email: updated.email || "",
+        token,
+      });
       return res.render(page, {
         user: updated,
         error: null,
@@ -170,16 +177,21 @@ const authRouter = (passport: PassportStatic) => {
       const { email, password, name } = req.body;
       const existingUser = await getLingdocsUser("email", email);
       if (existingUser) return res.send("User Already Exists");
-      const user = await createNewUser({
-        strategy: "local",
-        email,
-        passwordPlainText: password,
-        name,
-      });
-      req.logIn(user, (err) => {
-        if (err) return next(err);
-        return res.send({ ok: true, user });
-      });
+      try {
+        const user = await createNewUser({
+          strategy: "local",
+          email,
+          passwordPlainText: password,
+          name,
+        });
+        req.logIn(user, (err) => {
+          if (err) return next(err);
+          return res.send({ ok: true, user });
+        });
+      } catch (e) {
+        console.error(e);
+        return res.send("Invalid E-mail");
+      }
     } catch (e) {
       next(e);
     }
