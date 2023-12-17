@@ -259,7 +259,10 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
   const dictionaryInfoBuffer = writeDictionaryInfo(dictionary.info);
   await Promise.all([
     upload(JSON.stringify(dictionary), `${dictionaryFilename}.json`),
-    upload(JSON.stringify(dictionary.info), `${dictionaryInfoFilename}.json`),
+    upload(
+      JSON.stringify(dictionary.info, null, "\t"),
+      `${dictionaryInfoFilename}.json`
+    ),
     upload(dictionaryBuffer as Buffer, dictionaryFilename),
     upload(dictionaryInfoBuffer as Buffer, dictionaryInfoFilename),
   ]);
