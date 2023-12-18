@@ -249,22 +249,13 @@ async function upload(content: Buffer | string, filename: string) {
     metadata,
   });
   // upload to r2 (new destination)
-  const Metadata = {
-    "Content-Type": isBuffer
-      ? "application/octet-stream"
-      : filename.endsWith(".json")
-      ? "application/json"
-      : filename.endsWith(".xml")
-      ? "application/xml"
-      : "text/plain; charset=UTF-8",
-    "Cache-Control": "no-cache",
-  };
   if (isBuffer) {
     const putObjectCommand = new PutObjectCommand({
       Bucket: functions.config().r2.bucket_name,
       Key: `dictionary/${filename}`,
       Body: content,
-      Metadata,
+      CacheControl: "no-cache",
+      ContentType: "application/octet-stream",
     });
     await s3Client.send(putObjectCommand);
   } else {
@@ -275,11 +266,16 @@ async function upload(content: Buffer | string, filename: string) {
       const putObjectCommand = new PutObjectCommand({
         Bucket: functions.config().r2.bucket_name,
         Key: `dictionary/${filename}`,
-        Metadata,
+        CacheControl: "no-cache",
         Body: buffer,
         ContentEncoding: "gzip",
+        ContentType: filename.endsWith(".json")
+          ? "application/json"
+          : filename.endsWith(".xml")
+          ? "application/xml"
+          : "text/plain; charset=UTF-8",
       });
-      s3Client.send(putObjectCommand);
+      s3Client.send(putObjectCommand).catch(console.error);
     });
   }
 }
