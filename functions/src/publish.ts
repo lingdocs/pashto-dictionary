@@ -15,6 +15,7 @@ import { getWordList } from "./word-list-maker";
 import { PublishDictionaryResponse } from "../../website/src/types/functions-types";
 import { Storage } from "@google-cloud/storage";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import zlib from "zlib";
 const s3Client = new S3Client({
   region: "auto",
   endpoint: functions.config().r2.endpoint,
@@ -258,14 +259,29 @@ async function upload(content: Buffer | string, filename: string) {
       : "text/plain; charset=UTF-8",
     "Cache-Control": "no-cache",
   };
-  // TODO: GZIP FILES
-  const putObjectCommand = new PutObjectCommand({
-    Bucket: functions.config().r2.bucket_name,
-    Key: `dictionary/${filename}`,
-    Body: content,
-    Metadata,
-  });
-  await s3Client.send(putObjectCommand);
+  if (isBuffer) {
+    const putObjectCommand = new PutObjectCommand({
+      Bucket: functions.config().r2.bucket_name,
+      Key: `dictionary/${filename}`,
+      Body: content,
+      Metadata,
+    });
+    await s3Client.send(putObjectCommand);
+  } else {
+    zlib.gzip(content, (err, buffer) => {
+      if (err) {
+        console.error(err);
+      }
+      const putObjectCommand = new PutObjectCommand({
+        Bucket: functions.config().r2.bucket_name,
+        Key: `dictionary/${filename}`,
+        Metadata,
+        Body: buffer,
+        ContentEncoding: "gzip",
+      });
+      s3Client.send(putObjectCommand);
+    });
+  }
 }
 
 // async function uploadHunspellToStorage(wordlist: {
