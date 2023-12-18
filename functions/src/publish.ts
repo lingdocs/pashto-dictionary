@@ -277,7 +277,7 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
 
 function makeSitemap(dictionary: T.Dictionary): string {
   const pages = [
-    ...["", "about", "settings", "account", "phrase-builder"],
+    ...["", "about", "settings", "account", "phrase-builder", "new-entries"],
     ...dictionary.entries.map((x) => `word?id=${x.ts}`),
   ];
   return `<?xml version="1.0" encoding="UTF-8"?>
