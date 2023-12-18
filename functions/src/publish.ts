@@ -56,6 +56,7 @@ export default async function publish(): Promise<PublishDictionaryResponse> {
     entries,
   };
   uploadDictionaryToStorage(dictionary).catch(console.error);
+  uploadSitemap(dictionary).catch(console.error);
   // TODO: make this async and run after publish response
   doHunspellEtc(dictionary.info, entries).catch(console.error);
   return {
@@ -254,6 +255,10 @@ async function uploadAllWordsToStoarage(
   );
 }
 
+async function uploadSitemap(dictionary: T.Dictionary) {
+  await upload(makeSitemap(dictionary), "sitemap.xml");
+}
+
 async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
   const dictionaryBuffer = writeDictionary(dictionary);
   const dictionaryInfoBuffer = writeDictionaryInfo(dictionary.info);
@@ -266,6 +271,19 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
     upload(dictionaryBuffer as Buffer, dictionaryFilename),
     upload(dictionaryInfoBuffer as Buffer, dictionaryInfoFilename),
   ]);
+}
+
+function makeSitemap(dictionary: T.Dictionary): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${dictionary.entries.map(
+    (entry) =>
+      `  <url>  
+    <loc>https://dictionary.lingdocs.com/word?id=${entry.ts}</loc>
+  </url>`
+  )} 
+</urlset> 
+`;
 }
 
 // function makeHunspell(wordlist: string[]) {
