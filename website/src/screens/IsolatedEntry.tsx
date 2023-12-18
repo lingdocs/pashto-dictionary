@@ -155,13 +155,13 @@ function IsolatedEntry({
   return (
     <div className="wide-width-limiter">
       <Helmet>
-        <title>{entry.p} - LingDocs Pashto Dictionary</title>
+        <title>{entry.p} | LingDocs Pashto Dictionary</title>
         <link
           rel="canonical"
           href={`https://dictionary.lingdocs.com/word?id=${entry.ts}`}
         />
       </Helmet>
-      <div className="row">
+      <dl className="row mb-1">
         <div className="col-8">
           <Entry
             nonClickable
@@ -226,7 +226,7 @@ function IsolatedEntry({
             )}
           </div>
         </div>
-      </div>
+      </dl>
       <EntryAudioDisplay entry={entry} opts={textOptions} />
       {wordlistWord && (
         <>
@@ -358,6 +358,7 @@ function IsolatedEntry({
             state={{ ...state, results: relatedEntries }}
             isolateEntry={isolateEntry}
             handleInflectionSearch={() => null}
+            relatedResults
           />
         </>
       ) : (
