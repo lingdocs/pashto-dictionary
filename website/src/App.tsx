@@ -439,6 +439,13 @@ class App extends Component<RouteComponentProps, State> {
       action.type === "toggleSearchType"
     ) {
       if (this.props.location.pathname !== "/new-entries") {
+        if (
+          action.type === "toggleSearchType" &&
+          this.state.options.searchType === "fuzzy" &&
+          this.props.location.pathname !== "/search"
+        ) {
+          this.handleSearchValueChange("آ");
+        }
         this.setState((prevState) => ({
           options,
           page: 1,
@@ -636,12 +643,12 @@ class App extends Component<RouteComponentProps, State> {
                       </Link>
                     </div>
                   )}
-                  {/* <Link
+                  <Link
                     to="/new-entries"
                     className="plain-link font-weight-light"
                   >
                     <div className="my-4">New words this month</div>
-                  </Link> */}
+                  </Link>
                   <div className="my-4 pt-3">
                     <Link
                       to="/phrase-builder"
