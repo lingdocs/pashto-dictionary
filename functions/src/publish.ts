@@ -13,7 +13,6 @@ import {
 } from "@lingdocs/inflect";
 import { getWordList } from "./word-list-maker";
 import { PublishDictionaryResponse } from "../../website/src/types/functions-types";
-import { Storage } from "@google-cloud/storage";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import zlib from "zlib";
 const s3Client = new S3Client({
@@ -25,14 +24,9 @@ const s3Client = new S3Client({
   },
 });
 
-const storage = new Storage({
-  projectId: "lingdocs",
-});
-
 const title = "LingDocs Pashto Dictionary";
 const license = `Copyright © ${new Date().getFullYear()} lingdocs.com All Rights Reserved - Licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - https://creativecommons.org/licenses/by-nc-sa/4.0/`;
-const bucketName = "lingdocs";
-const baseUrl = `https://storage.lingdocs.com/`;
+const baseUrl = `https://storage.lingdocs.com/dictionary/`;
 const dictionaryFilename = "dictionary";
 const dictionaryInfoFilename = "dictionary-info";
 // const hunspellAffFileFilename = "ps_AFF.aff";
@@ -231,23 +225,6 @@ function checkForErrors(
 
 async function upload(content: Buffer | string, filename: string) {
   const isBuffer = typeof content !== "string";
-  const file = storage.bucket(bucketName).file(filename);
-  // upload to Google Cloud Storage (will be deprecated / removed)
-  const metadata = {
-    contentType: isBuffer
-      ? "application/octet-stream"
-      : filename.endsWith(".json")
-      ? "application/json"
-      : filename.endsWith(".xml")
-      ? "application/xml"
-      : "text/plain; charset=UTF-8",
-    cacheControl: "no-cache",
-  };
-  await file.save(content, {
-    gzip: isBuffer ? false : true,
-    predefinedAcl: "publicRead",
-    metadata,
-  });
   // upload to r2 (new destination)
   if (isBuffer) {
     const putObjectCommand = new PutObjectCommand({
