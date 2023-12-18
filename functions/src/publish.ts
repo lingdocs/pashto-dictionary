@@ -287,7 +287,7 @@ function makeSitemap(dictionary: T.Dictionary): string {
       (page) =>
         `
   <url>
-    <loc>https://dictionary.lingdocs.com${page}}</loc>
+    <loc>https://dictionary.lingdocs.com${page}</loc>
   </url>`
     )
     .join("")}

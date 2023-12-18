@@ -57,6 +57,10 @@ body {
     padding-bottom: 60px; */
 }
 
+dt {
+    float: left;
+}
+
 .p-text {
     font-size: var(--p-text-size);
 }

@@ -36,10 +36,8 @@ function Entry({
       data-testid="entry"
     >
       <div>
-        <dt>
-          <strong>
-            <InlinePs opts={textOptions}>{{ p: entry.p, f: entry.f }}</InlinePs>
-          </strong>
+        <dt className="mr-2">
+          <InlinePs opts={textOptions}>{{ p: entry.p, f: entry.f }}</InlinePs>
         </dt>
         {` `}
         <em>{entry.c}</em>
