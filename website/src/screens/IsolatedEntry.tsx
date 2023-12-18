@@ -34,7 +34,7 @@ import { Modal } from "react-bootstrap";
 import { getTextOptions } from "../lib/get-text-options";
 import { entryFeeder } from "../lib/dictionary";
 import { State, DictionaryAPI } from "../types/dictionary-types";
-import playStorageAudio from "../components/PlayStorageAudio";
+import { EntryAudioDisplay } from "../components/EntryAudioDisplay";
 
 function IsolatedEntry({
   state,
@@ -46,7 +46,6 @@ function IsolatedEntry({
   isolateEntry: (ts: number) => void;
 }) {
   const [exploded, setExploded] = useState<boolean>(false);
-  const [playing, setPlaying] = useState<boolean>(false);
   const [editing, setEditing] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const [editSubmitted, setEditSubmitted] = useState<boolean>(false);
@@ -57,7 +56,6 @@ function IsolatedEntry({
     setEditing(false);
     setComment("");
     setEditSubmitted(false);
-    setPlaying(false);
   }, [state]);
   function flashClippedMessage(m: string) {
     setShowClipped(m);
@@ -154,17 +152,14 @@ function IsolatedEntry({
     navigator.clipboard.writeText(JSON.stringify(entry));
     flashClippedMessage("entry data copied to clipboard");
   }
-  function handlePlayStorageAudio() {
-    if (!entry) return;
-    setPlaying(true);
-    playStorageAudio(entry.ts, () => {
-      setPlaying(false);
-    });
-  }
   return (
     <div className="wide-width-limiter">
       <Helmet>
         <title>{entry.p} - LingDocs Pashto Dictionary</title>
+        <link
+          rel="canonical"
+          href={`https://dictionary.lingdocs.com/word?id=${entry.ts}`}
+        />
       </Helmet>
       <div className="row">
         <div className="col-8">
@@ -177,13 +172,6 @@ function IsolatedEntry({
         </div>
         <div className="col-4">
           <div className="d-flex flex-row justify-content-end">
-            {entry.a && (
-              <div className="clickable mr-3" onClick={handlePlayStorageAudio}>
-                <i
-                  className={`fas fa-lg fa-volume-${playing ? "down" : "off"}`}
-                />
-              </div>
-            )}
             <div
               className="clickable mr-3"
               onClick={() => setExploded((os) => !os)}
@@ -239,6 +227,7 @@ function IsolatedEntry({
           </div>
         </div>
       </div>
+      <EntryAudioDisplay entry={entry} opts={textOptions} />
       {wordlistWord && (
         <>
           {hasAttachment(wordlistWord, "audio") && (

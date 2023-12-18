@@ -36,9 +36,11 @@ function Entry({
       data-testid="entry"
     >
       <div>
-        <strong>
-          <InlinePs opts={textOptions}>{{ p: entry.p, f: entry.f }}</InlinePs>
-        </strong>
+        <dt>
+          <strong>
+            <InlinePs opts={textOptions}>{{ p: entry.p, f: entry.f }}</InlinePs>
+          </strong>
+        </dt>
         {` `}
         <em>{entry.c}</em>
         {entry.a && !nonClickable && (
@@ -49,7 +51,9 @@ function Entry({
         )}
       </div>
       <ExtraEntryInfo entry={entry} textOptions={textOptions} />
-      <div className="entry-definition">{entry.e}</div>
+      <dd>
+        <div className="entry-definition">{entry.e}</div>
+      </dd>
     </div>
   );
 }

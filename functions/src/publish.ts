@@ -227,8 +227,10 @@ async function upload(content: Buffer | string, filename: string) {
     metadata: {
       contentType: isBuffer
         ? "application/octet-stream"
-        : filename.slice(-5) === ".json"
+        : filename.endsWith(".json")
         ? "application/json"
+        : filename.endsWith(".xml")
+        ? "application/xml"
         : "text/plain; charset=UTF-8",
       cacheControl: "no-cache",
     },
@@ -274,14 +276,21 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
 }
 
 function makeSitemap(dictionary: T.Dictionary): string {
+  const pages = [
+    ...["", "/about", "/settings", "/account", "/phrase-builder"],
+    ...dictionary.entries.map((x) => `/word?id=${x.ts}`),
+  ];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${dictionary.entries.map(
-    (entry) =>
-      `  <url>  
-    <loc>https://dictionary.lingdocs.com/word?id=${entry.ts}</loc>
+  ${pages
+    .map(
+      (page) =>
+        `
+  <url>
+    <loc>https://dictionary.lingdocs.com${page}}</loc>
   </url>`
-  )} 
+    )
+    .join("")}
 </urlset> 
 `;
 }

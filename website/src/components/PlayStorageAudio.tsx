@@ -1,6 +1,10 @@
+export function getAudioPath(ts: number): string {
+  return `https://storage.lingdocs.com/audio/${ts}.mp3`;
+}
+
 export default function playStorageAudio(ts: number, callback: () => void) {
   if (!ts) return;
-  let audio = new Audio(`https://storage.lingdocs.com/audio/${ts}.mp3`);
+  let audio = new Audio(getAudioPath(ts));
   audio.addEventListener("ended", () => {
     callback();
     audio.remove();
