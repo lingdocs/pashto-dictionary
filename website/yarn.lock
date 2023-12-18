@@ -2349,10 +2349,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/ps-react@7.0.3":
-  version "7.0.3"
-  resolved "https://npm.lingdocs.com/@lingdocs/ps-react/-/ps-react-7.0.3.tgz#9962fca6a7eeec1d9eec7938ca5fbf2c8634c228"
-  integrity sha512-/ASFFGudbqjEaZQ5OSHAwCQaZSdnPPInWv30rLR6ytLA+lS2udXLQHXkW+3ArUQ1UFBQlK1AC2+1tKNxvD2IrQ==
+"@lingdocs/ps-react@7.0.7":
+  version "7.0.7"
+  resolved "https://npm.lingdocs.com/@lingdocs/ps-react/-/ps-react-7.0.7.tgz#030d7b614027d944b4228cbeac67bffec206a1ff"
+  integrity sha512-H/md+cDteBPry8wrI0uvhQIdGz97BqwPollj3c8NANc7ryUGNS7wbwRA20ayGn7AaiwpERhu/1+VzW4YEqM8vw==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.3"
     classnames "^2.2.6"

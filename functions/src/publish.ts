@@ -14,6 +14,16 @@ import {
 import { getWordList } from "./word-list-maker";
 import { PublishDictionaryResponse } from "../../website/src/types/functions-types";
 import { Storage } from "@google-cloud/storage";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+const s3Client = new S3Client({
+  region: "auto",
+  endpoint: functions.config().r2.endpoint,
+  credentials: {
+    accessKeyId: functions.config().r2.access_key_id,
+    secretAccessKey: functions.config().r2.secret_access_key,
+  },
+});
+
 const storage = new Storage({
   projectId: "lingdocs",
 });
@@ -221,20 +231,41 @@ function checkForErrors(
 async function upload(content: Buffer | string, filename: string) {
   const isBuffer = typeof content !== "string";
   const file = storage.bucket(bucketName).file(filename);
+  // upload to Google Cloud Storage (will be deprecated / removed)
+  const metadata = {
+    contentType: isBuffer
+      ? "application/octet-stream"
+      : filename.endsWith(".json")
+      ? "application/json"
+      : filename.endsWith(".xml")
+      ? "application/xml"
+      : "text/plain; charset=UTF-8",
+    cacheControl: "no-cache",
+  };
   await file.save(content, {
     gzip: isBuffer ? false : true,
     predefinedAcl: "publicRead",
-    metadata: {
-      contentType: isBuffer
-        ? "application/octet-stream"
-        : filename.endsWith(".json")
-        ? "application/json"
-        : filename.endsWith(".xml")
-        ? "application/xml"
-        : "text/plain; charset=UTF-8",
-      cacheControl: "no-cache",
-    },
+    metadata,
   });
+  // upload to r2 (new destination)
+  const Metadata = {
+    "Content-Type": isBuffer
+      ? "application/octet-stream"
+      : filename.endsWith(".json")
+      ? "application/json"
+      : filename.endsWith(".xml")
+      ? "application/xml"
+      : "text/plain; charset=UTF-8",
+    "Cache-Control": "no-cache",
+  };
+  // TODO: GZIP FILES
+  const putObjectCommand = new PutObjectCommand({
+    Bucket: functions.config().r2.bucket_name,
+    Key: `dictionary/${filename}`,
+    Body: content,
+    Metadata,
+  });
+  await s3Client.send(putObjectCommand);
 }
 
 // async function uploadHunspellToStorage(wordlist: {
