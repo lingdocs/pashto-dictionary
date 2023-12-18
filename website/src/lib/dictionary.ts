@@ -24,9 +24,9 @@ import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 import { getTextOptions } from "./get-text-options";
 import { DictionaryAPI, State } from "../types/dictionary-types";
 
-// const dictionaryBaseUrl = "https://storage.googleapis.com/lingdocs/";
-const dictionaryUrl = `https://storage.googleapis.com/lingdocs/dictionary`;
-const dictionaryInfoUrl = `https://storage.googleapis.com/lingdocs/dictionary-info`;
+const dictionaryBaseUrl = `https://storage.lingdocs.com/dictionary`;
+const dictionaryUrl = `${dictionaryBaseUrl}/dictionary`;
+const dictionaryInfoUrl = `${dictionaryBaseUrl}/dictionary-info`;
 
 const dictionaryInfoLocalStorageKey = "dictionaryInfo5";
 const dictionaryCollectionName = "dictionary3";
