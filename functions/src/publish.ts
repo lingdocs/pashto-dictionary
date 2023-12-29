@@ -112,13 +112,13 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
   //   // await rows[i].delete();
   // }
   const entries: T.DictionaryEntry[] = [];
-  let sheetIndex = 0;
+  // let sheetIndex = 0;
   // get the rows in order of ts for easy detection of duplicate entries
   for (let i = 0; i < rows.length; i++) {
     // function sameEntry(a: any, b: any): boolean {
     //   return a.p === b.p && a.f === b.f && a.e === b.e;
     // }
-    sheetIndex++;
+    // sheetIndex++;
     const row = rows[i];
     const nextRow = rows[i + 1] || undefined;
     if (row.ts === nextRow?.ts) {
