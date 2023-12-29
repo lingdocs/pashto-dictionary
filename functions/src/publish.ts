@@ -296,10 +296,25 @@ async function uploadDictionaryToStorage(dictionary: T.Dictionary) {
 }
 
 function makeSitemap(dictionary: T.Dictionary): string {
+  function tsToDate(ts: number): string {
+    if (ts < 10000000000) {
+      // approximate date for old-style timestamps
+      return "2021-01-01";
+    }
+    return getDateString(new Date(ts));
+  }
+  function getDateString(d: Date): string {
+    return d.toISOString().split("T")[0];
+  }
   const pages = [
-    ...["", "about", "settings", "account", "phrase-builder", "new-entries"],
-    ...dictionary.entries.map((x) => `word?id=${x.ts}`),
+    "",
+    "about",
+    "settings",
+    "account",
+    "phrase-builder",
+    "new-entries",
   ];
+  const currentDate = getDateString(new Date());
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${pages
@@ -308,9 +323,20 @@ function makeSitemap(dictionary: T.Dictionary): string {
         `
   <url>
     <loc>https://dictionary.lingdocs.com/${page}</loc>
+    <lastmod>${currentDate}</lastmod>
   </url>`
     )
     .join("")}
+    ${dictionary.entries
+      .map(
+        (entry) =>
+          `
+  <url>
+    <loc>https://dictionary.lingdocs.com/word?id=${entry.ts}</loc>
+    <lastmod>${tsToDate(entry.ts)}</lastmod>
+  </url>`
+      )
+      .join("")}
 </urlset> 
 `;
 }
