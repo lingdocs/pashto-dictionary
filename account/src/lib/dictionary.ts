@@ -4,8 +4,6 @@ import { CronJob } from "cron";
 const collectionName = "ps-dictionary";
 const allWordsCollectionName = "all-words";
 import {
-  readDictionary,
-  readDictionaryInfo,
   Types as T,
   typePredicates as tp,
   entryOfFull,
@@ -27,9 +25,8 @@ const updateJob = new CronJob("* * * * *", updateDictionary, null, false);
 let version: number = 0;
 
 async function fetchDictionary(): Promise<T.Dictionary> {
-  const res = await fetch(process.env.LINGDOCS_DICTIONARY_URL || "");
-  const buffer = await res.arrayBuffer();
-  return readDictionary(buffer as Uint8Array);
+  const res = await fetch(process.env.LINGDOCS_DICTIONARY_URL + ".json" || "");
+  return await res.json();
 }
 
 async function fetchAllWords(): Promise<T.AllWordsWithInflections> {
@@ -42,9 +39,10 @@ async function fetchAllWords(): Promise<T.AllWordsWithInflections> {
 }
 
 async function fetchDictionaryInfo(): Promise<T.DictionaryInfo> {
-  const res = await fetch(process.env.LINGDOCS_DICTIONARY_URL + "-info" || "");
-  const buffer = await res.arrayBuffer();
-  return readDictionaryInfo(buffer as Uint8Array);
+  const res = await fetch(
+    process.env.LINGDOCS_DICTIONARY_URL + "-info.json" || ""
+  );
+  return await res.json();
 }
 
 export async function updateDictionary(): Promise<"no update" | "updated"> {
