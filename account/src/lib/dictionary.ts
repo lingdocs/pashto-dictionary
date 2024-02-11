@@ -46,20 +46,25 @@ async function fetchDictionaryInfo(): Promise<T.DictionaryInfo> {
 }
 
 export async function updateDictionary(): Promise<"no update" | "updated"> {
-  const info = await fetchDictionaryInfo();
-  if (info.release === version) {
+  try {
+    const info = await fetchDictionaryInfo();
+    if (info.release === version) {
+      return "no update";
+    }
+    const dictionary = await fetchDictionary();
+    version = dictionary.info.release;
+    collection?.clear();
+    lokidb.removeCollection(collectionName);
+    collection?.insert(dictionary.entries);
+    const allWords = await fetchAllWords();
+    allWordsCollection?.clear();
+    lokidb.removeCollection(allWordsCollectionName);
+    allWordsCollection?.insert(allWords.words);
+    return "updated";
+  } catch (e) {
+    console.error(e);
     return "no update";
   }
-  const dictionary = await fetchDictionary();
-  version = dictionary.info.release;
-  collection?.clear();
-  lokidb.removeCollection(collectionName);
-  collection?.insert(dictionary.entries);
-  const allWords = await fetchAllWords();
-  allWordsCollection?.clear();
-  lokidb.removeCollection(allWordsCollectionName);
-  allWordsCollection?.insert(allWords.words);
-  return "updated";
 }
 
 function getOneByTs(ts: number): T.DictionaryEntry {
