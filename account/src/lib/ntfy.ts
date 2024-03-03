@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
+import envVars from "./env-vars";
 
 export async function ntfy(message: string) {
-  fetch("https://ntfy.sh/uhrv932r4e5w6zmi4-ld", {
+  fetch(`https://ntfy.sh/${envVars.ntfyTopic}`, {
     method: "POST",
     body: message,
   }).catch(console.error);
