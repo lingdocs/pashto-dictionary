@@ -203,7 +203,7 @@ class App extends Component<RouteComponentProps, State> {
         }
         if (this.props.location.pathname === "/new-entries") {
           this.setState({
-            results: dictionary.getNewWordsThisMonth(),
+            results: dictionary.getNewWords("week"),
             page: 1,
           });
         }
@@ -335,7 +335,7 @@ class App extends Component<RouteComponentProps, State> {
       }
       if (this.props.location.pathname === "/new-entries") {
         this.setState({
-          results: dictionary.getNewWordsThisMonth(),
+          results: dictionary.getNewWords("week"),
           page: 1,
         });
       }
@@ -647,7 +647,7 @@ class App extends Component<RouteComponentProps, State> {
                     to="/new-entries"
                     className="plain-link font-weight-light"
                   >
-                    <div className="my-4">New words this month</div>
+                    <div className="my-4">New words this week</div>
                   </Link>
                   <div className="my-4 pt-3">
                     <Link

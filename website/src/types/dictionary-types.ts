@@ -40,7 +40,9 @@ export type DictionaryAPI = {
   exactPashtoSearch: (
     search: string
   ) => import("@lingdocs/ps-react").Types.DictionaryEntry[];
-  getNewWordsThisMonth: () => import("@lingdocs/ps-react").Types.DictionaryEntry[];
+  getNewWords: (
+    period: "month" | "week"
+  ) => import("@lingdocs/ps-react").Types.DictionaryEntry[];
   findOneByTs: (
     ts: number
   ) => import("@lingdocs/ps-react").Types.DictionaryEntry | undefined;

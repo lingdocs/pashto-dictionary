@@ -83,20 +83,27 @@ function getExpForInflections(input: string, index: "p" | "f"): RegExp {
   return new RegExp(`^${base}[و|ې|ه]?`);
 }
 
-function tsOneMonthBack(): number {
-  // https://stackoverflow.com/a/24049314/8620945
-  const d = new Date();
-  const m = d.getMonth();
-  d.setMonth(d.getMonth() - 1);
+function tsBack(period: "month" | "week"): number {
+  if (period === "month") {
+    // https://stackoverflow.com/a/24049314/8620945
+    const d = new Date();
+    const m = d.getMonth();
+    d.setMonth(d.getMonth() - 1);
 
-  // If still in same month, set date to last day of
-  // previous month
-  if (d.getMonth() === m) d.setDate(0);
-  d.setHours(0, 0, 0);
-  d.setMilliseconds(0);
+    // If still in same month, set date to last day of
+    // previous month
+    if (d.getMonth() === m) d.setDate(0);
+    d.setHours(0, 0, 0);
+    d.setMilliseconds(0);
 
-  // Get the time value in milliseconds and convert to seconds
-  return d.getTime();
+    // Get the time value in milliseconds and convert to seconds
+    return d.getTime();
+  }
+  const currentDate = new Date();
+  const lastWeekDate = new Date(
+    currentDate.getTime() - 7 * 24 * 60 * 60 * 1000
+  );
+  return lastWeekDate.getTime();
 }
 
 function alphabeticalLookup({
@@ -575,10 +582,12 @@ export const dictionary: DictionaryAPI = {
         });
   },
   exactPashtoSearch: pashtoExactLookup,
-  getNewWordsThisMonth: function (): T.DictionaryEntry[] {
+  getNewWords: function (period: "week" | "month"): T.DictionaryEntry[] {
     return dictDb.collection
       .chain()
-      .find({ ts: { $gt: tsOneMonthBack() } })
+      .find({
+        ts: { $gt: tsBack(period) },
+      })
       .simplesort("ts")
       .data()
       .reverse();
