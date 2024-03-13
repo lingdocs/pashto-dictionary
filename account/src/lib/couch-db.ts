@@ -109,6 +109,7 @@ export async function deleteCouchDbAuthUser(uuid: T.UUID): Promise<void> {
   if (!user.docs.length) return;
   const u = user.docs[0];
   await authUsers.destroy(u._id, u._rev);
+  await nano.db.destroy(getWordlistDbName(uuid));
 }
 
 export async function updateLingdocsUser(
