@@ -174,7 +174,7 @@ export async function createNewUser(
       _id: userId,
       userId,
       emailVerified: false,
-      name: input.profile.displayName,
+      name: input.profile.displayName || input.profile.username || "",
       [input.strategy]: input.profile,
       level: "basic",
       tests: [],
