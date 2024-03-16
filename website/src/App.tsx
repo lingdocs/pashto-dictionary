@@ -11,6 +11,7 @@
 
 import { Component } from "react";
 import {
+  capitalizeFirstLetter,
   defaultTextOptions,
   revertSpelling,
   standardizePashto,
@@ -72,6 +73,8 @@ import PhraseBuilder from "./screens/PhraseBuilder";
 import { searchAllInflections } from "./lib/search-all-inflections";
 import { addToWordlist } from "./lib/wordlist-database";
 import ScriptToPhonetics from "./screens/ScriptToPhonetics";
+
+const newWordsPeriod: "week" | "month" = "month";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
@@ -203,7 +206,7 @@ class App extends Component<RouteComponentProps, State> {
         }
         if (this.props.location.pathname === "/new-entries") {
           this.setState({
-            results: dictionary.getNewWords("week"),
+            results: dictionary.getNewWords(newWordsPeriod),
             page: 1,
           });
         }
@@ -335,7 +338,7 @@ class App extends Component<RouteComponentProps, State> {
       }
       if (this.props.location.pathname === "/new-entries") {
         this.setState({
-          results: dictionary.getNewWords("week"),
+          results: dictionary.getNewWords(newWordsPeriod),
           page: 1,
         });
       }
@@ -647,7 +650,7 @@ class App extends Component<RouteComponentProps, State> {
                     to="/new-entries"
                     className="plain-link font-weight-light"
                   >
-                    <div className="my-4">New words this week</div>
+                    <div className="my-4">New words this {newWordsPeriod}</div>
                   </Link>
                   <div className="my-4 pt-3">
                     <Link
@@ -694,7 +697,9 @@ class App extends Component<RouteComponentProps, State> {
                 />
               </Route>
               <Route path="/new-entries">
-                <h4 className="mb-3">New Words This Month</h4>
+                <h4 className="mb-3">
+                  New Words This {capitalizeFirstLetter(newWordsPeriod)}
+                </h4>
                 {this.state.results.length ? (
                   <Results
                     state={this.state}
@@ -702,7 +707,7 @@ class App extends Component<RouteComponentProps, State> {
                     handleInflectionSearch={this.handleInflectionSearch}
                   />
                 ) : (
-                  <div>No new words added this month 😓</div>
+                  <div>No new words added this {newWordsPeriod}</div>
                 )}
               </Route>
               <Route path="/account">
