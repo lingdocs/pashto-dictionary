@@ -1,6 +1,7 @@
 {
   "short_name": "Pashto Dictionary",
   "name": "LingDocs Pashto Dictionary",
+  "id": "/",
   "icons": [
     {
       "src": "/icons/android-chrome-192x192.png",
@@ -23,12 +24,33 @@
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "display": "standalone",
   "theme_color": "#596267",
   "background_color": "#f9f9f9",
   "start_url": ".",
+  "description": "An offline Pashto Dictionary app with approximate search-as-you-type, alphabetical browsing, verb conjugation, inflections, and a phrase generation engine.",
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "orientation": "any",
+  "categories": [
+    "education",
+    "language",
+    "productivity",
+    "language learning",
+    "Pashto",
+    "dictionaries"
+  ],
+  "lang": "en",
+  "prefer_related_applications": false,
   "share_target": {
     "action": "/share-target",
     "method": "GET",
