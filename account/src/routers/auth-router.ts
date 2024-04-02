@@ -51,6 +51,13 @@ const authRouter = (passport: PassportStatic) => {
     });
   });
 
+  router.get("/delete-account", (req, res) => {
+    res.render("delete-account", {
+      user: req.user,
+      error: null,
+    });
+  });
+
   router.post("/user", async (req, res, next) => {
     const page = "user";
     if (!req.user) return next("user not found");
