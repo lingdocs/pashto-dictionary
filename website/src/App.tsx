@@ -74,7 +74,7 @@ import { searchAllInflections } from "./lib/search-all-inflections";
 import { addToWordlist } from "./lib/wordlist-database";
 import ScriptToPhonetics from "./screens/ScriptToPhonetics";
 
-const newWordsPeriod: "week" | "month" = "month";
+const newWordsPeriod: "week" | "month" = "week";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
