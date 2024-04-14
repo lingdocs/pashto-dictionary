@@ -36,7 +36,7 @@
   "theme_color": "#596267",
   "background_color": "#f9f9f9",
   "start_url": ".",
-  "description": "An offline Pashto Dictionary app with approximate search-as-you-type, alphabetical browsing, verb conjugation, inflections, and a phrase generation engine.",
+  "description": "An offline Pashto Dictionary app with audio, approximate search-as-you-type, alphabetical browsing, verb conjugation, inflections, and a phrase generation engine.",
   "launch_handler": {
     "client_mode": "auto"
   },

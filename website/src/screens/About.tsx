@@ -29,6 +29,7 @@ const About = ({ state }: { state: State }) => (
     <ul>
       <li>Approximate search-as-you-type</li>
       <li>Alphabetical browsing</li>
+      <li>Pashto Audio Recordings</li>
       <li>Inflections and Verb Conjugations</li>
       <li>Phrase Generation Engine</li>
       <li>Ability to suggest additions or corrections (with sign-in)</li>
