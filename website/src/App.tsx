@@ -73,6 +73,7 @@ import PhraseBuilder from "./screens/PhraseBuilder";
 import { searchAllInflections } from "./lib/search-all-inflections";
 import { addToWordlist } from "./lib/wordlist-database";
 import ScriptToPhonetics from "./screens/ScriptToPhonetics";
+import { pNums, convertNumShortcutToNum } from "./lib/misc-helpers";
 
 const newWordsPeriod: "week" | "month" = "week";
 
@@ -242,20 +243,24 @@ class App extends Component<RouteComponentProps, State> {
       });
     }
     // shortcuts to isolote word in search results
-    Mousetrap.bind(["1", "2", "3", "4", "5", "6", "7", "8", "9"], (e) => {
-      e.preventDefault();
-      if (e.repeat) {
-        return;
+    Mousetrap.bind(
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", ...pNums],
+      (e) => {
+        e.preventDefault();
+        if (e.repeat) {
+          return;
+        }
+        if (this.props.location.pathname !== "/search") {
+          return;
+        }
+        const toIsolate =
+          this.state.results[convertNumShortcutToNum(e.key) - 1];
+        if (!toIsolate) {
+          return;
+        }
+        this.handleIsolateEntry(toIsolate.ts);
       }
-      if (this.props.location.pathname !== "/search") {
-        return;
-      }
-      const toIsolate = this.state.results[Number(e.key) - 1];
-      if (!toIsolate) {
-        return;
-      }
-      this.handleIsolateEntry(toIsolate.ts);
-    });
+    );
     Mousetrap.bind(
       ["ctrl+down", "ctrl+up", "command+down", "command+up"],
       (e) => {
