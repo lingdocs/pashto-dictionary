@@ -133,13 +133,6 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
       duplicates.add(row.ts);
       // }
     }
-    if (duplicates.size) {
-      throw new Error(
-        `ts ${Array.from(duplicates).join(
-          ", "
-        )} is a duplicate ts of a different entry`
-      );
-    }
     const e: T.DictionaryEntry = {
       i: 1,
       ts: parseInt(row.ts),
@@ -162,6 +155,13 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
       }
     );
     entries.push(standardizeEntry(e));
+  }
+  if (duplicates.size) {
+    throw new Error(
+      `ts ${Array.from(duplicates).join(
+        ", "
+      )} is a duplicate ts of a different entry`
+    );
   }
   // add alphabetical index
   entries.sort((a, b) => a.p.localeCompare(b.p, "ps"));
