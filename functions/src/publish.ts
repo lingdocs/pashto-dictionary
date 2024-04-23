@@ -114,6 +114,7 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
   const entries: T.DictionaryEntry[] = [];
   // let sheetIndex = 0;
   // get the rows in order of ts for easy detection of duplicate entries
+  const duplicates: Set<number> = new Set();
   for (let i = 0; i < rows.length; i++) {
     // function sameEntry(a: any, b: any): boolean {
     //   return a.p === b.p && a.f === b.f && a.e === b.e;
@@ -129,8 +130,15 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
       //   sheetIndex--;
       //   continue;
       // } else {
-      throw new Error(`ts ${row.ts} is a duplicate ts of a different entry`);
+      duplicates.add(row.ts);
       // }
+    }
+    if (duplicates.size) {
+      throw new Error(
+        `ts ${Array.from(duplicates).join(
+          ", "
+        )} is a duplicate ts of a different entry`
+      );
     }
     const e: T.DictionaryEntry = {
       i: 1,
