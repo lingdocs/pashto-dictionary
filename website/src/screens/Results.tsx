@@ -92,6 +92,7 @@ function Results({
                 : ""
             }`}
             onClick={startSuggestion}
+            title="create entry suggestion"
           >
             <i className="fas fa-plus" style={{ padding: "3px" }} />
           </button>
@@ -107,6 +108,7 @@ function Results({
                 : ""
             }`}
             onClick={handleInflectionSearch}
+            title="search in inflections/conjugations"
           >
             <i className={inflectionSearchIcon} style={{ padding: "3px" }} />
           </button>

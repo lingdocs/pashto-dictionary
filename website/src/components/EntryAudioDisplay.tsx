@@ -12,6 +12,7 @@ export function EntryAudioDisplay({
   opts: T.TextOptions;
   user: LingdocsUser | undefined;
 }) {
+  const audioPath = getAudioPath(entry.ts);
   if (!entry.a) {
     return null;
   }
@@ -24,23 +25,54 @@ export function EntryAudioDisplay({
       action: `play ${entry.p} - ${entry.ts}`,
     });
   }
+
+  function handleDownload() {
+    const documentName = `${entry.p}-${entry.ts}.mp3`;
+
+    fetch(audioPath)
+      .then((res) => {
+        return res.blob();
+      })
+      .then((blob) => {
+        const href = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.download = documentName;
+        a.href = href;
+        a.click();
+        a.href = "";
+      })
+      .catch((err) => console.error(err));
+  }
   return (
     <figure>
       <figcaption className="mb-2 pl-2">
-        Listen to <InlinePs opts={opts}>{{ p: entry.p, f: entry.f }}</InlinePs>
+        <div>
+          Listen to{" "}
+          <InlinePs opts={opts}>{{ p: entry.p, f: entry.f }}</InlinePs>
+        </div>
       </figcaption>
-      <audio
-        controls
-        controlsList="nofullscreen"
-        src={getAudioPath(entry.ts)}
-        preload="auto"
-        onPlay={handlePlay}
-      >
-        <a href={getAudioPath(entry.ts)}>
+      <div className="d-flex align-items-center">
+        <audio
+          controls
+          controlsList="nofullscreen"
+          src={audioPath}
+          preload="auto"
+          onPlay={handlePlay}
+        >
+          {/*         <a href={getAudioPath(entry.ts)}>
           Download audio for{" "}
           <InlinePs opts={opts}>{{ p: entry.p, f: entry.f }}</InlinePs>
-        </a>
-      </audio>
+        </a > */}
+        </audio>
+        <button
+          type="button"
+          onClick={handleDownload}
+          className="ml-2 btn btn-light"
+          title="download audio"
+        >
+          <i className="fas fa-download"></i>
+        </button>
+      </div>
     </figure>
   );
 }

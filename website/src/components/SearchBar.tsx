@@ -9,17 +9,18 @@
 import Mousetrap from "mousetrap";
 import { useEffect, useRef } from "react";
 import { State } from "../types/dictionary-types";
-import {
-  OptionsAction,
-  Language,
-  SearchType,
-} from "../types/dictionary-types";
+import { OptionsAction, Language, SearchType } from "../types/dictionary-types";
 
-const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }: {
-  state: State
-  optionsDispatch: (action: OptionsAction) => void,
-  handleSearchValueChange: (searchValue: string) => void,
-  onBottom?: boolean,
+const SearchBar = ({
+  state,
+  optionsDispatch,
+  handleSearchValueChange,
+  onBottom,
+}: {
+  state: State;
+  optionsDispatch: (action: OptionsAction) => void;
+  handleSearchValueChange: (searchValue: string) => void;
+  onBottom?: boolean;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -34,8 +35,8 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
     return () => {
       window.removeEventListener("focus", onFocus);
       Mousetrap.unbind(["shift+space"]);
-    }
-  // eslint-disable-next-line
+    };
+    // eslint-disable-next-line
   }, []);
   function onFocus() {
     if (["/", "/search"].includes(window.location.pathname)) {
@@ -50,43 +51,56 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
         onClick={() => optionsDispatch({ type: "toggleLanguage" })}
         data-testid="languageToggle"
       >
-        <div aria-label={`language-choice-${language === "Pashto" ? "ps-to-en" : "en-to-ps"}`}>
+        <div
+          aria-label={`language-choice-${
+            language === "Pashto" ? "ps-to-en" : "en-to-ps"
+          }`}
+        >
           Ps <span className={`fa fa-arrow-${arrowDirection}`} /> En
         </div>
       </button>
     );
-  }
+  };
   const SearchTypeToggle = ({ searchType }: { searchType: SearchType }) => {
-    const icon = (searchType === "alphabetical") ? "book" : "bolt";
+    const icon = searchType === "alphabetical" ? "book" : "bolt";
     return (
-        <button
-            className="btn btn-outline-secondary"
-            onClick={() => optionsDispatch({ type: "toggleSearchType" })}
-            data-testid="searchTypeToggle"
-        >
-            <span className={`fa fa-${icon}`} />
-        </button>
+      <button
+        className="btn btn-outline-secondary"
+        onClick={() => optionsDispatch({ type: "toggleSearchType" })}
+        data-testid="searchTypeToggle"
+        title="toggle alphabetical/smart search"
+      >
+        <span className={`fa fa-${icon}`} />
+      </button>
     );
   };
 
-  const placeholder = (state.options.searchType === "alphabetical" && state.options.language === "Pashto") 
-    ? "Browse alphabetically"
-    : `Search ${state.options.language === "Pashto" ? "Pashto" : "English"}`;
+  const placeholder =
+    state.options.searchType === "alphabetical" &&
+    state.options.language === "Pashto"
+      ? "Browse alphabetically"
+      : `Search ${state.options.language === "Pashto" ? "Pashto" : "English"}`;
   return (
-    <nav className={`navbar bg-light${onBottom ? "" : " fixed-top"}`} style={{ zIndex: 50, width: "100%" }}>
+    <nav
+      className={`navbar bg-light${onBottom ? "" : " fixed-top"}`}
+      style={{ zIndex: 50, width: "100%" }}
+    >
       <div className="form-inline my-1 my-lg-1">
         <div className="input-group">
           <input
             type="text"
-            style={{ borderRight: "0px", zIndex:  200 }}
+            style={{ borderRight: "0px", zIndex: 200 }}
             placeholder={placeholder}
             value={state.searchValue}
             onChange={(e) => {
               handleSearchValueChange(e.target.value);
             }}
-            onBlur={e => {
+            onBlur={(e) => {
               // don't loose focus/cursor if clicking on a word/star etc if searchBarStickyFocus is enabled
-              if (state.options.searchBarStickyFocus && e.relatedTarget === null) {
+              if (
+                state.options.searchBarStickyFocus &&
+                e.relatedTarget === null
+              ) {
                 e.target.focus();
               }
             }}
@@ -104,27 +118,33 @@ const SearchBar = ({ state, optionsDispatch, handleSearchValueChange, onBottom }
           />
           <span className="input-group-append">
             <span
-              className={`btn btn-outline-secondary${!state.searchValue ? " unclickable" : ""} clear-search-button border-left-0 border`}
+              className={`btn btn-outline-secondary${
+                !state.searchValue ? " unclickable" : ""
+              } clear-search-button border-left-0 border`}
               style={{ borderRadius: 0 }}
-              onClick={state.searchValue ? () => {
-                handleSearchValueChange("");
-                // keep the focus on the input after pressing the X
-                inputRef.current && inputRef.current.focus();
-              } : undefined}
+              onClick={
+                state.searchValue
+                  ? () => {
+                      handleSearchValueChange("");
+                      // keep the focus on the input after pressing the X
+                      inputRef.current && inputRef.current.focus();
+                    }
+                  : undefined
+              }
               data-testid="clearButton"
+              title="clear search"
             >
-              <i className="fa fa-times" style={!state.searchValue ? { visibility: "hidden" } : {}}></i>
+              <i
+                className="fa fa-times"
+                style={!state.searchValue ? { visibility: "hidden" } : {}}
+              ></i>
             </span>
           </span>
-          <div className="input-group-append">
-            {state.options.language === "Pashto" &&
-              <SearchTypeToggle
-                searchType={state.options.searchType}
-              />
-            }
-            {<LanguageToggle
-              language={state.options.language}
-            />}
+          <div className="input-group-append" title="toggle search language">
+            {state.options.language === "Pashto" && (
+              <SearchTypeToggle searchType={state.options.searchType} />
+            )}
+            {<LanguageToggle language={state.options.language} />}
           </div>
         </div>
       </div>

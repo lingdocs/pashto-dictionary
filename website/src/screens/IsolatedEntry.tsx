@@ -176,21 +176,31 @@ function IsolatedEntry({
             <div
               className="clickable mr-3"
               onClick={() => setExploded((os) => !os)}
+              title="separate letters"
             >
               <i className={`fas fa-${exploded ? "compress" : "expand"}-alt`} />
             </div>
-            <div className="clickable mr-3" onClick={handleClipId}>
+            <div
+              className="clickable mr-3"
+              onClick={handleClipId}
+              title="copy word id"
+            >
               <i className="fas fa-tag"></i>
             </div>
             {state.user && state.user.level === "editor" && (
               <>
-                <div className="clickable mr-3" onClick={handleClipEntry}>
+                <div
+                  className="clickable mr-3"
+                  onClick={handleClipEntry}
+                  title="copy entry data"
+                >
                   <i className="fas fa-code"></i>
                 </div>
                 <Link to={`/edit?id=${entry.ts}`} className="plain-link">
                   <div
                     className="clickable mr-3"
                     data-testid="finalEditEntryButton"
+                    title="edit entry"
                   >
                     <i className="fa fa-gavel" />
                   </div>
@@ -203,12 +213,14 @@ function IsolatedEntry({
                   className="clickable mr-3"
                   data-testid="editEntryButton"
                   onClick={() => setEditing((os) => !os)}
+                  title="suggest edit"
                 >
                   <i className="fa fa-pen" />
                 </div>
                 {wordlistEnabled(state.user) && (
                   <div
                     className="clickable"
+                    title="add to wordlist"
                     data-testid={
                       wordlistWord ? "fullStarButton" : "emptyStarButton"
                     }
