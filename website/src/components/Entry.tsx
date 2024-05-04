@@ -9,23 +9,26 @@ import ExtraEntryInfo from "../components/ExtraEntryInfo";
 import classNames from "classnames";
 import { Types as T, InlinePs } from "@lingdocs/ps-react";
 import playStorageAudio from "./PlayStorageAudio";
+import { LingdocsUser } from "../types/account-types";
 
 function Entry({
   entry,
   textOptions,
   nonClickable,
   isolateEntry,
+  user,
 }: {
   entry: T.DictionaryEntry;
   textOptions: T.TextOptions;
   nonClickable?: boolean;
   isolateEntry?: (ts: number) => void;
+  user: LingdocsUser | undefined;
 }) {
   function handlePlayStorageAudio(
     e: React.MouseEvent<HTMLElement, MouseEvent>
   ) {
     e.stopPropagation();
-    playStorageAudio(entry.ts, entry.p, () => null);
+    playStorageAudio(entry.ts, entry.p, user, () => null);
   }
   return (
     <div

@@ -143,6 +143,7 @@ function Results({
                       entry={p.entry}
                       textOptions={textOptions}
                       isolateEntry={isolateEntry}
+                      user={state.user}
                     />
                     <div className="mb-3 ml-2">
                       {p.forms.map((form, i) => (
@@ -169,6 +170,7 @@ function Results({
               entry={entry}
               textOptions={textOptions}
               isolateEntry={isolateEntry}
+              user={state.user}
             />
           ))}
         </dl>

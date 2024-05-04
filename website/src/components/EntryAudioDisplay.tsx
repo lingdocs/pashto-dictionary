@@ -21,7 +21,7 @@ export function EntryAudioDisplay({
     }
     ReactGA.event({
       category: "sounds",
-      action: `play ${entry.ts} - ${entry.p}`,
+      action: `play ${entry.p} - ${entry.ts}`,
     });
   }
   return (
