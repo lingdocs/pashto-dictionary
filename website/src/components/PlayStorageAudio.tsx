@@ -1,9 +1,19 @@
+import ReactGA from "react-ga4";
+
 export function getAudioPath(ts: number): string {
   return `https://storage.lingdocs.com/audio/${ts}.mp3`;
 }
 
-export default function playStorageAudio(ts: number, callback: () => void) {
+export default function playStorageAudio(
+  ts: number,
+  p: string,
+  callback: () => void
+) {
   if (!ts) return;
+  ReactGA.event({
+    category: "sounds",
+    action: `play ${ts} - ${p}`,
+  });
   let audio = new Audio(getAudioPath(ts));
   audio.addEventListener("ended", () => {
     callback();
