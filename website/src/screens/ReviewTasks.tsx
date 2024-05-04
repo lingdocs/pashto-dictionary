@@ -50,7 +50,7 @@ function ReviewTask({
                 <div>New Entry Suggestion</div>
               )}
               <Entry
-                user={undefined}
+                admin={false}
                 textOptions={textOptions}
                 entry={reviewTask.entry}
               />

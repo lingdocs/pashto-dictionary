@@ -72,6 +72,7 @@ function Results({
     setSuggestionState("received");
   }
   const inflectionResults = state.inflectionSearchResults;
+  const admin = !!state.user?.admin;
   return (
     <div className="width-limiter">
       {!relatedResults && (
@@ -143,7 +144,7 @@ function Results({
                       entry={p.entry}
                       textOptions={textOptions}
                       isolateEntry={isolateEntry}
-                      user={state.user}
+                      admin={admin}
                     />
                     <div className="mb-3 ml-2">
                       {p.forms.map((form, i) => (
@@ -170,7 +171,7 @@ function Results({
               entry={entry}
               textOptions={textOptions}
               isolateEntry={isolateEntry}
-              user={state.user}
+              admin={admin}
             />
           ))}
         </dl>

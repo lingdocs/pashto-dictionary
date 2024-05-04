@@ -1,5 +1,4 @@
 import ReactGA from "react-ga4";
-import { LingdocsUser } from "../types/account-types";
 
 export function getAudioPath(ts: number): string {
   return `https://storage.lingdocs.com/audio/${ts}.mp3`;
@@ -8,11 +7,11 @@ export function getAudioPath(ts: number): string {
 export default function playStorageAudio(
   ts: number,
   p: string,
-  user: LingdocsUser | undefined,
+  admin: boolean,
   callback: () => void
 ) {
   if (!ts) return;
-  if (user && !user.admin) {
+  if (!admin) {
     ReactGA.event({
       category: "sounds",
       action: `quick play ${p} - ${ts}`,

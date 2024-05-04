@@ -118,6 +118,7 @@ function Wordlist({
     };
     // eslint-disable-next-line
   }, []);
+  const admin = !!user?.admin;
   // TODO put the account url in an imported constant
   function handleIncomingMessage(event: MessageEvent<any>) {
     if (
@@ -199,7 +200,7 @@ function Wordlist({
     return (
       <div className="mb-4">
         <Entry
-          user={user}
+          admin={admin}
           entry={word.entry}
           textOptions={textOptions}
           isolateEntry={() => handleWordClickBrowse(word._id)}

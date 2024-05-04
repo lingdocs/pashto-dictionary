@@ -164,7 +164,7 @@ function IsolatedEntry({
       <dl className="row mb-1">
         <div className="col-8">
           <Entry
-            user={state.user}
+            admin={!!state.user?.admin}
             nonClickable
             entry={exploded ? explodeEntry(entry) : entry}
             textOptions={textOptions}

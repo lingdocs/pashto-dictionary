@@ -16,19 +16,19 @@ function Entry({
   textOptions,
   nonClickable,
   isolateEntry,
-  user,
+  admin,
 }: {
   entry: T.DictionaryEntry;
   textOptions: T.TextOptions;
   nonClickable?: boolean;
   isolateEntry?: (ts: number) => void;
-  user: LingdocsUser | undefined;
+  admin: boolean;
 }) {
   function handlePlayStorageAudio(
     e: React.MouseEvent<HTMLElement, MouseEvent>
   ) {
     e.stopPropagation();
-    playStorageAudio(entry.ts, entry.p, user, () => null);
+    playStorageAudio(entry.ts, entry.p, admin, () => null);
   }
   return (
     <div

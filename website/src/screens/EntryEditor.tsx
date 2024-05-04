@@ -233,7 +233,7 @@ function EntryEditor({
       </Helmet>
       {isolatedEntry && (
         <Entry
-          user={user}
+          admin={!!user?.admin}
           nonClickable
           entry={isolatedEntry}
           textOptions={textOptions}
