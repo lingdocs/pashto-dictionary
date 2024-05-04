@@ -27,6 +27,13 @@ export function EntryAudioDisplay({
   }
 
   function handleDownload() {
+    if (user && user.admin) {
+      return;
+    }
+    ReactGA.event({
+      category: "sounds",
+      action: `download ${entry.p} - ${entry.ts}`,
+    });
     const documentName = `${entry.p}-${entry.ts}.mp3`;
 
     fetch(audioPath)
