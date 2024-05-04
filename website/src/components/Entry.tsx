@@ -9,7 +9,6 @@ import ExtraEntryInfo from "../components/ExtraEntryInfo";
 import classNames from "classnames";
 import { Types as T, InlinePs } from "@lingdocs/ps-react";
 import playStorageAudio from "./PlayStorageAudio";
-import { LingdocsUser } from "../types/account-types";
 
 function Entry({
   entry,
