@@ -119,7 +119,7 @@ const SearchBar = ({
           <span className="input-group-append">
             <span
               className={`btn btn-outline-secondary${
-                !state.searchValue ? " unclickable" : ""
+                !state.searchValue ? " unclickable" : " clickable"
               } clear-search-button border-left-0 border`}
               style={{ borderRadius: 0 }}
               onClick={
