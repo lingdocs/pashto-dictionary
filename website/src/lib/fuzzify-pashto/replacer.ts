@@ -91,7 +91,7 @@ export const pashtoReplacerInfo: IPashtoReplacerInfoItem[] = [
   { char: "ؤ", range: "وع" },
 
   { char: "ښ", range: guttural },
-  { char: "غ", range: guttural },
+  { char: "غ", range: guttural + velarPlosives },
   { char: "خ", range: guttural },
   { char: "ح", range: guttural },
 
