@@ -42,6 +42,7 @@ function Entry({
           <InlinePs opts={textOptions}>{{ p: entry.p, f: entry.f }}</InlinePs>
         </dt>
         {` `}
+        {/* Can't figure out why but the <em> here can't be empty */}
         <em>{entry.c || "\u00A0"}</em>
         {entry.a && !nonClickable && (
           <i
