@@ -42,7 +42,7 @@ function Entry({
           <InlinePs opts={textOptions}>{{ p: entry.p, f: entry.f }}</InlinePs>
         </dt>
         {` `}
-        <em>{entry.c}</em>
+        <em>{entry.c || "\u00A0"}</em>
         {entry.a && !nonClickable && (
           <i
             onClick={handlePlayStorageAudio}
@@ -51,10 +51,12 @@ function Entry({
           />
         )}
       </div>
-      <ExtraEntryInfo entry={entry} textOptions={textOptions} />
-      <dd>
-        <div className="entry-definition">{entry.e}</div>
-      </dd>
+      <div>
+        <ExtraEntryInfo entry={entry} textOptions={textOptions} />
+        <dd>
+          <div className="entry-definition">{entry.e}</div>
+        </dd>
+      </div>
     </div>
   );
 }
