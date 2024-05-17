@@ -19,6 +19,7 @@ const fillerWords = [
   "a",
   "the",
   "Arabic",
+  "Urdu",
   "plural",
   "verb",
   "stem",
