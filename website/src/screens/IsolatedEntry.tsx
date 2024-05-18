@@ -240,7 +240,7 @@ function IsolatedEntry({
           </div>
         </div>
       </dl>
-      <EntryAudioDisplay entry={entry} opts={textOptions} user={state.user} />
+      <EntryAudioDisplay entry={entry} opts={textOptions} />
       {wordlistWord && (
         <>
           {hasAttachment(wordlistWord, "audio") && (

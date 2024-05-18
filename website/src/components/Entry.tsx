@@ -15,7 +15,6 @@ function Entry({
   textOptions,
   nonClickable,
   isolateEntry,
-  admin,
 }: {
   entry: T.DictionaryEntry;
   textOptions: T.TextOptions;
@@ -27,7 +26,7 @@ function Entry({
     e: React.MouseEvent<HTMLElement, MouseEvent>
   ) {
     e.stopPropagation();
-    playStorageAudio(entry.ts, entry.p, admin, () => null);
+    playStorageAudio(entry.ts, entry.p, () => null);
   }
   return (
     <div

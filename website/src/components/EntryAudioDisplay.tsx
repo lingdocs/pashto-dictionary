@@ -1,25 +1,19 @@
 import { Types as T, InlinePs } from "@lingdocs/ps-react";
 import { getAudioPath } from "./PlayStorageAudio";
-import { LingdocsUser } from "../types/account-types";
 import ReactGA from "react-ga4";
 
 export function EntryAudioDisplay({
   entry,
   opts,
-  user,
 }: {
   entry: T.DictionaryEntry;
   opts: T.TextOptions;
-  user: LingdocsUser | undefined;
 }) {
   const audioPath = getAudioPath(entry.ts);
   if (!entry.a) {
     return null;
   }
   function handlePlay() {
-    if (user && user.admin) {
-      return;
-    }
     ReactGA.event({
       category: "sounds",
       action: `play ${entry.p} - ${entry.ts}`,
@@ -27,12 +21,10 @@ export function EntryAudioDisplay({
   }
 
   function handleDownload() {
-    if (user && !user.admin) {
-      ReactGA.event({
-        category: "sounds",
-        action: `download ${entry.p} - ${entry.ts}`,
-      });
-    }
+    ReactGA.event({
+      category: "sounds",
+      action: `download ${entry.p} - ${entry.ts}`,
+    });
     const documentName = `${entry.p}-${entry.ts}.mp3`;
 
     fetch(audioPath)

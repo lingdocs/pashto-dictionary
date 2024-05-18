@@ -7,16 +7,13 @@ export function getAudioPath(ts: number): string {
 export default function playStorageAudio(
   ts: number,
   p: string,
-  admin: boolean,
   callback: () => void
 ) {
   if (!ts) return;
-  if (!admin) {
-    ReactGA.event({
-      category: "sounds",
-      action: `quick play ${p} - ${ts}`,
-    });
-  }
+  ReactGA.event({
+    category: "sounds",
+    action: `quick play ${p} - ${ts}`,
+  });
   let audio = new Audio(getAudioPath(ts));
   audio.addEventListener("ended", () => {
     callback();
