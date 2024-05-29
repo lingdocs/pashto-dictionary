@@ -75,7 +75,7 @@ import { addToWordlist } from "./lib/wordlist-database";
 import ScriptToPhonetics from "./screens/ScriptToPhonetics";
 import { pNums, convertNumShortcutToNum } from "./lib/misc-helpers";
 
-const newWordsPeriod: "week" | "month" = "week";
+const newWordsPeriod: "week" | "month" = "month";
 
 // to allow Moustrap key combos even when input fields are in focus
 Mousetrap.prototype.stopCallback = function () {
