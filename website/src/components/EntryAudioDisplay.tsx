@@ -44,7 +44,7 @@ export function EntryAudioDisplay({
   return (
     <figure>
       <figcaption className="mb-2 pl-2">
-        <div>
+        <div style={{ display: "none" }}>
           Listen to{" "}
           <InlinePs opts={opts}>{{ p: entry.p, f: entry.f }}</InlinePs>
         </div>
