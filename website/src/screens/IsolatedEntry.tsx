@@ -321,6 +321,16 @@ function IsolatedEntry({
               <InflectionsTable inf={inf.plural} textOptions={textOptions} />
             </div>
           )}
+          {"vocative" in inf && inf.vocative !== undefined && (
+            <div>
+              <h5>Vocative</h5>
+              <InflectionsTable
+                inf={inf.vocative}
+                vocative
+                textOptions={textOptions}
+              />
+            </div>
+          )}
           {"bundledPlural" in inf && inf.bundledPlural !== undefined && (
             <div>
               <h5>Bundled Plural</h5>
