@@ -2349,10 +2349,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lingdocs/ps-react@7.3.2":
-  version "7.3.2"
-  resolved "https://npm.lingdocs.com/@lingdocs/ps-react/-/ps-react-7.3.2.tgz#89e8bea335751a6ca804b73538b288eccdbddc95"
-  integrity sha512-/cBZQFDdQH3l+naXWKtLx4fMreTYqFrXSvuivplbjbY1qzDaSD1Fa3AhY1bhELY7m2Ofsj3JnU2GmA+88NN+lA==
+"@lingdocs/ps-react@7.3.3":
+  version "7.3.3"
+  resolved "https://npm.lingdocs.com/@lingdocs/ps-react/-/ps-react-7.3.3.tgz#c9327c3c927094f895c042a7e7ce14382ff6a420"
+  integrity sha512-UXslzxG7rdEpVebNAbLdLUDooVZZooZT+0X8IsLcQk67X5/OyN77hNIkxiyhkUtK6eBSFnCvyWm/tCS14XqJRA==
   dependencies:
     "@formkit/auto-animate" "^1.0.0-beta.3"
     classnames "^2.2.6"
@@ -11335,6 +11335,13 @@ react-dropzone@^11.3.2:
     attr-accept "^2.2.1"
     file-selector "^0.2.2"
     prop-types "^15.7.2"
+
+react-error-boundary@^4.0.13:
+  version "4.0.13"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-4.0.13.tgz#80386b7b27b1131c5fbb7368b8c0d983354c7947"
+  integrity sha512-b6PwbdSv8XeOSYvjt8LpgpKrZ0yGdtZokYwkwV2wlcZbxgopHX/hgPl5VgpnoVOWd868n1hktM8Qm4b+02MiLQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 react-error-overlay@^6.0.9:
   version "6.0.11"

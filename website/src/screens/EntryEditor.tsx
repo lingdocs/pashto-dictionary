@@ -26,6 +26,7 @@ import { Helmet } from "react-helmet";
 import { TextOptions } from "@lingdocs/ps-react/dist/types";
 import * as AT from "../types/account-types";
 import { DictionaryAPI } from "../types/dictionary-types";
+import { ErrorBoundary } from "react-error-boundary";
 
 const textFields: { field: T.DictionaryEntryTextField; label: string }[] = [
   { field: "p", label: "Pashto" },
@@ -424,17 +425,19 @@ function EntryEditor({
           {/* TODO: aay tail from state options */}
           {typePredicates.isVerbEntry({ entry, complement }) && (
             <div className="pb-4">
-              <VPExplorer
-                verb={{
-                  // TODO: CLEAN THIS UP!
-                  // @ts-ignore
-                  entry,
-                  complement,
-                }}
-                opts={textOptions}
-                entryFeeder={entryFeeder}
-                handleLinkClick="none"
-              />
+              <ErrorBoundary fallback={<h5>Error conjugating verb</h5>}>
+                <VPExplorer
+                  verb={{
+                    // TODO: CLEAN THIS UP!
+                    // @ts-ignore
+                    entry,
+                    complement,
+                  }}
+                  opts={textOptions}
+                  entryFeeder={entryFeeder}
+                  handleLinkClick="none"
+                />
+              </ErrorBoundary>
             </div>
           )}
           {typePredicates.isVerbEntry({ entry, complement }) && (

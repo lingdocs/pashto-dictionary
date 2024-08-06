@@ -9,13 +9,9 @@
 import { useEffect, useState } from "react";
 import {
   VPExplorer,
-  InflectionsTable,
-  inflectWord,
   InlinePs,
   Types as T,
   typePredicates as tp,
-  getInflectionPattern,
-  HumanReadableInflectionPattern,
 } from "@lingdocs/ps-react";
 import { submissionBase, addSubmission } from "../lib/submissions";
 import { Link } from "react-router-dom";
@@ -35,6 +31,8 @@ import { getTextOptions } from "../lib/get-text-options";
 import { entryFeeder } from "../lib/dictionary";
 import { State, DictionaryAPI } from "../types/dictionary-types";
 import { EntryAudioDisplay } from "../components/EntryAudioDisplay";
+import EntryInflections from "../components/EntryInflections";
+import { ErrorBoundary } from "react-error-boundary";
 
 function IsolatedEntry({
   state,
@@ -110,38 +108,7 @@ function IsolatedEntry({
   }
   const complement = entry.l ? dictionary.findOneByTs(entry.l) : undefined;
   const relatedEntries = dictionary.findRelatedEntries(entry);
-  const inf = ((): T.InflectorOutput | false => {
-    try {
-      return inflectWord(entry);
-    } catch (e) {
-      console.error("error inflecting entry", entry);
-      return false;
-    }
-  })();
   const isVerbEntry = tp.isVerbEntry({ entry, complement });
-  function DisplayVPExplorer(props: {
-    entry: T.DictionaryEntry;
-    complement: T.DictionaryEntry | undefined;
-  }) {
-    try {
-      return (
-        <VPExplorer
-          verb={{
-            // TODO: CLEAN THIS UP!
-            // @ts-ignore
-            entry: props.entry,
-            complement: props.complement,
-          }}
-          opts={textOptions}
-          entryFeeder={entryFeeder}
-          handleLinkClick={isolateEntry}
-        />
-      );
-    } catch (e) {
-      console.error("error rendering VPExplorer", e);
-      return null;
-    }
-  }
   function handleClipId() {
     if (!entry) return;
     navigator.clipboard.writeText(entry.ts.toString());
@@ -286,74 +253,24 @@ function IsolatedEntry({
         </div>
       )}
       {editSubmitted && <p>Thank you for your help!</p>}
-      {inf && (
-        <>
-          {inf.inflections &&
-            (() => {
-              const pattern = getInflectionPattern(
-                // @ts-ignore
-                entry
-              );
-              return (
-                <div>
-                  <a
-                    href={`https://grammar.lingdocs.com/inflection/inflection-patterns/${inflectionSubUrl(
-                      pattern
-                    )}`}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    <div className="badge bg-light mb-2">
-                      Inflection pattern{" "}
-                      {HumanReadableInflectionPattern(pattern, textOptions)}
-                    </div>
-                  </a>
-                  <InflectionsTable
-                    inf={inf.inflections}
-                    textOptions={textOptions}
-                  />
-                </div>
-              );
-            })()}
-          {"plural" in inf && inf.plural !== undefined && (
-            <div>
-              <h5>Plural</h5>
-              <InflectionsTable inf={inf.plural} textOptions={textOptions} />
-            </div>
-          )}
-          {"vocative" in inf && inf.vocative !== undefined && (
-            <div>
-              <h5>Vocative</h5>
-              <InflectionsTable
-                inf={inf.vocative}
-                vocative
-                textOptions={textOptions}
-              />
-            </div>
-          )}
-          {"bundledPlural" in inf && inf.bundledPlural !== undefined && (
-            <div>
-              <h5>Bundled Plural</h5>
-              <InflectionsTable
-                inf={inf.bundledPlural}
-                textOptions={textOptions}
-              />
-            </div>
-          )}
-          {"arabicPlural" in inf && inf.arabicPlural !== undefined && (
-            <div>
-              <h5>Arabic Plural</h5>
-              <InflectionsTable
-                inf={inf.arabicPlural}
-                textOptions={textOptions}
-              />
-            </div>
-          )}
-        </>
-      )}
+      <EntryInflections entry={entry} opts={textOptions} />
       {isVerbEntry && (
         <div className="pb-4">
-          <DisplayVPExplorer entry={entry} complement={complement} />
+          <ErrorBoundary
+            fallback={
+              <h5>Sorry, we weren't able to conjugate this verb! 😔</h5>
+            }
+          >
+            <VPExplorer
+              verb={{
+                entry: entry as T.VerbDictionaryEntry,
+                complement,
+              }}
+              opts={textOptions}
+              entryFeeder={entryFeeder}
+              handleLinkClick={isolateEntry}
+            />
+          </ErrorBoundary>
         </div>
       )}
       {showClipped && (
@@ -427,23 +344,6 @@ function explodeEntry(entry: T.DictionaryEntry): T.DictionaryEntry {
     ...entry,
     p: entry.p.split("").join(" "),
   };
-}
-
-function inflectionSubUrl(pattern: T.InflectionPattern): string {
-  return pattern === 0
-    ? ""
-    : pattern === 1
-    ? "#1-basic"
-    : pattern === 2
-    ? "#2-words-ending-in-an-unstressed-ی---ey"
-    : pattern === 3
-    ? "#3-words-ending-in-a-stressed-ی---éy"
-    : pattern === 4
-    ? "#4-words-with-the-pashtoon-pattern"
-    : pattern === 5
-    ? "#5-shorter-words-that-squish"
-    : // : pattern === 6
-      "#6-inanimate-feminine-nouns-ending-in-ي---ee";
 }
 
 export default IsolatedEntry;
