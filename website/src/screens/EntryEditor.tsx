@@ -428,9 +428,7 @@ function EntryEditor({
               <ErrorBoundary fallback={<h5>Error conjugating verb</h5>}>
                 <VPExplorer
                   verb={{
-                    // TODO: CLEAN THIS UP!
-                    // @ts-ignore
-                    entry,
+                    entry: entry as T.VerbDictionaryEntry,
                     complement,
                   }}
                   opts={textOptions}
@@ -438,30 +436,6 @@ function EntryEditor({
                   handleLinkClick="none"
                 />
               </ErrorBoundary>
-            </div>
-          )}
-          {typePredicates.isVerbEntry({ entry, complement }) && (
-            <div className="pb-4">
-              {(() => {
-                try {
-                  return (
-                    <VPExplorer
-                      verb={{
-                        // TODO: CLEAN THIS UP!
-                        // @ts-ignore
-                        entry,
-                        complement,
-                      }}
-                      opts={textOptions}
-                      entryFeeder={entryFeeder}
-                      handleLinkClick={"none"}
-                    />
-                  );
-                } catch (e) {
-                  console.error(e);
-                  return <h5>Error conjugating verb</h5>;
-                }
-              })()}
             </div>
           )}
         </div>
