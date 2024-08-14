@@ -1,0 +1,8 @@
+// This is the source file for the custom bootstrap file custom-bootstrap.scss
+// I compiled it seperately because node-sass is a world of pain
+
+$body-bg: #fefefe;
+$body-color: #333;
+
+@import '~bootstrap/scss/bootstrap.scss';
+

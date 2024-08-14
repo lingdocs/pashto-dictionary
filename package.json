@@ -1,0 +1,43 @@
+{
+  "name": "@lingdocs/lingdocs-main",
+  "version": "1.0.2",
+  "description": "types and functions for lingdocs stuff",
+  "main": "dist/library.js",
+  "module": "dist/library.js",
+  "types": "dist/library.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf && tsc",
+    "infup": "./update-inflector.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-lingdocs:lingdocs/lingdocs-main.git"
+  },
+  "author": "lingdocs.com",
+  "license": "MIT",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "@lingdocs/ps-react": "7.6.5",
+    "lokijs": "^1.5.12",
+    "nano": "^9.0.5",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth": "^2.0.0",
+    "passport-twitter": "^1.0.4",
+    "supermemo": "^2.0.17",
+    "stripe": "^10.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/lokijs": "^1.5.7",
+    "@types/passport-github2": "^1.2.5",
+    "@types/passport-google-oauth": "^1.0.42",
+    "@types/passport-twitter": "^1.0.37",
+    "next": "^12.0.7"
+  }
+}

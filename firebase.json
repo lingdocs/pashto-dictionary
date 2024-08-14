@@ -1,0 +1,19 @@
+{
+  "functions": {
+    "predeploy": "cp .npmrc functions && cat .npmrc | envsubst > functions/.npmrc && cd functions && npm --prefix \"$RESOURCE_DIR\" run build",
+    "postdeploy": "rm functions/.npmrc"
+  },
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "/publishDictionary",
+        "function": "/publishDictionary"
+      },
+      {
+        "source": "/submissions",
+        "function": "/submissions"
+      }
+    ]
+  }
+}

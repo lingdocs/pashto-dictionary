@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.lingdocs.pashto.dictionary",
+      "sha256_cert_fingerprints": ["53:8E:B9:CD:42:CD:3B:48:D9:08:BE:6C:A3:92:35:5D:50:DD:A5:A8:0B:93:DB:B4:AC:75:BB:BC:52:B3:E4:BD"]
+    }
+  }
+]

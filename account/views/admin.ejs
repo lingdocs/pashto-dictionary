@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LingDocs Signin">
+    <title>Admin · LingDocs</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  </head>
+  <script>
+    function handleDeleteUser(uid, name) {
+      const answer = confirm(`Are you sure you want to delete ${name}?`);
+      if (answer) {
+        fetch(`/admin/${uid}`, {
+          method: "DELETE",
+        }).then((res) => res.json()).then((res) => {
+          console.log(res);
+          if (res.ok) {
+            window.location = "/admin";
+          }
+        }).catch(console.error);
+      }
+    }
+  </script>
+  <body>
+    <div class="container">
+      <h1 class="my-4">LingDocs Auth Admin</h1>
+      <p><%= users.length %> Users</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Providers</th>
+            <th scope="col">Level</th>
+            <th scope="col">Joined</th>
+            <th shope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < users.length; i++) { %>
+            <tr>
+              <td><%= users[i].name %> <% if (users[i].admin) { %>
+                <i class="fas fa-id-badge ml-2"></i>
+              <% } %>
+              </td>
+              <td><%= users[i].email %></td>
+              <td>
+                <% if (users[i].password && users[i].email) { %>
+                  <i class="fas fa-key mr-2"></i>
+                <% } %>
+                <% if (users[i].google) { %>
+                  <i class="fab fa-google mr-2"></i>
+                <% } %>
+                <% if (users[i].twitter) { %>
+                  <i class="fab fa-twitter mr-2"></i>
+                <% } %>
+                <% if (users[i].github) { %>
+                  <i class="fab fa-github mr-2"></i>
+                <% } %>
+              </td>
+              <td>
+                <% if (users[i].upgradeToStudentRequest === "waiting") { %>
+                  <div class="d-flex flex-row">
+                    <div>Requested Upgrade </div>
+                    <div>
+                      <form action="/admin/upgradeToStudent/<%= users[i].userId %>/grant" method="POST">
+                        <button class="btn btn-sm btn-success mx-2" type="submit"><i class="fas fa-thumbs-up mr-2"></i> Grant </button>
+                      </form>
+                    </div>
+                    <div>
+                      <form action="/admin/upgradeToStudent/<%= users[i].userId %>/deny" method="POST">
+                        <button class="btn btn-sm btn-danger" type="submit"><i class="fas fa-thumbs-down mr-2"></i> Deny </button>
+                      </form>
+                    </div>
+                  </div>
+                <% } else if (users[i].upgradeToStudentRequest === "waiting"){ %>
+                  Upgrade Denied
+                <% } else if (users[i].level === "basic") { %>
+                  <div><%= users[i].level %></div>
+                  <div>
+                    <form action="/admin/upgradeToStudent/<%= users[i].userId %>/grant" method="POST">
+                      <button class="btn btn-sm btn-success mx-2" type="submit"><i class="fas fa-thumbs-up mr-2"></i> Upgrade </button>
+                    </form>
+                  </div>
+                <% } else { %>
+                  <%= users[i].level %>
+                <% } %>
+              </td>
+              <td>
+                <% if (users[i].accountCreated) { %>
+                  <%= new Date(users[i].accountCreated).toString().slice(0, 15) %>
+                <% } %>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-danger" onClick="handleDeleteUser('<%= users[i].userId %>', '<%= users[i].name %>')"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <div>
+        <h5>Tests Completed: Pass / Fail</h5>
+        <% for(var i=0; i < tests.length; i++) { %>
+          <div><%= tests[i].id %>: <%= tests[i].passes %> / <%= tests[i].fails %></div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>

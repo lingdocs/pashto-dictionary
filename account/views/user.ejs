@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LingDocs Signin">
+    <title>Account · LingDocs</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <script>
+
+  </script>
+  </head>
+  <body>
+    <div class="container" style="max-width: 400px;">
+      <h2 class="mt-4 mb-4 text-center">LingDocs Account</h2>
+      <% if (user.admin) { %>
+        <a href="/admin"><h5 class="mb-2">Admin Console</h5></a>
+      <% } %>
+      <h4>Profile <i class="fas fa-user ml-2"></i></h4>
+      <form method="POST" class="mb-4">
+        <div>
+          <label for="email" class="form-label">Email:</label>
+          <% if (user.email) { %>
+            <input required name="email" type="email" class="form-control" id="email" value="<%= user.email %>" />
+          <% } else { %>
+            <input name="email" type="email" class="form-control" id="email" placeholder="add an e-mail here" />
+          <% } %>
+        </div>
+        <div>
+          <% if (error === "email taken") { %>
+            <div class="alert alert-danger mt-3" role="alert">
+              Sorry, that e-mail is already taken 🙄
+            </div>
+          <% } else if (typeof user.emailVerified === "string") { %>
+            <div class="alert alert-info mt-3" role="alert">
+              <div class="d-flex flex-row justify-content-between align-items-center">
+                <div>Check your e-mail to verify</div>
+                <div id="resend-button-container">
+                  <button type="button" class="btn btn-light btn-sm" id="resend-button">Resend</button>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+        <div class="mb-4 mt-3">
+          <label for="name" class="form-label">Name:</label>
+          <input required name="name" type="text" class="form-control" id="name" value="<%= user.name %>" />
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary">Update Profile</button>
+        </div>
+      </form>
+      <h5>Account Level: <%= user.level.charAt(0).toUpperCase() + user.level.slice(1) %></h5>
+      <% if (user.level === "basic") { %>
+        <p>Upgrade to Student account for Wordlist features</p>
+        <div class="d-flex flex-row" style="gap: 1rem;">
+          <form action="/payment/create-checkout-session" method="POST">
+            <input type="hidden" name="priceId" value="price_1Lt8NqJnpCQCjf9pN7CQUjjO" />
+            <button class="btn btn-sm btn-outline-secondary" type="submit">$1/month</button>
+          </form>
+          <form action="/payment/create-checkout-session" method="POST">
+            <input type="hidden" name="priceId" value="price_1Lt8NqJnpCQCjf9p4FAEIOMw" />
+            <button class="btn btn-sm btn-outline-secondary" type="submit">$10/year</button>
+          </form>
+        </div>
+      <% } %>
+      <% if (user.level === "student" && user.subscription) { %>
+        <p>Current subscription: <% if (user.subscription.metadata.cycle === "monthly") { %>$1/month<% } else { %>$10/year<% } %></p>
+        <p><a href="#" onclick="handleDowngrade()">Downgrade</a> to cancel your subscription</p>
+      <% } %>
+      <% if (user.email) { %>
+        <h4 class="mt-3 mb-3">Password <i class="fas fa-key ml-2"></i></h4>
+        <% if (!user.password) { %>
+          <p class="small">Add a password to be able to log in with just your e-mail address.</p>
+        <% } %>
+      <% } %>
+      <div id="password-change-form" style="display: none;">
+        <% if (user.password) { %>
+          <div id="old-password-form">
+        <% } else { %>
+          <div id="old-password-form" style="display: none;">
+        <% } %>
+          <div class="mb-3 mt-3">
+            <label for="oldPassword" class="form-label">Old Password:</label>
+            <input type="password" class="form-control" id="oldPassword">
+          </div>
+          <div class="small text-left" id="forgot-password">
+            <a href="" tabindex="-1">Forgot Old Password?</a>
+          </div>
+        </div>
+        <div class="mb-3 mt-3">
+          <label for="password" class="form-label">New Password:</label>
+          <input type="password" class="form-control" id="password" />
+        </div>
+        <div class="mb-4 mt-3">
+          <label for="confirmPassword" class="form-label">Confirm New Password:</label>
+          <input type="password" class="form-control" id="confirmPassword">
+        </div>
+      </div>
+      <div id="password-change-result" style="display: none;" class="alert alert-info mt-3 mb-4" role="alert">
+      </div>
+      <% if (user.email) { %>
+        <div class="d-flex flex-row justify-content-between mt-2 mb-1">
+          <button type="button" id="password-change-button" class="btn btn-secondary">
+            <% if (user.password) { %>
+              Change 
+            <% } else { %>
+              Add
+            <% } %>
+            Password
+          </button>
+          <button type="button" style="display: none;" id="cancel-password-change-button" class="btn btn-light">Cancel</button>
+        </div>
+      <% } %>
+      <h4 class="mt-3 mb-1">Linked Accounts <i class="fas fa-link ml-2"></i></h4>
+      <div class="mb-4">
+        <% if (user.google) { %>
+          <!-- TODO: MAKE THIS EMAIL THING SAFER! -->
+          <div class="my-2 w-100 btn btn-secondary"><i class="fab fa-google mr-2"></i> Linked to Google · <%= user.google.emails[0].value %></div>
+          <form action="/google/remove" method="POST">
+            <% if (removeProviderOption) { %>
+              <button type="submit" class="btn btn-sm btn-outline">Unlink from Google</button>
+            <% } %>
+          </form>
+        <% } %>
+        <% if (user.twitter) { %>
+          <div class="my-2 w-100 btn btn-secondary"><i class="fab fa-twitter mr-2"></i> Linked to Twitter · @<%= user.twitter.username %></div>
+          <form action="/twitter/remove" method="POST">
+            <% if (removeProviderOption) { %>
+              <button type="submit" class="btn btn-sm btn-outline">Unlink from Twitter</button>
+            <% } %>
+          </form>
+        <% } %>
+        <% if (user.github) { %>
+          <div class="my-2 w-100 btn btn-secondary"><i class="fab fa-github mr-2"></i> Linked to GitHub · <%= user.github.username %></div>
+          <form action="/github/remove" method="POST">
+            <% if (removeProviderOption) { %>
+              <button type="submit" class="btn btn-sm btn-outline">Unlink from GitHub</button>
+            <% } %>
+          </form>
+        <% } %>
+
+        <% if (!user.google) { %>
+          <a href="/google" class="my-2 w-100 btn btn-outline-secondary" role="button"><i class="fab fa-google mr-2"></i> Link to Google</a>
+        <% } %>
+        <% if (!user.twitter) { %>
+          <a href="/twitter" class="my-2 w-100 btn btn-outline-secondary" role="button"><i class="fab fa-twitter mr-2"></i> Link to Twitter</a>
+        <% } %>
+        <% if (!user.github) { %>
+          <a href="/github" class="my-2 w-100 btn btn-outline-secondary" role="button"><i class="fab fa-github mr-2"></i> Link to GitHub</a>
+        <% } %>
+      </div>
+      <hr />
+      <p class="text-muted small">Last Login: <%= new Date(user.lastLogin).toUTCString() %></p>
+      <form action="/sign-out" method="POST">
+        <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-sign-out-alt mr-2"></i> Sign Out of LingDocs</button>
+      </form>
+      <hr />
+      <div class="mb-4">
+        <button onclick="handleDelete()" type="button" class="btn btn-outline-danger my-4"><i class="fas fa-trash-alt mr-2"></i> Delete Account</button>
+      </div>
+      <p class="text-muted text-center"><a href="https://www.lingdocs.com/">LingDocs.com</a></p>
+    </div>
+
+  </body>
+  <script>
+    if (window.opener) {
+      const w = window.opener
+      try {
+        w.postMessage("signed in", "https://dictionary.lingdocs.com");
+      } catch (e) {
+        console.error(e);
+      }
+      try {
+        w.postMessage("signed in", "https://dev.dictionary.lingdocs.com");
+      } catch (e) {
+        console.error(e);
+      }
+      try {
+        w.postMessage("signed in", "https://grammar.lingdocs.com");
+      } catch (e) {
+        console.error(e);
+      }
+      try {
+        w.postMessage("upgraded", "https://dictionary.lingodocs.com");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    // function handleRequestUpgrade() {
+    //   const btn = document.getElementById("upgrade-request-button");
+    //   btn.innerHTML = "Sending...";
+    //   fetch("/api/user/upgradeToStudentRequest", {
+    //     method: "POST",
+    //   }).then((res) => res.json()).then((res) => {
+    //     console.log(res);
+    //     if (res.ok) {
+    //       btn.innerHTML = "Upgrade request sent";
+    //     } else {
+    //       btn.innerHTML = "Error requesting upgrade";
+    //     }
+    //   }).catch((e) => {
+    //     console.error(e);
+    //     btn.innerHTML = "Error requesting upgrade";
+    //   });
+    // }
+    function clearPasswordForm() {
+      document.getElementById("oldPassword").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("confirmPassword").value = "";
+    }
+    function handleDelete() {
+      const answer = confirm("Are you sure you want to delete your account?");
+      if (answer) {
+        fetch("/api/user", { method: "DELETE" }).then((res) => res.json()).then((res) => {
+          if (res.ok) {
+            window.location = "/";
+          }
+        }).catch((err) => {
+          alert("Error deleting account - check your connection");
+          console.error(err);
+        });
+      }
+    }
+    function handleDowngrade() {
+      const answer = confirm("Are you sure you want to downgrade your account? Your wordlist will be deleted forever. (Export it to CSV from the dictionary first if you want to keep it.)");
+      if (answer) {
+        fetch("/downgradeToBasic", { method: "POST" }).then((res) => res.json()).then((res) => {
+          if (res.ok) {
+            window.location = "/";
+          } else {
+            alert("Error downgrading account");
+          }
+        }).catch((err) => {
+          alert("Error downgrading account - check your connection");
+          console.error(err);
+        });
+      }
+    }
+    window.addEventListener('keydown', (e) => {
+      // prevent an enter from submitting the form
+      if (e.keyCode === 13) {
+        e.preventDefault();
+      }
+    });
+    const passwordChangeForm = document.getElementById("password-change-form");
+    const passwordChangeButton = document.getElementById("password-change-button");
+    const passwordChangeResult = document.getElementById("password-change-result");
+    const forgotPassword = document.getElementById("forgot-password");
+    if (forgotPassword) {
+      forgotPassword.addEventListener("click", (e) => {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        window.location = encodeURI("/password-reset?email=" + email);
+      });
+    }
+    const cancelPasswordChangeButton = document.getElementById("cancel-password-change-button");
+    if (passwordChangeButton) {
+      passwordChangeButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const formClosed = window.getComputedStyle(passwordChangeForm).getPropertyValue("display") === "none";
+        if (formClosed) {
+          clearPasswordForm();
+          passwordChangeResult.innerHTML = "";
+          passwordChangeResult.style = "display: none;";
+          passwordChangeForm.style = "";
+          cancelPasswordChangeButton.style = "";
+        } else {
+          const oldPassword = document.getElementById("oldPassword").value;
+          const password = document.getElementById("password").value;
+          const passwordConfirmed = document.getElementById("confirmPassword").value;
+          fetch("/api/password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ oldPassword, password, passwordConfirmed }),
+          }).then((res) => res.json()).then((res) => {
+            if (res.ok) {
+              passwordChangeResult.innerHTML = res.message;
+              passwordChangeResult.style = "";
+              passwordChangeForm.style = "display: none;";
+              cancelPasswordChangeButton.style = "display: none;";
+              if (res.message === "Password added") {
+                document.getElementById("old-password-form").style = "";
+                passwordChangeButton.innerHTML = "Change Password";
+              }
+            } else {
+              passwordChangeResult.innerHTML = res.error;
+              passwordChangeResult.style = "";
+            }
+          }).catch(console.error);
+        }
+      });
+    }
+    if (cancelPasswordChangeButton) {
+      cancelPasswordChangeButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        passwordChangeForm.style="display: none;";
+        cancelPasswordChangeButton.style="display: none;";
+        passwordChangeResult.innerHTML = "";
+        passwordChangeResult.style = "display: none;";
+        clearPasswordForm();
+      });
+    }
+    const resendButton = document.getElementById("resend-button");
+    if (resendButton) {
+      resendButton.addEventListener("click", handleResendVerification, true);
+    }
+    function handleResendVerification(e) {
+      e.preventDefault();
+      const bc = document.getElementById("resend-button-container");
+      bc.innerHTML = "Sending …";
+      fetch("/api/email-verification", { method: "PUT" }).then((res) => res.json())
+        .then((res) => {
+          if (res.ok) {
+            bc.innerHTML = "Sent ✔";
+          } else {
+            bc.innerHTML = "Send Failed 😔";
+          }
+        }).catch((error) => {
+          console.error(error);
+          bs.innerHTML = "Send Failed 😔";
+        });
+    }
+  </script> 
+</html>
