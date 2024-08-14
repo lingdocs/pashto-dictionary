@@ -13,6 +13,7 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5242880,
       },
       includeAssets: ["**/*.(js|html|svg|png|jpg|jpeg|eot|woff|woff2|ttf)"],
+      filename: "service-worker.js",
       manifest: {
         short_name: "Pashto Dictionary",
         name: "LingDocs Pashto Dictionary",
