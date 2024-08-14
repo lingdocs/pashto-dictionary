@@ -26,17 +26,15 @@ To update the `@lingdocs/pashto-inflector` dependency accross the project you ca
 
 SPA Dictionary Frontend
 
-Use [Yarn](https://yarnpkg.com/).
-
 ```sh
 cd website
-yarn install
+npm install
 ```
 
 #### Development
 
 ```sh
-yarn start
+npm run dev
 ```
 
 ### Account
@@ -44,8 +42,6 @@ yarn start
 Backend authentication server build on express / passport
 
 #### Development
-
-Use [npm](https://www.npmjs.com/).
 
 ```sh
 cd account
@@ -56,8 +52,6 @@ npm run dev
 ### Functions
 
 Backend Firebase functions
-
-Use [npm](https://www.npmjs.com/).
 
 ```sh
 cd functions
