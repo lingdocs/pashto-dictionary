@@ -76,6 +76,8 @@ npm run serve
 
 ## Architecture
 
+**TODO: Diagram out of date as we are now using Cloudflare Cloud Storage instead**
+
 ![LingDocs Pashto Dictioanry App Architecture](./architecture.svg)
 
 ### Source Layer
