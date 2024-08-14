@@ -2,7 +2,7 @@
 /// <reference types="vite-plugin-pwa/client" />
 
 interface ImportMetaEnv {
-  readonly REACT_APP_BUILD_NO: string;
+  readonly VITE_BUILD_NO: string;
 }
 
 interface ImportMeta {
