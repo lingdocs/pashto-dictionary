@@ -5,18 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "./custom-bootstrap.css";
 import "./App.css";
-import { registerSW } from "virtual:pwa-register";
-
-const updateSW = registerSW({
-  onNeedRefresh() {
-    if (window.confirm("App update available. Reload?")) {
-      updateSW(true);
-    }
-  },
-  onOfflineReady() {
-    console.log("offline ready");
-  },
-});
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -25,3 +14,5 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </StrictMode>
 );
+
+serviceWorkerRegistration.register();
