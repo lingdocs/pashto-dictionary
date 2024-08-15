@@ -48,13 +48,7 @@ const About = ({ state }: { state: State }) => {
         from your browser even without an internet connection. You can also
         {` `}
         <strong>install it as an app</strong> on your phone or desktop by
-        choosing "Add to Home Screen" on "Install" on your browser menu. It is
-        also
-        {` `}
-        <a href="https://play.google.com/store/apps/details?id=com.lingdocs.pashto.dictionary">
-          find and install it on the Google Play Store
-        </a>
-        .
+        choosing "Add to Home Screen" on "Install" on your browser menu.
       </p>
       <h3>Phonetic System</h3>
       <p>
