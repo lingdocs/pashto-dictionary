@@ -42,7 +42,7 @@ const About = ({ state }: { state: State }) => {
       </ul>
       <h3>Video Introduction</h3>
       <VideoPlayer url="https://www.youtube.com/watch?v=MMpSpaMMdp4&t=1s&ab_channel=LingDocs" />
-      <h3>Installing</h3>
+      <h3>Install as an App</h3>
       <p>
         After visiting this dictionary for the first time it will be accessible
         from your browser even without an internet connection. You can also
