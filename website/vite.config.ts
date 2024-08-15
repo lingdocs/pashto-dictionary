@@ -14,7 +14,7 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
       },
       includeAssets: ["**/*.(js|html|svg|png|jpg|jpeg|eot|woff|woff2|ttf)"],
-      filename: "service-worker.js",
+      filename: "sw.js",
       manifest: {
         short_name: "Pashto Dictionary",
         name: "LingDocs Pashto Dictionary",
