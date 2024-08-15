@@ -61,7 +61,7 @@
     "dev": "vite",
     "lint": "eslint .",
     "test": "jest",
-    "build": "rm -rf dist &&  tsc -b && vite build && bun build src/service-worker.ts --outdir ./dist",
+    "build": "rm -rf dist &&  tsc -b && vite build",
     "preview": "vite preview",
     "test-ci": "yarn test --watchAll=false"
   },
