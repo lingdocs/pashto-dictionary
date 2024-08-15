@@ -161,7 +161,7 @@ async function getRawEntries(): Promise<T.DictionaryEntry[]> {
       )} is a duplicate ts of a different entry`
     );
   }
-  // add alphabetical index
+  // make alphabetical index
   entries.sort((a, b) => a.p.localeCompare(b.p, "ps"));
   const entriesLength = entries.length;
   // add index
