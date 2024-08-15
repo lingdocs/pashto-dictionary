@@ -11,6 +11,7 @@ export default defineConfig({
         // globPatterns: ["**/*.(mp4|m4a)"],
         globPatterns: ["*/*.*", "*.*"],
         maximumFileSizeToCacheInBytes: 5242880,
+        cleanupOutdatedCaches: true,
       },
       includeAssets: ["**/*.(js|html|svg|png|jpg|jpeg|eot|woff|woff2|ttf)"],
       filename: "service-worker.js",
