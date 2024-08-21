@@ -15,7 +15,7 @@
   "main": "lib/functions/src/index.js",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.474.0",
-    "@lingdocs/inflect": "7.6.5",
+    "@lingdocs/inflect": "7.7.1",
     "@types/cors": "^2.8.10",
     "@types/google-spreadsheet": "^3.0.2",
     "@types/react": "^18.0.21",

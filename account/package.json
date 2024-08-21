@@ -12,7 +12,7 @@
   "author": "lingdocs.com",
   "license": "ISC",
   "dependencies": {
-    "@lingdocs/inflect": "7.6.5",
+    "@lingdocs/inflect": "7.7.1",
     "base64url": "^3.0.1",
     "bcryptjs": "^2.4.3",
     "connect-redis": "^6.0.0",
