@@ -24,7 +24,7 @@ export default function EntryInflections({
   if (inf === "error") {
     return <h4>Error inflecting word!</h4>;
   }
-  if (!inf || !inf.inflections) {
+  if (!inf) {
     return null;
   }
   return (
