@@ -58,7 +58,8 @@ registerRoute(
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
   ({ url }) =>
-    url.origin === self.location.origin && ([".png", ".woff2", "woff"].some(ending => url.pathname.endsWith(ending)))
+    url.origin === self.location.origin &&
+    [".png", ".woff2", "woff"].some((ending) => url.pathname.endsWith(ending)),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
     cacheName: "images",

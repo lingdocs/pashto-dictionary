@@ -1,6 +1,7 @@
 import { Types as T, InlinePs } from "@lingdocs/ps-react";
 import { getAudioPath } from "./PlayStorageAudio";
 import ReactGA from "react-ga4";
+import { getRecordedGenders } from "../lib/recorded-genders";
 
 export function EntryAudioDisplay({
   entry,
@@ -9,23 +10,46 @@ export function EntryAudioDisplay({
   entry: T.DictionaryEntry;
   opts: T.TextOptions;
 }) {
-  const audioPath = getAudioPath(entry.ts);
+  if (!entry.a) {
+    return null;
+  }
+  return (
+    <div className="mb-4">
+      {getRecordedGenders(entry).map((gender) => (
+        <EntryRecording entry={entry} opts={opts} gender={gender} />
+      ))}
+    </div>
+  );
+}
+
+function EntryRecording({
+  entry,
+  opts,
+  gender,
+}: {
+  entry: T.DictionaryEntry;
+  opts: T.TextOptions;
+  gender: T.Gender;
+}) {
+  const audioPath = getAudioPath(entry.ts, gender);
   if (!entry.a) {
     return null;
   }
   function handlePlay() {
     ReactGA.event({
       category: "sounds",
-      action: `play ${entry.p} - ${entry.ts}`,
+      action: `play ${entry.p} - ${entry.ts} ${gender}`,
     });
   }
 
   function handleDownload() {
     ReactGA.event({
       category: "sounds",
-      action: `download ${entry.p} - ${entry.ts}`,
+      action: `download ${entry.p} - ${entry.ts} ${gender}`,
     });
-    const documentName = `${entry.p}-${entry.ts}.mp3`;
+    const documentName = `${entry.p}-${entry.ts}-${
+      gender === "masc" ? "m" : "f"
+    }.mp3`;
 
     fetch(audioPath)
       .then((res) => {
@@ -45,10 +69,15 @@ export function EntryAudioDisplay({
     <figure>
       <figcaption className="mb-2 pl-2">
         <div style={{ display: "none" }}>
-          Listen to <InlinePs opts={opts} ps={{ p: entry.p, f: entry.f }} />
+          Listen to <InlinePs opts={opts} ps={{ p: entry.p, f: entry.f }} />:
+          {` `}
+          {gender === "masc" ? "Male" : "Female"} recording
         </div>
       </figcaption>
       <div className="d-flex align-items-center">
+        <div className="mr-2" style={{ width: "1rem" }}>
+          {gender === "masc" ? "M" : "F"}
+        </div>
         <audio
           controls
           controlsList="nofullscreen"

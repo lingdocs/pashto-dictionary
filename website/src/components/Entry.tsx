@@ -9,6 +9,7 @@ import ExtraEntryInfo from "../components/ExtraEntryInfo";
 import classNames from "classnames";
 import { Types as T, InlinePs } from "@lingdocs/ps-react";
 import playStorageAudio from "./PlayStorageAudio";
+import { getRecordedGenders } from "../lib/recorded-genders";
 
 function Entry({
   entry,
@@ -22,11 +23,12 @@ function Entry({
   isolateEntry?: (ts: number) => void;
   admin: boolean;
 }) {
-  function handlePlayStorageAudio(
-    e: React.MouseEvent<HTMLElement, MouseEvent>
-  ) {
-    e.stopPropagation();
-    playStorageAudio(entry.ts, entry.p, () => null);
+  const gendersRecorded = getRecordedGenders(entry);
+  function handlePlayStorageAudio(gender: T.Gender) {
+    return (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      e.stopPropagation();
+      playStorageAudio(entry.ts, gender, entry.p, () => null);
+    };
   }
   return (
     <div
@@ -43,13 +45,14 @@ function Entry({
         {` `}
         {/* Can't figure out why but the <em> here can't be empty */}
         <em>{entry.c || "\u00A0"}</em>
-        {entry.a && !nonClickable && (
-          <i
-            onClick={handlePlayStorageAudio}
-            className="clickable ml-2 fas fa-volume-down px-1"
-            title="play audio"
-          />
-        )}
+        {!nonClickable &&
+          gendersRecorded.map((gender) => (
+            <i
+              onClick={handlePlayStorageAudio(gender)}
+              className="clickable ml-2 fas fa-volume-down px-1"
+              title="play audio"
+            />
+          ))}
       </div>
       <div>
         <ExtraEntryInfo entry={entry} textOptions={textOptions} />
