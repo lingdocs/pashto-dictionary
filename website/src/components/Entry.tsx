@@ -44,14 +44,17 @@ function Entry({
         </dt>
         {` `}
         {/* Can't figure out why but the <em> here can't be empty */}
-        <em>{entry.c || "\u00A0"}</em>
+        <em className="mr-1">{entry.c || "\u00A0"}</em>
         {!nonClickable &&
           gendersRecorded.map((gender) => (
-            <i
-              onClick={handlePlayStorageAudio(gender)}
-              className="clickable ml-2 fas fa-volume-down px-1"
-              title="play audio"
-            />
+            <span className="ml-2">
+              <span className="text-muted mr-1">{gender[0]}</span>
+              <i
+                onClick={handlePlayStorageAudio(gender)}
+                className="clickable fas fa-volume-down px-1"
+                title="play audio"
+              />
+            </span>
           ))}
       </div>
       <div>
