@@ -1,11 +1,11 @@
 import Nano from "nano";
 import * as FT from "../../website/src/types/functions-types";
 import * as functions from "firebase-functions";
-import {
-  addDictionaryEntries,
-  deleteEntry,
-  updateDictionaryEntries,
-} from "./tools/spreadsheet-tools";
+// import {
+//   addDictionaryEntries,
+//   deleteEntry,
+//   updateDictionaryEntries,
+// } from "./tools/spreadsheet-tools";
 
 const nano = Nano(functions.config().couchdb.couchdb_url);
 const reviewTasksDb = nano.db.use("review-tasks");
@@ -31,12 +31,14 @@ export async function receiveSubmissions(
     await reviewTasksDb.bulk({ docs });
   }
 
-  const { newEntries, entryEdits, entryDeletions } = sortEdits(edits);
-  await updateDictionaryEntries(entryEdits);
-  for (const ed of entryDeletions) {
-    await deleteEntry(ed);
+  if (edits.length && editor) {
+    // const { newEntries, entryEdits, entryDeletions } = sortEdits(edits);
+    // await updateDictionaryEntries(entryEdits);
+    // for (const ed of entryDeletions) {
+    //   await deleteEntry(ed);
+    // }
+    // await addDictionaryEntries(newEntries);
   }
-  await addDictionaryEntries(newEntries);
 
   return {
     ok: true,
