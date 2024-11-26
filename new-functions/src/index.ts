@@ -11,7 +11,7 @@ app.get("/", (c) => {
 });
 
 app.get("/wa", authMiddleware, async (c) => {
-  return c.json({ user: c.var.user });
+  return c.json({ name: c.var.user?.name, admin: c.var.user?.admin });
 });
 
 export default app;
