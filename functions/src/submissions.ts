@@ -1,13 +1,20 @@
 import Nano from "nano";
 import * as FT from "../../website/src/types/functions-types";
-import * as functions from "firebase-functions";
-// import {
-//   addDictionaryEntries,
-//   deleteEntry,
-//   updateDictionaryEntries,
-// } from "./tools/spreadsheet-tools";
+// import * as functions from "firebase-functions/v2";
+// @ts-ignore
+import { defineString } from "firebase-functions/params";
 
-const nano = Nano(functions.config().couchdb.couchdb_url);
+// Define some parameters
+// // import {
+// //   addDictionaryEntries,
+// //   deleteEntry,
+// //   updateDictionaryEntries,
+// // } from "./tools/spreadsheet-tools";
+
+const couchdbUrl = defineString("ABC");
+console.log({ couchdb: couchdbUrl });
+
+const nano = Nano("");
 const reviewTasksDb = nano.db.use("review-tasks");
 
 export async function receiveSubmissions(
