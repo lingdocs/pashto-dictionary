@@ -5,7 +5,7 @@ import {
   addDictionaryEntries,
   deleteEntry,
   updateDictionaryEntries,
-} from "./lib/spreadsheet-tools";
+} from "./tools/spreadsheet-tools";
 
 const nano = Nano(functions.config().couchdb.couchdb_url);
 const reviewTasksDb = nano.db.use("review-tasks");
