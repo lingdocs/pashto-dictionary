@@ -3,7 +3,7 @@ name: Deploy Hono
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
