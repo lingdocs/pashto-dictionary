@@ -20,7 +20,7 @@ submissionsRouter.use((req, res, next) => {
 });
 
 /**
- * Receive a submissions request
+ * Receive a submissions request from the dictionary app
  */
 submissionsRouter.post("/", async (req, res, next) => {
   if (!req.user) return next("user not found");
