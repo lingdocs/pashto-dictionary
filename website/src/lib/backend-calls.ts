@@ -13,7 +13,7 @@ const baseUrl: Record<Service, string> = {
 export async function publishDictionary(): Promise<
   FT.PublishDictionaryResponse | FT.FunctionError
 > {
-  return (await myFetch("functions", "publishDictionary")) as
+  return (await myFetch("functions", "publish")) as
     | FT.PublishDictionaryResponse
     | FT.FunctionError;
 }
