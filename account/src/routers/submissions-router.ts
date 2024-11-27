@@ -1,12 +1,6 @@
 import express, { Response } from "express";
 import * as T from "../../../website/src/types/account-types";
 import { receiveSubmissions } from "../lib/submissions";
-import { google } from "googleapis";
-import {
-  getEntriesFromSheet,
-  Sheets,
-} from "../../../functions/lib/spreadsheet-tools";
-import env from "../lib/env-vars";
 
 // TODO: ADD PROPER ERROR HANDLING THAT WILL RETURN JSON ALWAYS
 
