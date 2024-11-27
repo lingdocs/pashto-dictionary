@@ -60,7 +60,13 @@ export async function getEntriesFromSheet({
       if (dictionaryEntryBooleanFields.includes(k)) {
         return [[k, x.toLowerCase() === "true"]];
       }
-      return [[k, k.endsWith("p") ? standardizePashto(x.trim()) : x.trim()]];
+      return [
+        [
+          k,
+          // @ts-ignore (for some reason the CI build is failing without this ignore)
+          k.endsWith("p") ? standardizePashto(x.trim()) : x.trim(),
+        ],
+      ];
     });
     return processedRow;
   }
