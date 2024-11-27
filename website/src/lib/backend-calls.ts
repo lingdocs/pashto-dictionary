@@ -1,27 +1,29 @@
 import * as FT from "../types/functions-types";
 import * as AT from "../types/account-types";
 
-type Service = "account" | "functions";
+type Service = "account" | "submissions"; //  | "functions";
 
 const baseUrl: Record<Service, string> = {
   account: "https://account.lingdocs.com/api/",
-  functions: "https://functions.lingdocs.com/",
+  // clean up redundancy in call, put it all in api?
+  submissions: "https://account.lingdocs.com/",
 };
 
 // FUNCTIONS CALLS - MUST BE RE-ROUTED THROUGH FIREBASE HOSTING IN ../../../firebase.json
 export async function publishDictionary(): Promise<
   FT.PublishDictionaryResponse | FT.FunctionError
 > {
-  return (await myFetch("functions", "publishDictionary")) as
-    | FT.PublishDictionaryResponse
-    | FT.FunctionError;
+  throw new Error("not currently implemented on app");
+  // return (await myFetch("functions", "publishDictionary")) as
+  //   | FT.PublishDictionaryResponse
+  //   | FT.FunctionError;
 }
 
 export async function postSubmissions(
   submissions: FT.SubmissionsRequest
 ): Promise<FT.SubmissionsResponse> {
   return (await myFetch(
-    "functions",
+    "submissions",
     "submissions",
     "POST",
     submissions
