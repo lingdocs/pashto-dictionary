@@ -16,33 +16,6 @@ function sendResponse(res: Response, payload: T.APIResponse) {
 
 const submissionsRouter = express.Router();
 
-const auth = new google.auth.GoogleAuth({
-  // TODO: THESE CREDENTIALS ARE NOT WORKING SOMEHOW !!
-  credentials: {
-    private_key: Buffer.from(env.lingdocsServiceAccountKey, "base64").toString(
-      "ascii"
-    ),
-    client_email: env.lingdocsServiceAccountEmail,
-  },
-  scopes: [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.file",
-  ],
-});
-const { spreadsheets } = google.sheets({
-  version: "v4",
-  auth,
-});
-const sheets: Sheets = {
-  spreadsheetId: env.lingdocsDictionarySpreadsheet,
-  spreadsheets,
-};
-
-submissionsRouter.get("/", async (req, res, next) => {
-  const r = await getEntriesFromSheet(sheets);
-  res.send(r);
-});
-
 // Guard all api with authentication
 submissionsRouter.use((req, res, next) => {
   if (req.isAuthenticated()) {

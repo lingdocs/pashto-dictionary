@@ -99,7 +99,7 @@ export async function updateDictionaryEntries(
     const values = [entryToRowArray(entry)];
     return [
       {
-        q: `B${rowNum}:${lastCol}${rowNum}`,
+        range: `B${rowNum}:${lastCol}${rowNum}`,
         values,
       },
     ];
