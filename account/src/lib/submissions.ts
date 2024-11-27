@@ -21,13 +21,8 @@ const reviewTasksDb = nano.db.use("review-tasks");
 
 const auth = new google.auth.GoogleAuth({
   credentials: {
-    // IMPORTANT!! have to have key stored in Base64 because of the
-    // weirdness of node handling spaces in the key (at least there was on AWS)
-    private_key: Buffer.from(
-      env.lingdocsServiceAccountEmail,
-      "base64"
-    ).toString("ascii"),
-    client_email: env.lingdocsServiceAccountKey,
+    private_key: env.lingdocsServiceAccountKey,
+    client_email: env.lingdocsServiceAccountEmail,
   },
   scopes: [
     "https://www.googleapis.com/auth/spreadsheets",
