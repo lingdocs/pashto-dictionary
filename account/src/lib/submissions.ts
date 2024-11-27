@@ -20,6 +20,7 @@ const reviewTasksDb = nano.db.use("review-tasks");
 // TODO: get new env vars on server (remember base64 for key)
 
 const auth = new google.auth.GoogleAuth({
+  // TODO: THESE CREDENTIALS ARE NOT WORKING SOMEHOW !!
   credentials: {
     private_key: Buffer.from(env.lingdocsServiceAccountKey, "base64").toString(
       "ascii"
