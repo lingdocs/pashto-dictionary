@@ -21,6 +21,26 @@ import { getEnv } from "../lib/env-helper";
 const app = new Hono();
 
 app.get("/publish", async (c) => {
+  // check if caller is authorized as lingdocs admin
+  // might be nicer to abstract this into some middleware
+  const cookie = c.req.header("cookie");
+  if (!cookie) {
+    c.status(401);
+    return c.json({
+      ok: false,
+      error: "unauthorized",
+    });
+  }
+  const r = await fetch("https://account.lingdocs.com/api/user", {
+    headers: { Cookie: cookie },
+  });
+  const { ok, user } = await r.json();
+  if (ok !== true || typeof user !== "object" || !user.admin) {
+    return c.json({
+      ok: false,
+      error: "unauthorized",
+    });
+  }
   const vars = getEnv(c);
   const auth = new google.auth.GoogleAuth({
     credentials: {
