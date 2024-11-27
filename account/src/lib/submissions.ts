@@ -1,21 +1,47 @@
 import Nano from "nano";
-import * as FT from "../../website/src/types/functions-types";
-// import * as functions from "firebase-functions/v2";
-// @ts-ignore
-import { defineString } from "firebase-functions/params";
+import * as FT from "../../../website/src/types/functions-types";
+import {
+  addDictionaryEntries,
+  deleteEntry,
+  Sheets,
+  updateDictionaryEntries,
+} from "../../../functions/lib/spreadsheet-tools";
+import { google } from "googleapis";
+import env from "./env-vars";
 
-// Define some parameters
-// // import {
-// //   addDictionaryEntries,
-// //   deleteEntry,
-// //   updateDictionaryEntries,
-// // } from "./tools/spreadsheet-tools";
-
-const couchdbUrl = defineString("ABC");
-console.log({ couchdb: couchdbUrl });
-
-const nano = Nano("");
+const sheetId = parseInt(env.lingdocsDictionarySheetId);
+if (isNaN(sheetId)) {
+  console.error("Invalid SheetID for LINGDOCS_DICTIONARY_SHEET_ID env var");
+  process.exit(1);
+}
+const nano = Nano(env.couchDbURL);
 const reviewTasksDb = nano.db.use("review-tasks");
+
+// TODO: get new env vars on server (remember base64 for key)
+
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    // IMPORTANT!! have to have key stored in Base64 because of the
+    // weirdness of node handling spaces in the key (at least there was on AWS)
+    private_key: Buffer.from(
+      env.lingdocsServiceAccountEmail,
+      "base64"
+    ).toString("ascii"),
+    client_email: env.lingdocsServiceAccountKey,
+  },
+  scopes: [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+  ],
+});
+const { spreadsheets } = google.sheets({
+  version: "v4",
+  auth,
+});
+const sheets: Sheets = {
+  spreadsheetId: env.lingdocsDictionarySpreadsheet,
+  spreadsheets,
+};
 
 export async function receiveSubmissions(
   e: FT.SubmissionsRequest,
@@ -39,12 +65,12 @@ export async function receiveSubmissions(
   }
 
   if (edits.length && editor) {
-    // const { newEntries, entryEdits, entryDeletions } = sortEdits(edits);
-    // await updateDictionaryEntries(entryEdits);
-    // for (const ed of entryDeletions) {
-    //   await deleteEntry(ed);
-    // }
-    // await addDictionaryEntries(newEntries);
+    const { newEntries, entryEdits, entryDeletions } = sortEdits(edits);
+    await updateDictionaryEntries(sheets, entryEdits);
+    for (const ed of entryDeletions) {
+      await deleteEntry(sheets, sheetId, ed);
+    }
+    await addDictionaryEntries(sheets, newEntries);
   }
 
   return {

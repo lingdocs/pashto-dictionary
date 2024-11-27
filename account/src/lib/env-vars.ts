@@ -1,3 +1,5 @@
+// TODO: REDO THIS THIS IS UGLY
+
 const names = [
   "LINGDOCS_EMAIL_HOST",
   "LINGDOCS_EMAIL_USER",
@@ -12,11 +14,18 @@ const names = [
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
   "NTFY_TOPIC",
-];
+  "LINGDOCS_SERVICE_ACCOUNT_KEY",
+  "LINGDOCS_SERVICE_ACCOUNT_EMAIL",
+  "LINGDOCS_DICTIONARY_SPREADSHEET",
+  "LINGDOCS_DICTIONARY_SHEET_ID",
+] as const;
 
 const values = names.map((name) => ({
   name,
-  value: process.env[name] || "",
+  value:
+    name === "LINGDOCS_SERVICE_ACCOUNT_KEY"
+      ? Buffer.from(process.env[name] || "").toString("base64")
+      : process.env[name] || "",
 }));
 
 const missing = values.filter((v) => !v.value);
@@ -42,4 +51,8 @@ export default {
   stripeSecretKey: values[10].value,
   stripeWebhookSecret: values[11].value,
   ntfyTopic: values[12].value,
+  lingdocsServiceAccountKey: values[13].value,
+  lingdocsServiceAccountEmail: values[14].value,
+  lingdocsDictionarySpreadsheet: values[15].value,
+  lingdocsDictionarySheetId: values[16].value,
 };

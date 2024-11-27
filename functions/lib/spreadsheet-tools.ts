@@ -1,57 +1,92 @@
-import { google } from "googleapis";
 import { Types as T } from "@lingdocs/inflect";
-import * as FT from "../../../website/src/types/functions-types";
+import * as FT from "../../website/src/types/functions-types";
 import { standardizeEntry } from "@lingdocs/inflect";
+import type { sheets_v4 } from "@googleapis/sheets";
 import {
   dictionaryEntryBooleanFields,
   dictionaryEntryNumberFields,
   dictionaryEntryTextFields,
+  simplifyPhonetics,
+  standardizePashto,
 } from "@lingdocs/inflect";
-import * as functions from "firebase-functions";
 
-const spreadsheetId = functions.config().sheet.id;
-const sheetId = 51288491;
 const validFields = [
   ...dictionaryEntryTextFields,
   ...dictionaryEntryBooleanFields,
   ...dictionaryEntryNumberFields,
 ];
 
-const SCOPES = [
-  "https://www.googleapis.com/auth/spreadsheets",
-  "https://www.googleapis.com/auth/drive.file",
-];
+export type Sheets = {
+  spreadsheetId: string;
+  spreadsheets: sheets_v4.Resource$Spreadsheets;
+};
 
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    private_key: functions.config().serviceacct.key,
-    client_email: functions.config().serviceacct.email,
-  },
-  scopes: SCOPES,
-});
-
-const { spreadsheets } = google.sheets({
-  version: "v4",
-  auth,
-});
-
-async function getTsIndex(): Promise<number[]> {
-  const values = await getRange("A2:A");
+async function getTsIndex(sheets: Sheets): Promise<number[]> {
+  const values = await getRange(sheets, "A2:A");
   return values.map((r) => parseInt(r[0]));
 }
 
-async function getFirstEmptyRow(): Promise<number> {
-  const values = await getRange("A2:A");
+async function getFirstEmptyRow(sheets: Sheets): Promise<number> {
+  const values = await getRange(sheets, "A2:A");
   return values.length + 2;
 }
 
-export async function updateDictionaryEntries(edits: FT.EntryEdit[]) {
+export async function getEntriesFromSheet({
+  spreadsheets,
+  spreadsheetId,
+}: Sheets): Promise<T.DictionaryEntry[]> {
+  const keyInfo = await getKeyInfo({ spreadsheets, spreadsheetId });
+  const { data } = await spreadsheets.values.get({
+    spreadsheetId,
+    range: `A2:${keyInfo.lastCol}`,
+  });
+  if (!data.values) {
+    throw new Error("data not found");
+  }
+  function processRow(row: string[]) {
+    // TODO: optimize this
+    const processedRow = row.flatMap<
+      [keyof T.DictionaryEntry, string | boolean | number]
+    >((x, i) => {
+      if (x === "") {
+        return [];
+      }
+      const k = keyInfo.keyRow[i];
+      // @ts-expect-error
+      if (dictionaryEntryNumberFields.includes(k)) {
+        return [[k, parseInt(x)]];
+      }
+      // @ts-expect-error
+      if (dictionaryEntryBooleanFields.includes(k)) {
+        return [[k, x.toLowerCase() === "true"]];
+      }
+      return [[k, k.endsWith("p") ? standardizePashto(x.trim()) : x.trim()]];
+    });
+    return processedRow;
+  }
+  const entries = data.values.map(processRow).map((pr) => {
+    return Object.fromEntries(pr) as T.DictionaryEntry;
+  });
+  entries.sort((a, b) => a.p.localeCompare(b.p, "ps"));
+  const entriesLength = entries.length;
+  // add index and g
+  for (let i = 0; i < entriesLength; i++) {
+    entries[i].i = i;
+    entries[i].g = simplifyPhonetics(entries[i].f);
+  }
+  return entries;
+}
+
+export async function updateDictionaryEntries(
+  { spreadsheets, spreadsheetId }: Sheets,
+  edits: FT.EntryEdit[]
+) {
   if (edits.length === 0) {
     return;
   }
   const entries = edits.map((e) => e.entry);
-  const tsIndex = await getTsIndex();
-  const { keyRow, lastCol } = await getKeyInfo();
+  const tsIndex = await getTsIndex({ spreadsheets, spreadsheetId });
+  const { keyRow, lastCol } = await getKeyInfo({ spreadsheets, spreadsheetId });
   function entryToRowArray(e: T.DictionaryEntry): any[] {
     return keyRow.slice(1).map((k) => e[k] || "");
   }
@@ -64,7 +99,7 @@ export async function updateDictionaryEntries(edits: FT.EntryEdit[]) {
     const values = [entryToRowArray(entry)];
     return [
       {
-        range: `B${rowNum}:${lastCol}${rowNum}`,
+        q: `B${rowNum}:${lastCol}${rowNum}`,
         values,
       },
     ];
@@ -78,13 +113,16 @@ export async function updateDictionaryEntries(edits: FT.EntryEdit[]) {
   });
 }
 
-export async function addDictionaryEntries(additions: FT.NewEntry[]) {
+export async function addDictionaryEntries(
+  { spreadsheets, spreadsheetId }: Sheets,
+  additions: FT.NewEntry[]
+) {
   if (additions.length === 0) {
     return;
   }
   const entries = additions.map((x) => standardizeEntry(x.entry));
-  const endRow = await getFirstEmptyRow();
-  const { keyRow, lastCol } = await getKeyInfo();
+  const endRow = await getFirstEmptyRow({ spreadsheets, spreadsheetId });
+  const { keyRow, lastCol } = await getKeyInfo({ spreadsheets, spreadsheetId });
   const ts = Date.now();
   function entryToRowArray(e: T.DictionaryEntry): any[] {
     return keyRow.slice(1).map((k) => e[k] || "");
@@ -105,10 +143,11 @@ export async function addDictionaryEntries(additions: FT.NewEntry[]) {
 }
 
 export async function updateDictionaryFields(
+  { spreadsheets, spreadsheetId }: Sheets,
   edits: { ts: number; col: keyof T.DictionaryEntry; val: any }[]
 ) {
-  const tsIndex = await getTsIndex();
-  const { colMap } = await getKeyInfo();
+  const tsIndex = await getTsIndex({ spreadsheets, spreadsheetId });
+  const { colMap } = await getKeyInfo({ spreadsheets, spreadsheetId });
   const data = edits.flatMap((edit) => {
     const rowNum = getRowNumFromTs(tsIndex, edit.ts);
     if (rowNum === undefined) {
@@ -132,8 +171,12 @@ export async function updateDictionaryFields(
   });
 }
 
-export async function deleteEntry(ed: FT.EntryDeletion) {
-  const tsIndex = await getTsIndex();
+export async function deleteEntry(
+  { spreadsheets, spreadsheetId }: Sheets,
+  sheetId: number,
+  ed: FT.EntryDeletion
+) {
+  const tsIndex = await getTsIndex({ spreadsheets, spreadsheetId });
   const row = getRowNumFromTs(tsIndex, ed.ts);
   if (!row) {
     console.error(`${ed.ts} not found to do delete`);
@@ -169,28 +212,35 @@ function getRowNumFromTs(tsIndex: number[], ts: number): number | undefined {
   return res + 2;
 }
 
-async function getKeyInfo(): Promise<{
+async function getKeyInfo(sheets: Sheets): Promise<{
   colMap: Record<keyof T.DictionaryEntry, string>;
+  colMapN: Record<keyof T.DictionaryEntry, number>;
   keyRow: (keyof T.DictionaryEntry)[];
   lastCol: string;
 }> {
-  const headVals = await getRange("A1:1");
+  const headVals = await getRange(sheets, "A1:1");
   const headRow: string[] = headVals[0];
-  const colMap: any = {};
+  const colMap: Record<any, string> = {};
+  const colMapN: Record<any, number> = {};
   headRow.forEach((c, i) => {
     if (validFields.every((v) => c !== v)) {
       throw new Error(`Invalid spreadsheet field ${c}`);
     }
     colMap[c] = getColumnLetters(i);
+    colMapN[c] = i;
   });
   return {
     colMap: colMap as Record<keyof T.DictionaryEntry, string>,
+    colMapN: colMapN as Record<keyof T.DictionaryEntry, number>,
     keyRow: headRow as (keyof T.DictionaryEntry)[],
     lastCol: getColumnLetters(headRow.length - 1),
   };
 }
 
-async function getRange(range: string): Promise<any[][]> {
+async function getRange(
+  { spreadsheets, spreadsheetId }: Sheets,
+  range: string
+): Promise<any[][]> {
   const { data } = await spreadsheets.values.get({
     spreadsheetId,
     range,

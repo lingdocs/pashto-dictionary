@@ -1,17 +1,31 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
     "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "lib",
-    "sourceMap": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "declaration": true,
     "strict": true,
-    "target": "es2017",
-    "skipLibCheck": true,	
-    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   },
-  "compileOnSave": true,
-  "include": [
-    "src"
+  "exclude": [
+    "node_modules",
+    "cdk.out"
   ]
 }

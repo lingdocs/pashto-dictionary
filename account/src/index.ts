@@ -9,6 +9,7 @@ import inProd from "./lib/inProd";
 import feedbackRouter from "./routers/feedback-router";
 import paymentRouter from "./routers/payment-router";
 import dictionaryRouter from "./routers/dictionary-router";
+import submissionsRouter from "./routers/submissions-router";
 
 const sameOriginCorsOpts = {
   origin: inProd ? /\.lingdocs\.com$/ : "*",
@@ -43,6 +44,7 @@ app.use("/", cors(sameOriginCorsOpts), authRouter(passport));
 // REST API - returning json
 app.use("/api", cors(sameOriginCorsOpts), apiRouter);
 app.use("/feedback", cors(sameOriginCorsOpts), feedbackRouter);
+app.use("/submissions", cors(sameOriginCorsOpts), submissionsRouter);
 // TODO: check - does this work with the cors ?
 app.use("/payment", cors(sameOriginCorsOpts), paymentRouter);
 
