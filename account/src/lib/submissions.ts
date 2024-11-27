@@ -21,7 +21,9 @@ const reviewTasksDb = nano.db.use("review-tasks");
 
 const auth = new google.auth.GoogleAuth({
   credentials: {
-    private_key: env.lingdocsServiceAccountKey,
+    private_key: Buffer.from(env.lingdocsServiceAccountKey, "base64").toString(
+      "ascii"
+    ),
     client_email: env.lingdocsServiceAccountEmail,
   },
   scopes: [
