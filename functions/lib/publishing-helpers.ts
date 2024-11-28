@@ -7,7 +7,7 @@ export const dictionaryFilename = "dictionary";
 export const dictionaryInfoFilename = "dictionary-info";
 // const hunspellAffFileFilename = "ps_AFF.aff";
 // const hunspellDicFileFilename = "ps_AFF.dic";
-const allWordsJsonFilename = "all-words-dictionary.json";
+// const allWordsJsonFilename = "all-words-dictionary.json";
 const url = `${baseUrl}${dictionaryFilename}`;
 const infoUrl = `${baseUrl}${dictionaryInfoFilename}`;
 
@@ -16,6 +16,8 @@ export function makeDictionaryObject(
 ): T.Dictionary {
   return {
     info: {
+      // @ts-ignore
+      testVal: true,
       title,
       license,
       url,
