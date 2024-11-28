@@ -2,8 +2,8 @@ import { Context } from "hono";
 import { env } from "hono/adapter";
 
 export type FEnvironment = {
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
+  // AWS_ACCESS_KEY_ID: string;
+  // AWS_SECRET_ACCESS_KEY: string;
   LINGDOCS_DICTIONARY_SPREADSHEET: string;
   LINGDOCS_DICTIONARY_SHEET_ID: string;
   LINGDOCS_SERVICE_ACCOUNT_EMAIL: string;
@@ -15,8 +15,8 @@ export type FEnvironment = {
 };
 
 export const environment: FEnvironment = {
-  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
-  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
+  // AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || "",
+  // AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
   LINGDOCS_DICTIONARY_SPREADSHEET:
     process.env.LINGDOCS_DICTIONARY_SPREADSHEET || "",
   LINGDOCS_DICTIONARY_SHEET_ID: process.env.LINGDOCS_DICTIONARY_SHEET_ID || "",
