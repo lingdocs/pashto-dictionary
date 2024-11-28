@@ -2,6 +2,8 @@
 
 This is a CDK / AWS Lambda project for the publish dictionary function
 
+The AWS Lambda function needs to be put behind an API Gateway with a custom domain `functions.lingdocs.com`.
+
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands

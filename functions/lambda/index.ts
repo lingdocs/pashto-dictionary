@@ -14,12 +14,16 @@ import {
 import { uploader } from "../lib/uploader";
 import { S3Client } from "@aws-sdk/client-s3";
 import { getEnv } from "../lib/env-helper";
+import { cors } from "hono/cors";
 // import { getWordList } from "../lib/word-list-maker";
 // import { Types as T } from "@lingdocs/inflect";
 // const allWordsJsonFilename = "all-words-dictionary2.json";
 
 const app = new Hono();
 
+app.use(
+  cors({ origin: ["https://dictionary.lingdocs.com"], credentials: true })
+);
 app.get("/publish", async (c) => {
   // check if caller is authorized as lingdocs admin
   // might be nicer to abstract this into some middleware
