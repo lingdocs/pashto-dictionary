@@ -15,14 +15,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: cdk deploy
-        uses: youyo/aws-cdk-github-actions@v2
+      - uses: actions/setup-node@v4
         with:
-          cdk_subcommand: "deploy"
-          cdk_stack: "stack1"
-          cdk_args: "--require-approval never"
-          working_dir: "functions"
-          actions_comment: false
+          node-version: 20
+          cache: "npm"
+      - name: Install AWS CDK
+        run: npm install -g aws-cdk
+      - name: CDK Deplay
+        run: |
+          cd functions
+          cdk deploy --require-approval never
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
