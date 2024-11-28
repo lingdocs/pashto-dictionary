@@ -21,9 +21,15 @@ jobs:
           cache: "npm"
       - name: Install AWS CDK
         run: npm install -g aws-cdk
-      - name: CDK Deplay
+      - name: CDK Deploy
         run: |
-          cd functions
+          npm install
+          cd website
+          npm install
+          cd ../account
+          npm install
+          cd ../functions
+          npm install
           cdk deploy --require-approval never
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
