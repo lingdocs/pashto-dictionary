@@ -16,8 +16,6 @@ export function makeDictionaryObject(
 ): T.Dictionary {
   return {
     info: {
-      // @ts-ignore
-      testVal: true,
       title,
       license,
       url,
