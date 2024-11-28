@@ -1,3 +1,5 @@
+name: Deploy Functions
+
 on:
   push:
     branches:
@@ -17,6 +19,7 @@ jobs:
           cdk_subcommand: "deploy"
           cdk_stack: "stack1"
           cdk_args: "--require-approval never"
+          working_dir: "functions"
           actions_comment: false
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

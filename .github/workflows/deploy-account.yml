@@ -1,9 +1,8 @@
-name: deploy account
+name: Deploy Account
 on:
   push:
     branches:
       - master
-      - dev
     paths:
       - "account/**"
       - ".github/workflows/deploy-account.yml"
