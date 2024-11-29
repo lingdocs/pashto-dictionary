@@ -8,6 +8,19 @@ import {
 } from "../../../functions/lib/spreadsheet-tools";
 import { google } from "googleapis";
 import env from "./env-vars";
+import Queue from "bull";
+
+const submissionsQueue = new Queue<
+  | {
+      type: "edits";
+      entries: FT.EntryEdit[];
+    }
+  | {
+      type: "new";
+      entries: FT.NewEntry[];
+    }
+  | FT.EntryDeletion
+>("submissions");
 
 const sheetId = parseInt(env.lingdocsDictionarySheetId);
 if (isNaN(sheetId)) {
@@ -55,6 +68,7 @@ export async function receiveSubmissions(
   // 3. Add new dictionary entries
 
   if (reviewTasks.length) {
+    // add whatever review tasks came in to the db
     const docs = reviewTasks.map((task) => ({
       ...task,
       _rev: undefined,
@@ -64,11 +78,15 @@ export async function receiveSubmissions(
 
   if (edits.length && editor) {
     const { newEntries, entryEdits, entryDeletions } = sortEdits(edits);
-    await updateDictionaryEntries(sheets, entryEdits);
-    for (const ed of entryDeletions) {
-      await deleteEntry(sheets, sheetId, ed);
+    if (entryEdits.length) {
+      submissionsQueue.add({ type: "edits", entries: entryEdits });
     }
-    await addDictionaryEntries(sheets, newEntries);
+    if (newEntries.length) {
+      submissionsQueue.add({ type: "new", entries: newEntries });
+    }
+    entryDeletions.forEach((e) => {
+      submissionsQueue.add(e);
+    });
   }
 
   return {
@@ -77,6 +95,26 @@ export async function receiveSubmissions(
     submissions: e,
   };
 }
+
+submissionsQueue.process(async function (job, done) {
+  try {
+    if (job.data.type === "edits") {
+      await updateDictionaryEntries(sheets, job.data.entries);
+    } else if (job.data.type === "new") {
+      await addDictionaryEntries(sheets, job.data.entries);
+    } else {
+      await deleteEntry(sheets, sheetId, job.data);
+    }
+  } catch (e) {
+    console.error(e);
+    if (e instanceof Error) {
+      done(e);
+    } else {
+      throw new Error("unknown error");
+    }
+  }
+  done();
+});
 
 type SortedSubmissions = {
   edits: FT.Edit[];
