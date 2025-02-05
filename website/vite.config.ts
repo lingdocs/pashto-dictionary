@@ -13,9 +13,9 @@ export default defineConfig({
       filename: "service-worker.ts",
       manifestFilename: "manifest.json",
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,jpg,png,eot,ttf,woff,woff2}"],
+        globPatterns: ["**/*.{js,css,html,svg,jpg,png,eot,ttf,woff,woff2,ico}"],
       },
-      includeAssets: ["**/*.{js,css,html,svg,jpg,png,eot,ttf,woff,woff2}"],
+      includeAssets: ["**/*.{js,css,html,svg,jpg,png,eot,ttf,woff,woff2,ico}"],
       manifest: {
         short_name: "Pashto Dictionary",
         name: "LingDocs Pashto Dictionary",
