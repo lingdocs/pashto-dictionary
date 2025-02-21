@@ -58,7 +58,8 @@ function fuzzifyEnglish(input: string): string {
   return safeInput
     .replace("to ", "")
     .replace(/our/g, "ou?r")
-    .replace(/or/g, "ou?r");
+    .replace(/or/g, "ou?r")
+    .replace(/i(s|z)e/g, "i(s|z)e");
 }
 
 function chunkOutArray<T>(arr: T[], chunkSize: number): T[][] {
