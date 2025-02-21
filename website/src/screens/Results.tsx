@@ -263,13 +263,12 @@ function Results({
             <h5 className="mt-2">
               No Results Found in {state.options.language}
             </h5>
-            {state.options.language === "Pashto" &&
-              isPashtoScript(state.searchValue) && (
-                <p className="mt-3">
-                  Click on the <i className={inflectionSearchIcon} /> to search
-                  inflections and conjugations
-                </p>
-              )}
+            {state.options.language === "Pashto" && (
+              <p className="mt-3">
+                Click on the <i className={inflectionSearchIcon} /> to search
+                inflections and conjugations
+              </p>
+            )}
             {state.options.searchType === "alphabetical" && (
               <div className="mt-4 font-weight-light">
                 <div className="mb-3">
