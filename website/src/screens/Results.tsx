@@ -17,6 +17,7 @@ import { getTextOptions } from "../lib/get-text-options";
 import { State } from "../types/dictionary-types";
 
 export const inflectionSearchIcon = "fas fa-search-plus";
+const addEntryIcon = "fas fa-plus";
 
 // TODO: put power results in a prop so we can do it from outside with the keyboard shortcut
 function Results({
@@ -94,7 +95,7 @@ function Results({
             onClick={startSuggestion}
             title="create entry suggestion"
           >
-            <i className="fas fa-plus" style={{ padding: "3px" }} />
+            <i className={addEntryIcon} style={{ padding: "3px" }} />
           </button>
         )}
       {inflectionResults === undefined &&
@@ -131,6 +132,12 @@ function Results({
                   No conjugation/inflection matches found for{" "}
                   <strong>{state.searchValue}</strong>
                 </div>
+                {state.user && (
+                  <p className="mt-3">
+                    Click on the <i className={addEntryIcon} /> button to
+                    suggest an addition
+                  </p>
+                )}
               </div>
             )}
           {(["exact", "fuzzy"] as ("exact" | "fuzzy")[]).map((t) => {
@@ -264,10 +271,18 @@ function Results({
               No Results Found in {state.options.language}
             </h5>
             {state.options.language === "Pashto" && (
-              <p className="mt-3">
-                Click on the <i className={inflectionSearchIcon} /> to search
-                inflections and conjugations
-              </p>
+              <>
+                <p className="mt-3">
+                  Click on the <i className={inflectionSearchIcon} /> button to
+                  search inflections and conjugations
+                </p>
+                {state.user && (
+                  <p className="mt-3">
+                    Click on the <i className={addEntryIcon} /> button to
+                    suggest an addition
+                  </p>
+                )}
+              </>
             )}
             {state.options.searchType === "alphabetical" && (
               <div className="mt-4 font-weight-light">
