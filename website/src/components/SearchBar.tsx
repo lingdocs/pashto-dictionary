@@ -10,6 +10,7 @@ import Mousetrap from "mousetrap";
 import { useEffect, useRef } from "react";
 import { State } from "../types/dictionary-types";
 import { OptionsAction, Language, SearchType } from "../types/dictionary-types";
+import { isMobile } from "../lib/detect-mobile";
 
 const SearchBar = ({
   state,
@@ -99,6 +100,7 @@ const SearchBar = ({
               // don't loose focus/cursor if clicking on a word/star etc if searchBarStickyFocus is enabled
               if (
                 state.options.searchBarStickyFocus &&
+                !isMobile &&
                 e.relatedTarget === null
               ) {
                 e.target.focus();

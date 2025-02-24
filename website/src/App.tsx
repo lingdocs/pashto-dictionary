@@ -242,19 +242,18 @@ class App extends Component<RouteComponentProps, State> {
     Mousetrap.bind(
       ["1", "2", "3", "4", "5", "6", "7", "8", "9", ...pNums],
       (e) => {
-        e.preventDefault();
-        if (e.repeat) {
-          return;
+        if (this.props.location.pathname === "/search") {
+          e.preventDefault();
+          if (e.repeat) {
+            return;
+          }
+          const toIsolate =
+            this.state.results[convertNumShortcutToNum(e.key) - 1];
+          if (!toIsolate) {
+            return;
+          }
+          this.handleIsolateEntry(toIsolate.ts);
         }
-        if (this.props.location.pathname !== "/search") {
-          return;
-        }
-        const toIsolate =
-          this.state.results[convertNumShortcutToNum(e.key) - 1];
-        if (!toIsolate) {
-          return;
-        }
-        this.handleIsolateEntry(toIsolate.ts);
       }
     );
     Mousetrap.bind(
