@@ -254,6 +254,7 @@ class App extends Component<RouteComponentProps, State> {
           }
           this.handleIsolateEntry(toIsolate.ts);
         }
+        return true;
       }
     );
     Mousetrap.bind(
