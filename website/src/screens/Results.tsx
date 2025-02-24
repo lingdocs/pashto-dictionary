@@ -25,15 +25,14 @@ function Results({
   isolateEntry,
   handleInflectionSearch,
   relatedResults,
+  setSuggestionState,
 }: {
   state: State;
   isolateEntry: (ts: number) => void;
   handleInflectionSearch: () => void;
+  setSuggestionState: (s: State["suggestion"]) => void;
   relatedResults?: boolean;
 }) {
-  const [suggestionState, setSuggestionState] = useState<
-    "none" | "editing" | "received"
-  >("none");
   const [comment, setComment] = useState<string>("");
   const [pashto, setPashto] = useState<string>("");
   const [phonetics, setPhonetics] = useState<string>("");
@@ -83,7 +82,7 @@ function Results({
       )}
       {state.user &&
         window.location.pathname !== "/word" &&
-        suggestionState === "none" &&
+        state.suggestion === "none" &&
         inflectionResults === undefined && (
           <button
             type="button"
@@ -99,7 +98,7 @@ function Results({
           </button>
         )}
       {inflectionResults === undefined &&
-        suggestionState === "none" &&
+        state.suggestion === "none" &&
         window.location.pathname === "/search" && (
           <button
             type="button"
@@ -172,7 +171,7 @@ function Results({
           })}
         </div>
       )}
-      {inflectionResults === undefined && suggestionState === "none" && (
+      {inflectionResults === undefined && state.suggestion === "none" && (
         <dl>
           {state.results.map((entry) => (
             <Entry
@@ -185,7 +184,7 @@ function Results({
           ))}
         </dl>
       )}
-      {state.user && suggestionState === "editing" && (
+      {state.user && state.suggestion === "editing" && (
         <div className="my-3">
           <h5 className="mb-3">Suggest an entry for the dictionary:</h5>
           <div className="form-group mt-4" style={{ maxWidth: "500px" }}>
@@ -259,11 +258,11 @@ function Results({
           </button>
         </div>
       )}
-      {suggestionState === "received" && (
+      {state.suggestion === "received" && (
         <div className="my-3">Thanks for the help!</div>
       )}
       {inflectionResults === undefined &&
-        suggestionState === "none" &&
+        state.suggestion === "none" &&
         state.searchValue &&
         !state.results.length && (
           <div>

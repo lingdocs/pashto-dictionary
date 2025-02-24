@@ -135,8 +135,10 @@ class App extends Component<RouteComponentProps, State> {
       reviewTasks: [],
       user: readUser(),
       inflectionSearchResults: undefined,
+      suggestion: "none",
     };
     this.handleOptionsUpdate = this.handleOptionsUpdate.bind(this);
+    this.handleSuggestionState = this.handleSuggestionState.bind(this);
     this.handleTextOptionsUpdate = this.handleTextOptionsUpdate.bind(this);
     this.handleSearchValueChange = this.handleSearchValueChange.bind(this);
     this.handleIsolateEntry = this.handleIsolateEntry.bind(this);
@@ -242,7 +244,10 @@ class App extends Component<RouteComponentProps, State> {
     Mousetrap.bind(
       ["1", "2", "3", "4", "5", "6", "7", "8", "9", ...pNums],
       (e) => {
-        if (this.props.location.pathname === "/search") {
+        if (
+          this.props.location.pathname === "/search" &&
+          this.state.suggestion !== "editing"
+        ) {
           e.preventDefault();
           if (e.repeat) {
             return;
@@ -409,6 +414,10 @@ class App extends Component<RouteComponentProps, State> {
     } catch (err) {
       console.error("error checking user level", err);
     }
+  }
+
+  private handleSuggestionState(suggestion: State["suggestion"]) {
+    this.setState({ suggestion });
   }
 
   private handleDictionaryUpdate() {
@@ -695,6 +704,7 @@ class App extends Component<RouteComponentProps, State> {
                   state={this.state}
                   isolateEntry={this.handleIsolateEntry}
                   handleInflectionSearch={this.handleInflectionSearch}
+                  setSuggestionState={this.handleSuggestionState}
                 />
               </Route>
               <Route path="/new-entries">
@@ -706,6 +716,7 @@ class App extends Component<RouteComponentProps, State> {
                     state={this.state}
                     isolateEntry={this.handleIsolateEntry}
                     handleInflectionSearch={this.handleInflectionSearch}
+                    setSuggestionState={this.handleSuggestionState}
                   />
                 ) : (
                   <div>No new words added this {newWordsPeriod}</div>
@@ -722,6 +733,7 @@ class App extends Component<RouteComponentProps, State> {
                   state={this.state}
                   dictionary={dictionary}
                   isolateEntry={this.handleIsolateEntry}
+                  setSuggestionState={this.handleSuggestionState}
                 />
               </Route>
               <Route path="/wordlist">

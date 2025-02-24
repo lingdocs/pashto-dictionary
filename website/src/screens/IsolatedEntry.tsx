@@ -38,10 +38,12 @@ function IsolatedEntry({
   state,
   dictionary,
   isolateEntry,
+  setSuggestionState,
 }: {
   state: State;
   dictionary: DictionaryAPI;
   isolateEntry: (ts: number) => void;
+  setSuggestionState: (s: State["suggestion"]) => void;
 }) {
   const [exploded, setExploded] = useState<boolean>(false);
   const [editing, setEditing] = useState<boolean>(false);
@@ -299,6 +301,7 @@ function IsolatedEntry({
             isolateEntry={isolateEntry}
             handleInflectionSearch={() => null}
             relatedResults
+            setSuggestionState={setSuggestionState}
           />
         </>
       ) : (

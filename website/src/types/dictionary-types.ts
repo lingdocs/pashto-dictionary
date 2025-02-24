@@ -16,6 +16,7 @@ export type State = {
   reviewTasks: import("./functions-types").ReviewTask[];
   dictionaryInfo: import("@lingdocs/ps-react").Types.DictionaryInfo | undefined;
   user: undefined | import("./account-types").LingdocsUser;
+  suggestion: "none" | "editing" | "received";
   inflectionSearchResults:
     | undefined
     | "searching"
