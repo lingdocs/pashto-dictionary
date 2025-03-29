@@ -505,6 +505,7 @@ class App extends Component<RouteComponentProps, State> {
         results: [],
         page: 1,
         inflectionSearchResults: undefined,
+        suggestion: "none",
       });
       if (this.props.location.pathname !== "/") {
         this.props.history.replace("/");
@@ -516,6 +517,7 @@ class App extends Component<RouteComponentProps, State> {
       results: dictionary.search({ ...prevState, searchValue }),
       page: 1,
       inflectionSearchResults: undefined,
+      suggestion: "none",
     }));
     if (this.props.history.location.pathname !== "/search") {
       this.props.history.push("/search");

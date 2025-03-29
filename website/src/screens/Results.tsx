@@ -6,7 +6,7 @@
  *
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as FT from "../types/functions-types";
 import { submissionBase, addSubmission } from "../lib/submissions";
 import { isPashtoScript } from "../lib/is-pashto";
