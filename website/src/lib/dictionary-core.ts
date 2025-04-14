@@ -227,4 +227,14 @@ export class DictionaryDb {
     const { $loki, meta, ...word } = res;
     return word;
   }
+
+  public findByL(l: number): T.DictionaryEntry[] {
+    if (!this.ready || !this.collection) {
+      return [];
+    }
+    return this.collection?.find({ l }).map((x) => {
+      const { $loki, meta, ...word } = x;
+      return word;
+    });
+  }
 }

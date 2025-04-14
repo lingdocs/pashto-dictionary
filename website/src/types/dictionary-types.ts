@@ -47,6 +47,7 @@ export type DictionaryAPI = {
   findOneByTs: (
     ts: number
   ) => import("@lingdocs/ps-react").Types.DictionaryEntry | undefined;
+  findByL: (l: number) => import("@lingdocs/ps-react").Types.DictionaryEntry[];
   findRelatedEntries: (
     entry: import("@lingdocs/ps-react").Types.DictionaryEntry
   ) => import("@lingdocs/ps-react").Types.DictionaryEntry[];

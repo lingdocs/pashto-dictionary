@@ -23,6 +23,7 @@ import { fuzzifyPashto } from "./fuzzify-pashto/fuzzify-pashto";
 import { makeAWeeBitFuzzy } from "./wee-bit-fuzzy";
 import { getTextOptions } from "./get-text-options";
 import { DictionaryAPI, State } from "../types/dictionary-types";
+import { isVerbDictionaryEntry } from "@lingdocs/ps-react/dist/lib/src/type-predicates";
 
 const dictionaryBaseUrl = `https://storage.lingdocs.com/dictionary`;
 const dictionaryUrl = `${dictionaryBaseUrl}/dictionary`;
@@ -523,6 +524,10 @@ function makeLookupPortal<X extends T.DictionaryEntry>(
       if (!res) return undefined;
       return tpFilter(res) ? res : undefined;
     },
+    getByL: () => {
+      // TODO: maybe take this off of the type for the non-verb lookup portal
+      return [];
+    },
   };
 }
 
@@ -564,6 +569,18 @@ function makeVerbLookupPortal(): T.EntryLookupPortal<T.VerbEntry> {
         }
       })();
       return { entry, complement };
+    },
+    getByL: (l: number): T.VerbEntry[] => {
+      const vEntries = dictionary.findByL(l).filter(isVerbDictionaryEntry);
+      return vEntries.map(
+        (entry): T.VerbEntry => ({
+          entry,
+          complement:
+            entry.c?.includes("comp.") && entry.l
+              ? dictionary.findOneByTs(entry.l)
+              : undefined,
+        })
+      );
     },
   };
 }
@@ -618,6 +635,7 @@ export const dictionary: DictionaryAPI = {
       .reverse();
   },
   findOneByTs: (ts: number) => dictDb.findOneByTs(ts),
+  findByL: (l: number) => dictDb.findByL(l),
   findRelatedEntries: function (entry: T.DictionaryEntry): T.DictionaryEntry[] {
     return relatedWordsLookup(entry);
   },
