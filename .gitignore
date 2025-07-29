@@ -7,6 +7,9 @@ yarn-error.log*
 firebase-debug.log*
 firebase-debug.*.log*
 
+# Custom npmrc
+.npmrc
+
 # Firebase cache
 .firebase/
 

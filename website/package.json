@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
-    "@lingdocs/ps-react": "7.8.12",
+    "@lingdocs/ps-react": "8.0.2",
     "bootstrap": "4.6.1",
     "classnames": "^2.2.6",
     "cron": "^1.8.2",

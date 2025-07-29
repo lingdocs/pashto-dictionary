@@ -13,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@googleapis/sheets": "^9.3.1",
-    "@lingdocs/inflect": "7.8.12",
+    "@lingdocs/inflect": "8.0.2",
     "base64url": "^3.0.1",
     "bcryptjs": "^2.4.3",
     "bull": "^4.16.4",
