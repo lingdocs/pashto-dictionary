@@ -32,6 +32,7 @@ jobs:
           node-version: 22
           cache: "npm"
       - run: |
+          ls
           cd website && \
           npm install && \
           export VITE_BUILD_NO=`git rev-parse --short HEAD` && \
