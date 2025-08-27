@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  ci:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,8 +32,9 @@ jobs:
           node-version: 22
           cache: "npm"
       - run: |
+          echo $NETLIFY_SITE_ID && \
           npm install && \
           export VITE_BUILD_NO=`git rev-parse --short HEAD` && \
           npm run build && \
-          npm run test && \
+          npm run test && \ 
           npx netlify deploy --prod --site $NETLIFY_SITE_ID
