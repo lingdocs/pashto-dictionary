@@ -36,4 +36,4 @@ jobs:
           export VITE_BUILD_NO=`git rev-parse --short HEAD` && \
           npm run build && \
           npm run test && \
-          npx netlify deploy --site $NETLIFY_SITE_ID
+          npx netlify deploy --prod --site $NETLIFY_SITE_ID
