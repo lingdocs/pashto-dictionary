@@ -25,19 +25,19 @@
   "dependencies": {
     "@lingdocs/ps-react": "8.0.2",
     "lokijs": "^1.5.12",
-    "nano": "^9.0.5",
+    "nano": "^10.1.4",
     "passport-github2": "^0.1.12",
     "passport-google-oauth": "^2.0.0",
     "passport-twitter": "^1.0.4",
-    "supermemo": "^2.0.17",
-    "stripe": "^10.13.0"
+    "stripe": "^10.13.0",
+    "supermemo": "^2.0.23"
   },
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "@types/lokijs": "^1.5.7",
-    "@types/passport-github2": "^1.2.5",
-    "@types/passport-google-oauth": "^1.0.42",
-    "@types/passport-twitter": "^1.0.37",
-    "next": "^12.0.7"
+    "@types/lokijs": "^1.5.14",
+    "@types/passport-github2": "^1.2.9",
+    "@types/passport-google-oauth": "^1.0.45",
+    "@types/passport-twitter": "^1.0.40",
+    "next": "^12.0.7",
+    "typescript": "^5.9.2"
   }
 }

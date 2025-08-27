@@ -1,4 +1,0 @@
-[build]
-  base    = "website"
-  command = "export VITE_BUILD_NO=`git rev-parse --short HEAD` && npm run test && npm run build"
-  publish = "dist"

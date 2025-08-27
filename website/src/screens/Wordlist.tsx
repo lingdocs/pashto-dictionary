@@ -54,15 +54,15 @@ const reviewLanguageOptions: {
   label: string;
   value: Language;
 }[] = [
-  {
-    label: "Pashto",
-    value: "Pashto",
-  },
-  {
-    label: "English",
-    value: "English",
-  },
-];
+    {
+      label: "Pashto",
+      value: "Pashto",
+    },
+    {
+      label: "English",
+      value: "English",
+    },
+  ];
 
 function paginate<T>(arr: T[], page: number): T[] {
   return arr.slice(0, page * pageSize);

@@ -17,7 +17,8 @@ import {
   standardizePashto,
   Types as T,
 } from "@lingdocs/ps-react";
-import { withRouter, Route, RouteComponentProps, Link } from "react-router-dom";
+import { Route, Routes, Link } from "react-router-dom";
+import { withRouter, type RouterProps } from "./lib/withRouter";
 import Helmet from "react-helmet";
 import BottomNavItem from "./components/BottomNavItem";
 import SearchBar from "./components/SearchBar";
@@ -74,7 +75,7 @@ import { pNums, convertNumShortcutToNum } from "./lib/misc-helpers";
 const newWordsPeriod: "week" | "month" = "month";
 
 // to allow Moustrap key combos even when input fields are in focus
-Mousetrap.prototype.stopCallback = function () {
+Mousetrap.prototype.stopCallback = function() {
   return false;
 };
 
@@ -100,8 +101,8 @@ const possibleLandingPages = [
 ];
 const editorOnlyPages = ["/edit", "/review-tasks"];
 
-class App extends Component<RouteComponentProps, State> {
-  constructor(props: RouteComponentProps) {
+class App extends Component<RouterProps, State> {
+  constructor(props: RouterProps) {
     super(props);
     const savedOptions = readOptions();
     this.state = {
@@ -112,21 +113,21 @@ class App extends Component<RouteComponentProps, State> {
       options: savedOptions
         ? savedOptions
         : {
-            language: "Pashto",
-            searchType: "fuzzy",
-            searchBarStickyFocus: false,
-            theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light",
-            textOptionsRecord: {
-              lastModified: Date.now() as AT.TimeStamp,
-              textOptions: defaultTextOptions,
-            },
-            wordlistMode: "browse",
-            wordlistReviewLanguage: "Pashto",
-            wordlistReviewBadge: true,
-            searchBarPosition: "top",
+          language: "Pashto",
+          searchType: "fuzzy",
+          searchBarStickyFocus: false,
+          theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light",
+          textOptionsRecord: {
+            lastModified: Date.now() as AT.TimeStamp,
+            textOptions: defaultTextOptions,
           },
+          wordlistMode: "browse",
+          wordlistReviewLanguage: "Pashto",
+          wordlistReviewBadge: true,
+          searchBarPosition: "top",
+        },
       searchValue: "",
       page: 1,
       isolatedEntry: undefined,
@@ -153,8 +154,8 @@ class App extends Component<RouteComponentProps, State> {
 
   public componentDidMount() {
     window.addEventListener("scroll", this.handleScroll);
-    if (!possibleLandingPages.includes(this.props.location.pathname)) {
-      this.props.history.replace("/");
+    if (!possibleLandingPages.includes(this.props.router.location.pathname)) {
+      this.props.router.navigate("/", { replace: true });
     }
     if (prod && !(this.state.user?.level === "editor")) {
       ReactGA.send({
@@ -178,8 +179,8 @@ class App extends Component<RouteComponentProps, State> {
             reviewTasks: this.handleRefreshReviewTasks,
           });
         }
-        if (this.props.location.pathname === "/word") {
-          const wordId = getWordId(this.props.location.search);
+        if (this.props.router.location.pathname === "/word") {
+          const wordId = getWordId(this.props.router.location.search);
           if (wordId) {
             const word = dictionary.findOneByTs(wordId);
             if (word) {
@@ -189,12 +190,12 @@ class App extends Component<RouteComponentProps, State> {
           } else {
             // TODO: Make a word not found screen
             console.error("somehow had a word path without a word id param");
-            this.props.history.replace("/");
+            this.props.router.navigate("/", { replace: true });
           }
         }
-        if (this.props.location.pathname === "/share-target") {
+        if (this.props.router.location.pathname === "/share-target") {
           const searchString = getTextFromShareTarget(window.location);
-          this.props.history.replace("/");
+          this.props.router.navigate("/", { replace: true });
           if (this.state.options.language === "English") {
             this.handleOptionsUpdate({ type: "toggleLanguage" });
           }
@@ -203,7 +204,7 @@ class App extends Component<RouteComponentProps, State> {
           }
           this.handleSearchValueChange(searchString);
         }
-        if (this.props.location.pathname === "/new-entries") {
+        if (this.props.router.location.pathname === "/new-entries") {
           this.setState({
             results: dictionary.getNewWords(newWordsPeriod),
             page: 1,
@@ -245,7 +246,7 @@ class App extends Component<RouteComponentProps, State> {
       ["1", "2", "3", "4", "5", "6", "7", "8", "9", ...pNums],
       (e) => {
         if (
-          this.props.location.pathname === "/search" &&
+          this.props.router.location.pathname === "/search" &&
           this.state.suggestion !== "editing"
         ) {
           e.preventDefault();
@@ -311,8 +312,8 @@ class App extends Component<RouteComponentProps, State> {
       if (this.state.user?.level === "basic") {
         return;
       }
-      if (this.props.location.pathname !== "/wordlist") {
-        this.props.history.push("/wordlist");
+      if (this.props.router.location.pathname !== "/wordlist") {
+        this.props.router.navigate("/wordlist");
       } else {
         this.handleGoBack();
       }
@@ -331,33 +332,33 @@ class App extends Component<RouteComponentProps, State> {
     Mousetrap.unbind(["1", "2", "3", "4", "5", "6", "7", "8", "9"]);
   }
 
-  public componentDidUpdate(prevProps: RouteComponentProps) {
-    if (this.props.location.pathname !== prevProps.location.pathname) {
+  public componentDidUpdate(prevProps: RouterProps) {
+    if (this.props.router.location.pathname !== prevProps.router.location.pathname) {
       if (prod && !(this.state.user?.level === "editor")) {
         ReactGA.send({
           hitType: "pageview",
           page: window.location.pathname + window.location.search,
         });
       }
-      if (this.props.location.pathname === "/") {
+      if (this.props.router.location.pathname === "/") {
         this.handleSearchValueChange("");
       }
-      if (this.props.location.pathname === "/new-entries") {
+      if (this.props.router.location.pathname === "/new-entries") {
         this.setState({
           results: dictionary.getNewWords(newWordsPeriod),
           page: 1,
         });
       }
       if (
-        editorOnlyPages.includes(this.props.location.pathname) &&
+        editorOnlyPages.includes(this.props.router.location.pathname) &&
         !(this.state.user?.level === "editor")
       ) {
-        this.props.history.replace("/");
+        this.props.router.navigate("/");
       }
     }
     if (
-      getWordId(this.props.location.search) !==
-      getWordId(prevProps.location.search)
+      getWordId(this.props.router.location.search) !==
+      getWordId(prevProps.router.location.search)
     ) {
       if (prod && this.state.user?.level !== "editor") {
         ReactGA.send({
@@ -365,7 +366,7 @@ class App extends Component<RouteComponentProps, State> {
           page: window.location.pathname + window.location.search,
         });
       }
-      const wordId = getWordId(this.props.location.search);
+      const wordId = getWordId(this.props.router.location.search);
       /* istanbul ignore else */
       if (wordId) {
         this.handleIsolateEntry(wordId, true);
@@ -451,11 +452,11 @@ class App extends Component<RouteComponentProps, State> {
       action.type === "toggleLanguage" ||
       action.type === "toggleSearchType"
     ) {
-      if (this.props.location.pathname !== "/new-entries") {
+      if (this.props.router.location.pathname !== "/new-entries") {
         if (
           action.type === "toggleSearchType" &&
           this.state.options.searchType === "fuzzy" &&
-          this.props.location.pathname !== "/search"
+          this.props.router.location.pathname !== "/search"
         ) {
           this.handleSearchValueChange("آ");
         }
@@ -507,8 +508,8 @@ class App extends Component<RouteComponentProps, State> {
         inflectionSearchResults: undefined,
         suggestion: "none",
       });
-      if (this.props.location.pathname !== "/") {
-        this.props.history.replace("/");
+      if (this.props.router.location.pathname !== "/") {
+        this.props.router.navigate("/", { replace: true });
       }
       return;
     }
@@ -519,8 +520,8 @@ class App extends Component<RouteComponentProps, State> {
       inflectionSearchResults: undefined,
       suggestion: "none",
     }));
-    if (this.props.history.location.pathname !== "/search") {
-      this.props.history.push("/search");
+    if (this.props.router.location.pathname !== "/search") {
+      this.props.router.navigate("/search");
     }
     window.scrollTo(0, 0);
   }
@@ -535,10 +536,10 @@ class App extends Component<RouteComponentProps, State> {
     this.setState({ isolatedEntry });
     if (
       !onlyState &&
-      (this.props.location.pathname !== "/word" ||
-        getWordId(this.props.location.search) !== ts)
+      (this.props.router.location.pathname !== "/word" ||
+        getWordId(this.props.router.location.search) !== ts)
     ) {
-      this.props.history.push(`/word?id=${isolatedEntry.ts}`);
+      this.props.router.navigate(`/word?id=${isolatedEntry.ts}`);
     }
   }
 
@@ -553,7 +554,7 @@ class App extends Component<RouteComponentProps, State> {
   private handleScroll() {
     if (
       hitBottom() &&
-      this.props.location.pathname === "/search" &&
+      this.props.router.location.pathname === "/search" &&
       this.state.results.length >= pageSize * this.state.page
     ) {
       const page = this.state.page + 1;
@@ -590,7 +591,7 @@ class App extends Component<RouteComponentProps, State> {
   }
 
   private handleGoBack() {
-    this.props.history.goBack();
+    this.props.router.navigate(-1);
     window.scrollTo(0, 0);
   }
 
@@ -629,8 +630,8 @@ class App extends Component<RouteComponentProps, State> {
           {this.state.dictionaryStatus !== "ready" ? (
             <DictionaryStatusDisplay status={this.state.dictionaryStatus} />
           ) : (
-            <>
-              <Route path="/" exact={true}>
+            <Routes>
+              <Route path="/" element={
                 <div className="text-center mt-4">
                   <h4 className="font-weight-light p-3 mb-4">
                     LingDocs Pashto Dictionary
@@ -679,40 +680,28 @@ class App extends Component<RouteComponentProps, State> {
                       Grammar
                     </a>
                   </div>
-                </div>
-              </Route>
-              <Route path="/about">
-                <About state={this.state} />
-              </Route>
-              <Route path="/privacy">
-                <PrivacyPolicy />
-              </Route>
-              <Route path="/phrase-builder">
-                <PhraseBuilder
-                  state={this.state}
-                  isolateEntry={this.handleIsolateEntry}
-                />
-              </Route>
-              <Route path="/settings">
-                <Options
-                  state={this.state}
-                  options={this.state.options}
-                  optionsDispatch={this.handleOptionsUpdate}
-                  textOptionsDispatch={this.handleTextOptionsUpdate}
-                />
-              </Route>
-              <Route path="/search">
-                <Results
-                  state={this.state}
-                  isolateEntry={this.handleIsolateEntry}
-                  handleInflectionSearch={this.handleInflectionSearch}
-                  setSuggestionState={this.handleSuggestionState}
-                />
-              </Route>
-              <Route path="/new-entries">
-                <h4 className="mb-3">
-                  New Words This {capitalizeFirstLetter(newWordsPeriod)}
-                </h4>
+                </div>} />
+              <Route path="/about" element={<About state={this.state} />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/phrase-builder" element={<PhraseBuilder
+                state={this.state}
+                isolateEntry={this.handleIsolateEntry}
+              />} />
+              <Route path="/settings" element={<Options
+                state={this.state}
+                options={this.state.options}
+                optionsDispatch={this.handleOptionsUpdate}
+                textOptionsDispatch={this.handleTextOptionsUpdate}
+              />} />
+              <Route path="/search" element={<Results
+                state={this.state}
+                isolateEntry={this.handleIsolateEntry}
+                handleInflectionSearch={this.handleInflectionSearch}
+                setSuggestionState={this.handleSuggestionState}
+              />} />
+              <Route path="/new-entries" element={<><h4 className="mb-3">
+                New Words This {capitalizeFirstLetter(newWordsPeriod)}
+              </h4>
                 {this.state.results.length ? (
                   <Results
                     state={this.state}
@@ -722,54 +711,41 @@ class App extends Component<RouteComponentProps, State> {
                   />
                 ) : (
                   <div>No new words added this {newWordsPeriod}</div>
-                )}
-              </Route>
-              <Route path="/account">
-                <Account
+                )}</>} />
+              <Route path="/account" element={<Account
+                user={this.state.user}
+                loadUser={this.handleLoadUser}
+              />} />
+              <Route path="/word" element={<IsolatedEntry
+                state={this.state}
+                dictionary={dictionary}
+                isolateEntry={this.handleIsolateEntry}
+                setSuggestionState={this.handleSuggestionState}
+              />} />
+              <Route path="/wordlist" element={<Wordlist
+                options={this.state.options}
+                wordlist={this.state.wordlist}
+                isolateEntry={this.handleIsolateEntry}
+                optionsDispatch={this.handleOptionsUpdate}
+                user={this.state.user}
+                loadUser={this.handleLoadUser}
+              />} />
+              <Route path="/script-to-phonetics" element={<ScriptToPhonetics />} />
+              {this.state.user?.level === "editor" && (
+                <Route path="/edit" element={<EntryEditor
+                  isolatedEntry={this.state.isolatedEntry}
                   user={this.state.user}
-                  loadUser={this.handleLoadUser}
-                />
-              </Route>
-              <Route path="/word">
-                <IsolatedEntry
-                  state={this.state}
+                  textOptions={getTextOptions(this.state)}
                   dictionary={dictionary}
-                  isolateEntry={this.handleIsolateEntry}
-                  setSuggestionState={this.handleSuggestionState}
-                />
-              </Route>
-              <Route path="/wordlist">
-                <Wordlist
-                  options={this.state.options}
-                  wordlist={this.state.wordlist}
-                  isolateEntry={this.handleIsolateEntry}
-                  optionsDispatch={this.handleOptionsUpdate}
-                  user={this.state.user}
-                  loadUser={this.handleLoadUser}
-                />
-              </Route>
-              <Route path="/script-to-phonetics">
-                <ScriptToPhonetics />
-              </Route>
-              {this.state.user?.level === "editor" && (
-                <Route path="/edit">
-                  <EntryEditor
-                    isolatedEntry={this.state.isolatedEntry}
-                    user={this.state.user}
-                    textOptions={getTextOptions(this.state)}
-                    dictionary={dictionary}
-                    searchParams={
-                      new URLSearchParams(this.props.history.location.search)
-                    }
-                  />
-                </Route>
+                  searchParams={
+                    new URLSearchParams(this.props.router.location.search)
+                  }
+                />} />
               )}
               {this.state.user?.level === "editor" && (
-                <Route path="/review-tasks">
-                  <ReviewTasks state={this.state} />
-                </Route>
+                <Route path="/review-tasks" element={<ReviewTasks state={this.state} />} />
               )}
-            </>
+            </Routes>
           )}
         </div>
         <footer
@@ -777,22 +753,22 @@ class App extends Component<RouteComponentProps, State> {
             "footer",
             {
               "bg-white": !["/search", "/word"].includes(
-                this.props.location.pathname
+                this.props.router.location.pathname
               ),
             },
             {
               "footer-thick":
                 this.state.options.searchBarPosition === "bottom" &&
-                !["/search", "/word"].includes(this.props.location.pathname),
+                !["/search", "/word"].includes(this.props.router.location.pathname),
             },
             {
               "wee-less-footer":
                 this.state.options.searchBarPosition === "bottom" &&
-                ["/search", "/word"].includes(this.props.location.pathname),
+                ["/search", "/word"].includes(this.props.router.location.pathname),
             }
           )}
         >
-          <Route path="/" exact={true}>
+          {this.props.router.location.pathname === "/" &&
             <div className="buttons-footer">
               <BottomNavItem label="About" icon="info-circle" page="/about" />
               <BottomNavItem label="Settings" icon="cog" page="/settings" />
@@ -802,11 +778,10 @@ class App extends Component<RouteComponentProps, State> {
                 page="/account"
               />
               <BottomNavItem
-                label={`Wordlist ${
-                  this.state.options.wordlistReviewBadge
-                    ? textBadge(forReview(this.state.wordlist).length)
-                    : ""
-                }`}
+                label={`Wordlist ${this.state.options.wordlistReviewBadge
+                  ? textBadge(forReview(this.state.wordlist).length)
+                  : ""
+                  }`}
                 icon="list"
                 page="/wordlist"
               />
@@ -817,24 +792,20 @@ class App extends Component<RouteComponentProps, State> {
                   page="/review-tasks"
                 />
               )}
-            </div>
-          </Route>
-          <Route
-            path={[
-              "/about",
-              "/settings",
-              "/new-entries",
-              "/account",
-              "/wordlist",
-              "/edit",
-              "/review-tasks",
-              "/phrase-builder",
-            ]}
-          >
+            </div>}
+          {[
+            "/about",
+            "/settings",
+            "/new-entries",
+            "/account",
+            "/wordlist",
+            "/edit",
+            "/review-tasks",
+            "/phrase-builder",
+          ].includes(this.props.router.location.pathname) &&
             <div className="buttons-footer">
               <BottomNavItem label="Home" icon="home" page="/" />
-            </div>
-          </Route>
+            </div>}
           {this.state.options.searchBarPosition === "bottom" && (
             <SearchBar
               state={this.state}

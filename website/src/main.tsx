@@ -10,6 +10,7 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
+      {/* @ts-ignore */}
       <App />
     </BrowserRouter>
   </StrictMode>

@@ -6,7 +6,7 @@
  *
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 import { VPExplorer } from "@lingdocs/ps-react";
@@ -131,9 +131,9 @@ function EntryEditor({
   const suggestedWord =
     searchParams.get("p") || searchParams.get("f")
       ? {
-          p: searchParams.get("p") || "",
-          f: searchParams.get("f") || "",
-        }
+        p: searchParams.get("p") || "",
+        f: searchParams.get("f") || "",
+      }
       : undefined;
   useEffect(() => {
     setEntry(isolatedEntry ?? { ts: 1, i: 0, p: "", f: "", g: "", e: "" });
@@ -155,8 +155,8 @@ function EntryEditor({
       ...entry,
       [name]:
         value &&
-        numberFields.find((x) => x.field === name) &&
-        typeof value === "string"
+          numberFields.find((x) => x.field === name) &&
+          typeof value === "string"
           ? parseInt(value)
           : value,
     });

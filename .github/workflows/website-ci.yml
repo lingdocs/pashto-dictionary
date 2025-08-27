@@ -23,13 +23,18 @@ jobs:
         working-directory: ./website
     env:
       LINGDOCS_NPM_TOKEN: ${{ secrets.LINGDOCS_NPM_TOKEN }}
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
       - run: |
-          npm install
-          npm run build
-          npm run test
+          cd website && \
+          npm install && \
+          export VITE_BUILD_NO=`git rev-parse --short HEAD` && \
+          npm run build && \
+          npm run test && \
+          npx netlify deploy --prod --site $NETLIFY_SITE_ID
