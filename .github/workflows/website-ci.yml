@@ -32,7 +32,6 @@ jobs:
           node-version: 22
           cache: "npm"
       - run: |
-          echo $NETLIFY_SITE_ID && \
           npm install && \
           export VITE_BUILD_NO=`git rev-parse --short HEAD` && \
           npm run build && \
