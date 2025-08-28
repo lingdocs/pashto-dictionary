@@ -18,7 +18,7 @@ import Stripe from "stripe";
 import { ntfy } from "./ntfy";
 
 const stripe = new Stripe(env.stripeSecretKey, {
-  apiVersion: "2022-08-01",
+  apiVersion: "2025-08-27.basil",
 });
 
 function getUUID(): T.UUID {
@@ -30,7 +30,7 @@ export function canRemoveOneOutsideProvider(user: T.LingdocsUser): boolean {
     return true;
   }
   const providersPresent = outsideProviders.filter(
-    (provider) => !!user[provider]
+    (provider) => !!user[provider],
   );
   return providersPresent.length > 1;
 }
@@ -64,7 +64,7 @@ export function getEmailFromGoogleProfile(profile: T.GoogleProfile): {
 
 export async function upgradeUser(
   userId: T.UUID,
-  subscription?: T.StripeSubscription
+  subscription?: T.StripeSubscription,
 ): Promise<T.UpgradeUserResponse> {
   // add user to couchdb authentication db
   const { password, userDbName } = await addCouchDbAuthUser(userId);
@@ -89,11 +89,11 @@ export async function upgradeUser(
 
 export async function downgradeUser(
   userId: T.UUID,
-  subscriptionId?: string
+  subscriptionId?: string,
 ): Promise<T.DowngradeUserResponse> {
   await deleteCouchDbAuthUser(userId);
   if (subscriptionId) {
-    stripe.subscriptions.del(subscriptionId);
+    stripe.subscriptions.cancel(subscriptionId);
   }
   const user = await updateLingdocsUser(userId, {
     level: "basic",
@@ -138,7 +138,7 @@ export async function createNewUser(
     | {
         strategy: "twitter";
         profile: T.TwitterProfile;
-      }
+      },
 ): Promise<T.LingdocsUser> {
   const userId = getUUID();
   const now = getTimestamp();

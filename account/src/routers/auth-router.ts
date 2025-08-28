@@ -113,7 +113,8 @@ const authRouter = (passport: PassportStatic) => {
     }
     passport.authenticate(
       "local",
-      (err, user: T.LingdocsUser | undefined, info) => {
+      // TODO: type the info param according to the passport local setup
+      (err: any, user: T.LingdocsUser | undefined, info: any) => {
         if (err) throw err;
         if (!user && info.message === "email not found") {
           return res.send({ ok: false, newSignup: true });
@@ -129,7 +130,7 @@ const authRouter = (passport: PassportStatic) => {
             res.send({ ok: true, user });
           });
         }
-      }
+      },
     )(req, res, next);
   });
 
@@ -143,13 +144,13 @@ const authRouter = (passport: PassportStatic) => {
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
       ],
-    })
+    }),
   );
   router.get(
     "/github",
     passport.authenticate("github", {
       scope: ["read:user", "user:email"],
-    })
+    }),
   );
   router.get("/twitter", passport.authenticate("twitter"));
 
@@ -160,7 +161,7 @@ const authRouter = (passport: PassportStatic) => {
       passport.authenticate(provider, {
         successRedirect: "/user",
         failureRedirect: "/",
-      })
+      }),
     );
     router.post(`/${provider}/remove`, async (req, res, next) => {
       try {
@@ -170,7 +171,7 @@ const authRouter = (passport: PassportStatic) => {
         await updateLingdocsUser(
           req.user.userId,
           // @ts-ignore - shouldn't need this
-          { [provider]: undefined }
+          { [provider]: undefined },
         );
         return res.redirect("/user");
       } catch (e) {
@@ -211,7 +212,7 @@ const authRouter = (passport: PassportStatic) => {
         return res.redirect("/");
       }
       const users = (await getAllLingdocsUsers()).sort(
-        (a, b) => (a.accountCreated || 0) - (b.accountCreated || 0)
+        (a, b) => (a.accountCreated || 0) - (b.accountCreated || 0),
       );
       const tests = getTestCompletionSummary(users);
       res.render("admin", { users, tests });
@@ -257,7 +258,7 @@ const authRouter = (passport: PassportStatic) => {
       } catch (e) {
         next(e);
       }
-    }
+    },
   );
 
   router.post("/downgradeToBasic", async (req, res, next) => {
@@ -269,7 +270,7 @@ const authRouter = (passport: PassportStatic) => {
         "subscription" in req.user ? req.user.subscription : undefined;
       await downgradeUser(
         req.user.userId,
-        subscription ? subscription.id : undefined
+        subscription ? subscription.id : undefined,
       );
       res.send({
         ok: true,
@@ -404,7 +405,9 @@ const authRouter = (passport: PassportStatic) => {
   });
 
   router.post("/sign-out", (req, res) => {
-    req.logOut();
+    req.logOut((err: any) => {
+      console.error(err);
+    });
     res.redirect("/");
   });
 
@@ -432,11 +435,11 @@ function removeDuplicateTests(tests: T.TestResult[]): T.TestResult[] {
   return tests.reduceRight(
     (acc, curr) => {
       const redundant = acc.filter(
-        (x) => x.id === curr.id && x.done === curr.done
+        (x) => x.id === curr.id && x.done === curr.done,
       );
       return redundant.length ? acc : [...acc, curr];
     },
-    [...tests]
+    [...tests],
   );
 }
 

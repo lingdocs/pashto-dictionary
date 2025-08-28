@@ -6,14 +6,14 @@ import { downgradeUser, upgradeUser } from "../lib/user-utils";
 import { addToPaymentsDb } from "../lib/couch-db";
 
 const stripe = new Stripe(env.stripeSecretKey, {
-    apiVersion: "2022-08-01",
+  apiVersion: "2025-08-27.basil",
 });
 
 const paymentRouter = express.Router();
 
 paymentRouter.post(
-  '/webhook',
-  express.raw({ type: 'application/json' }),
+  "/webhook",
+  express.raw({ type: "application/json" }),
   async (request, response) => {
     let event = request.body;
     // Replace this endpoint secret with your endpoint's unique secret
@@ -25,12 +25,12 @@ paymentRouter.post(
     const endpointSecret = env.stripeWebhookSecret;
     if (endpointSecret) {
       // Get the signature sent by Stripe
-      const signature = request.headers['stripe-signature'] || "";
+      const signature = request.headers["stripe-signature"] || "";
       try {
         event = stripe.webhooks.constructEvent(
           request.body,
           signature,
-          endpointSecret
+          endpointSecret,
         );
       } catch (err: any) {
         console.log(`⚠️  Webhook signature verification failed.`, err.message);
@@ -41,7 +41,7 @@ paymentRouter.post(
     // Handle the event
     const userId = event.data.object.metadata.userId as T.UUID;
     switch (event.type) {
-      case 'customer.subscription.deleted':
+      case "customer.subscription.deleted":
         subscription = event.data.object;
         addToPaymentsDb({
           action: "deleted",
@@ -51,7 +51,7 @@ paymentRouter.post(
         // Then define and call a method to handle the subscription deleted.
         // handleSubscriptionDeleted(subscriptionDeleted);
         break;
-      case 'customer.subscription.created':
+      case "customer.subscription.created":
         subscription = event.data.object;
         addToPaymentsDb({
           action: "created",
@@ -66,71 +66,71 @@ paymentRouter.post(
     }
     // Return a 200 response to acknowledge receipt of the event
     response.send();
-  }
+  },
 );
 
 // Guard all api with authentication
 paymentRouter.use((req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    const r: T.APIResponse = { ok: false, error: "401 Unauthorized" };
-    return res.status(401).send(r);
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  const r: T.APIResponse = { ok: false, error: "401 Unauthorized" };
+  return res.status(401).send(r);
 });
 
 paymentRouter.post("/create-checkout-session", async (req, res, next) => {
-    if (!req.user) {
-      return next("not logged in");
-    }
-    try {
-        const source = req.query.source;
-        const returnUrl = source === "account"
-          ? "https://dictionary.lingdocs.com/account"
-          : source === "wordlist"
+  if (!req.user) {
+    return next("not logged in");
+  }
+  try {
+    const source = req.query.source;
+    const returnUrl =
+      source === "account"
+        ? "https://dictionary.lingdocs.com/account"
+        : source === "wordlist"
           ? "https://dictionary.lingdocs.com"
           : "https://account.lingdocs.com/user";
-        const price = req.body.priceId;
-        const session = await stripe.checkout.sessions.create({
-            billing_address_collection: 'auto',
-            line_items: [
-                {
-                  price,
-                  quantity: 1,
-                },
-            ],
-            subscription_data: {
-              metadata: {
-                userId: req.user.userId,
-                startTime: Date.now(),
-                cycle: price === "price_1Lt8NqJnpCQCjf9pN7CQUjjO"
-                  ? "monthly" : "yearly",
-              },
-            },
-            mode: 'subscription',
-            success_url: returnUrl,
-            cancel_url: returnUrl,
-        });
-        if (!session.url) {
-            return next("error creating session url");
-        }
-        res.redirect(303, session.url);
-    } catch (err) {
-        console.error(err);
-        return next("error connection to Stripe");
-    }
-});
-
-paymentRouter.post('/create-portal-session', async (req, res, next) => {
-    if (!req.user) {
-        return next("error finding user");
-    }
-    const portalSession = await stripe.billingPortal.sessions.create({
-        customer: req.user.userId,
-        return_url: "/",
+    const price = req.body.priceId;
+    const session = await stripe.checkout.sessions.create({
+      billing_address_collection: "auto",
+      line_items: [
+        {
+          price,
+          quantity: 1,
+        },
+      ],
+      subscription_data: {
+        metadata: {
+          userId: req.user.userId,
+          startTime: Date.now(),
+          cycle:
+            price === "price_1Lt8NqJnpCQCjf9pN7CQUjjO" ? "monthly" : "yearly",
+        },
+      },
+      mode: "subscription",
+      success_url: returnUrl,
+      cancel_url: returnUrl,
     });
-  
-    res.redirect(303, portalSession.url);
+    if (!session.url) {
+      return next("error creating session url");
+    }
+    res.redirect(303, session.url);
+  } catch (err) {
+    console.error(err);
+    return next("error connection to Stripe");
+  }
 });
 
+paymentRouter.post("/create-portal-session", async (req, res, next) => {
+  if (!req.user) {
+    return next("error finding user");
+  }
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: req.user.userId,
+    return_url: "/",
+  });
+
+  res.redirect(303, portalSession.url);
+});
 
 export default paymentRouter;

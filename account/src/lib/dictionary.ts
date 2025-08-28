@@ -1,5 +1,4 @@
 import loki, { Collection, LokiMemoryAdapter } from "lokijs";
-import fetch from "node-fetch";
 import { CronJob } from "cron";
 const collectionName = "ps-dictionary";
 const allWordsCollectionName = "all-words";
@@ -20,7 +19,14 @@ const lokidb = new loki("", {
   env: "NODEJS",
 });
 
-const updateJob = new CronJob("* * * * *", updateDictionary, null, false);
+const updateJob = new CronJob(
+  "* * * * *",
+  () => {
+    updateDictionary();
+  },
+  null,
+  false,
+);
 
 let version: number = 0;
 
@@ -33,14 +39,14 @@ async function fetchAllWords(): Promise<T.AllWordsWithInflections> {
   // TODO: this is really ugly
   const res = await fetch(
     process.env.LINGDOCS_DICTIONARY_URL?.slice(0, -10) +
-      "all-words-dictionary.json"
+      "all-words-dictionary.json",
   );
   return await res.json();
 }
 
 async function fetchDictionaryInfo(): Promise<T.DictionaryInfo> {
   const res = await fetch(
-    process.env.LINGDOCS_DICTIONARY_URL + "-info.json" || ""
+    process.env.LINGDOCS_DICTIONARY_URL + "-info.json" || "",
   );
   return await res.json();
 }
@@ -94,7 +100,7 @@ export async function getEntries(ids: (number | string)[]): Promise<{
     throw new Error("dictionary not initialized");
   }
   const idsP = ids.map((x) =>
-    typeof x === "number" ? x : standardizePashto(x)
+    typeof x === "number" ? x : standardizePashto(x),
   );
   const results: (T.DictionaryEntry | T.VerbEntry)[] = collection
     .find({
@@ -127,7 +133,7 @@ export async function getEntries(ids: (number | string)[]): Promise<{
         !results.find((x) => {
           const entry = entryOfFull(x);
           return entry.p === id || entry.ts === id;
-        })
+        }),
     ),
   };
 }

@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import envVars from "./env-vars";
 
 export async function ntfy(message: string) {
