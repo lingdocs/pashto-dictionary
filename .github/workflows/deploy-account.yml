@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: "npm"
       - run: |
           npm install
@@ -29,16 +29,27 @@ jobs:
           cd ../account
           npm install
           npm run build
+          npm prune --production
+          cd ..
+          tar --exclude-vcs -czf account.tar.gz account
+      - name: copy tarball to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.KEY }}
+          source: "account.tar.gz"
+          target: "."
       - name: unpack tarball and restart app
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd apps/live/account/account && \
-            git pull && \
-            npm install && \
-            npm run build && \
+            rm -rf apps/live/account
+            tar -xzf account.tar.gz -C ~/apps/live
+            rm account.tar.gz
             pm2 restart account
