@@ -22,7 +22,7 @@
     "cron": "^4.3.3",
     "crypto": "^1.0.1",
     "ejs": "^3.1.10",
-    "express": "^5.1.0",
+    "express": "^4.17.2",
     "express-session": "^1.18.2",
     "googleapis": "^158.0.0",
     "lokijs": "^1.5.12",
